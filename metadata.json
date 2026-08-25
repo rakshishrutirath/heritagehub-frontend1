@@ -1,0 +1,6 @@
+{
+  "name": "HeritageHub",
+  "description": "Preserving Heritage. Connecting Generations. A curated archival platform featuring timeless artifacts, 3D visualizations, community histories, and research canvas.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

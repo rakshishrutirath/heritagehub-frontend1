@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HeritageHub - Community Verification</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:wght@100..900&family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "outline-variant": "#dac1b8",
+                      "inverse-on-surface": "#feede8",
+                      "secondary-fixed-dim": "#e9c176",
+                      "surface-container-low": "#fff1ec",
+                      "surface-container-high": "#f5e5df",
+                      "on-error-container": "#93000a",
+                      "on-primary": "#ffffff",
+                      "inverse-surface": "#382e2b",
+                      "primary-container": "#a0522d",
+                      "on-primary-fixed-variant": "#76320f",
+                      "outline": "#87736b",
+                      "on-tertiary-container": "#aef2ff",
+                      "on-tertiary-fixed": "#001f24",
+                      "tertiary-fixed-dim": "#7fd3e3",
+                      "surface": "#fff8f6",
+                      "surface-dim": "#e7d7d1",
+                      "tertiary": "#005863",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed-variant": "#004f59",
+                      "surface-bright": "#fff8f6",
+                      "on-primary-container": "#ffe1d6",
+                      "surface-tint": "#944925",
+                      "on-secondary-fixed-variant": "#5d4201",
+                      "primary": "#823b18",
+                      "surface-container": "#fbeae5",
+                      "error": "#ba1a1a",
+                      "tertiary-container": "#007280",
+                      "on-error": "#ffffff",
+                      "on-background": "#221a17",
+                      "background": "#fff8f6",
+                      "secondary": "#775a19",
+                      "on-secondary-fixed": "#261900",
+                      "tertiary-fixed": "#9defff",
+                      "primary-fixed": "#ffdbcd",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-fixed": "#ffdea5",
+                      "inverse-primary": "#ffb596",
+                      "on-surface": "#221a17",
+                      "secondary-container": "#fed488",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-highest": "#efdfd9",
+                      "on-surface-variant": "#54433c",
+                      "primary-fixed-dim": "#ffb596",
+                      "on-primary-fixed": "#360f00",
+                      "surface-variant": "#efdfd9",
+                      "on-secondary": "#ffffff",
+                      "on-secondary-container": "#785a1a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "margin-mobile": "16px",
+                      "container-max": "1280px",
+                      "unit": "8px",
+                      "section-gap": "120px",
+                      "margin-desktop": "64px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Libre Caslon Text"],
+                      "display-lg": ["Libre Caslon Text"],
+                      "body-lg": ["Plus Jakarta Sans"],
+                      "display-md": ["Libre Caslon Text"],
+                      "headline-sm": ["Libre Caslon Text"],
+                      "headline-lg-mobile": ["Libre Caslon Text"],
+                      "body-md": ["Plus Jakarta Sans"],
+                      "label-caps": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                      "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                      "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                      "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                      "display-md": ["48px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                      "headline-sm": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                      "headline-lg-mobile": ["28px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                      "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                      "label-caps": ["12px", { "lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "700" }]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Pattachitra inspired subtle background pattern */
+        .pattern-bg {
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 3.33331C10.8 3.33331 3.33334 10.8 3.33334 20C3.33334 29.2 10.8 36.6666 20 36.6666C29.2 36.6666 36.6667 29.2 36.6667 20C36.6667 10.8 29.2 3.33331 20 3.33331ZM20 33.3333C12.6333 33.3333 6.66667 27.3666 6.66667 20C6.66667 12.6333 12.6333 6.66664 20 6.66664C27.3667 6.66664 33.3333 12.6333 33.3333 20C33.3333 27.3666 27.3667 33.3333 20 33.3333Z' fill='%2336454F' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md fixed top-0 w-full z-50 border-b border-outline-variant/20 dark:border-outline/20">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed filled text-2xl">account_balance</span>
+<span class="font-headline-lg-mobile text-headline-lg-mobile font-semibold text-primary dark:text-primary-fixed tracking-tight">HeritageHub</span>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Home</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Explore</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Contribute</a>
+<a class="font-label-caps text-label-caps text-primary dark:text-primary-fixed border-b-2 border-primary dark:border-primary-fixed pb-1" href="#">Verify</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Impact</a>
+</nav>
+<button class="font-label-caps text-label-caps text-primary dark:text-primary-fixed hover:opacity-80 transition-opacity cursor-pointer active:scale-95 duration-200">
+                Join
+            </button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow pt-24 pb-16 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto w-full flex flex-col gap-12 relative z-10">
+<!-- Header Section -->
+<section class="flex flex-col items-center text-center max-w-3xl mx-auto gap-4">
+<h1 class="font-display-md md:font-display-lg text-primary">Cultural Truth Belongs to the Community</h1>
+<p class="font-body-lg text-on-surface-variant max-w-2xl">Review community-submitted heritage records, compare AI-assisted insights, and ensure cultural authenticity before publication.</p>
+<div class="flex flex-wrap justify-center gap-4 mt-2">
+<span class="inline-flex items-center gap-1.5 font-label-caps text-label-caps text-secondary px-3 py-1 bg-secondary-container/20 rounded-full border border-secondary-container">
+<span class="material-symbols-outlined text-[14px]">psychology</span> Human-reviewed
+                </span>
+<span class="inline-flex items-center gap-1.5 font-label-caps text-label-caps text-secondary px-3 py-1 bg-secondary-container/20 rounded-full border border-secondary-container">
+<span class="material-symbols-outlined text-[14px]">groups</span> Community-led
+                </span>
+<span class="inline-flex items-center gap-1.5 font-label-caps text-label-caps text-secondary px-3 py-1 bg-secondary-container/20 rounded-full border border-secondary-container">
+<span class="material-symbols-outlined text-[14px]">verified_user</span> Responsibly preserved
+                </span>
+</div>
+</section>
+<!-- Summary Stats Bento -->
+<section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/30 shadow-sm flex flex-col items-start gap-2 relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-surface-container-high rounded-full opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+<span class="material-symbols-outlined text-primary text-3xl mb-2">pending_actions</span>
+<span class="font-display-md text-on-surface leading-none">12</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Pending Reviews</span>
+</div>
+<div class="bg-[#f0fdf4] dark:bg-[#052e16]/20 p-6 rounded-xl border border-[#bbf7d0] dark:border-[#166534] shadow-sm flex flex-col items-start gap-2 relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-[#dcfce7] dark:bg-[#14532d] rounded-full opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+<span class="material-symbols-outlined text-[#166534] dark:text-[#4ade80] text-3xl mb-2">check_circle</span>
+<span class="font-display-md text-[#14532d] dark:text-[#bbf7d0] leading-none">8</span>
+<span class="font-label-caps text-label-caps text-[#166534] dark:text-[#4ade80] uppercase">Verified Today</span>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/30 shadow-sm flex flex-col items-start gap-2 relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-secondary-container/30 rounded-full opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+<span class="material-symbols-outlined text-secondary text-3xl mb-2">edit_note</span>
+<span class="font-display-md text-on-surface leading-none">3</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Corrections Req</span>
+</div>
+<div class="bg-error-container/30 p-6 rounded-xl border border-error-container shadow-sm flex flex-col items-start gap-2 relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-error-container/50 rounded-full opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+<span class="material-symbols-outlined text-error text-3xl mb-2">cancel</span>
+<span class="font-display-md text-on-error-container leading-none">1</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Rejected</span>
+</div>
+</section>
+<!-- Main Workspace Area -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Left Column: Queue & Education -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<!-- Education Panel -->
+<div class="bg-surface-variant/50 p-6 rounded-xl border border-outline-variant/30">
+<div class="flex items-center gap-3 mb-4">
+<span class="material-symbols-outlined text-primary">info</span>
+<h3 class="font-headline-sm text-on-surface">Why Community Verification Matters</h3>
+</div>
+<p class="font-body-md text-on-surface-variant text-sm">
+                        While our AI assists with structuring data and preliminary translations, the nuance of true cultural heritage relies on lived knowledge. Your verification ensures authenticity, respects local narratives, and guards against misrepresentation before records become part of the permanent archive.
+                    </p>
+</div>
+<!-- Review Queue -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-sm overflow-hidden flex flex-col h-[500px]">
+<div class="p-4 border-b border-outline-variant/20 bg-surface flex justify-between items-center">
+<h3 class="font-headline-sm text-on-surface">Review Queue</h3>
+<span class="font-label-caps text-label-caps bg-primary text-on-primary px-2 py-1 rounded-full">12 items</span>
+</div>
+<div class="overflow-y-auto flex-grow p-2 space-y-2">
+<!-- Active Queue Item -->
+<div class="bg-surface-container-high border-l-4 border-primary p-4 rounded-r-lg cursor-pointer transition-colors">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-headline-sm text-headline-sm text-primary">Pipili Applique Work</h4>
+<span class="font-label-caps text-label-caps text-secondary bg-secondary-container/30 px-2 py-0.5 rounded">Craft</span>
+</div>
+<div class="flex flex-col gap-1 text-sm">
+<span class="text-on-surface-variant"><strong class="font-medium text-on-surface">Contributor:</strong> Ramesh Mohapatra</span>
+<span class="text-on-surface-variant"><strong class="font-medium text-on-surface">Community:</strong> Pipili Artisan Guild</span>
+</div>
+<button class="mt-3 w-full py-2 bg-primary text-on-primary font-label-caps text-label-caps rounded flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined text-sm">visibility</span> Currently Reviewing
+                            </button>
+</div>
+<!-- Inactive Queue Items -->
+<div class="bg-surface-container-lowest border border-outline-variant/20 hover:border-outline-variant p-4 rounded-lg cursor-pointer transition-colors">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-body-lg font-medium text-on-surface">Konark Wheel Stone Carving</h4>
+<span class="font-label-caps text-label-caps text-secondary bg-secondary-container/30 px-2 py-0.5 rounded">Architecture</span>
+</div>
+<div class="flex flex-col gap-1 text-sm">
+<span class="text-on-surface-variant"><strong class="font-medium text-on-surface">Contributor:</strong> S. Das</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant/20 hover:border-outline-variant p-4 rounded-lg cursor-pointer transition-colors">
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-body-lg font-medium text-on-surface">Pattachitra Scroll: Krishna Leela</h4>
+<span class="font-label-caps text-label-caps text-secondary bg-secondary-container/30 px-2 py-0.5 rounded">Art</span>
+</div>
+<div class="flex flex-col gap-1 text-sm">
+<span class="text-on-surface-variant"><strong class="font-medium text-on-surface">Contributor:</strong> Raghurajpur Artists</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Active Review Workspace -->
+<div class="lg:col-span-8 flex flex-col gap-6">
+<!-- Side-by-Side Comparison -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- LEFT: Original Submission -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-sm overflow-hidden flex flex-col">
+<div class="p-4 bg-surface border-b border-outline-variant/20 flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant">person</span>
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Original Submission</h3>
+</div>
+<div class="p-6 flex flex-col gap-6">
+<div>
+<h2 class="font-headline-lg text-primary mb-2">Pipili Applique Work</h2>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="font-label-caps text-label-caps text-on-surface bg-surface-container px-2 py-1 rounded">Category: Textile Craft</span>
+<span class="font-label-caps text-label-caps text-on-surface bg-surface-container px-2 py-1 rounded">Lang: Odia / English</span>
+<span class="font-label-caps text-label-caps text-on-surface bg-surface-container px-2 py-1 rounded">Loc: Puri District</span>
+</div>
+</div>
+<div class="w-full h-48 bg-surface-container-high rounded-lg overflow-hidden relative border border-outline-variant/20">
+<img class="w-full h-full object-cover" data-alt="A highly detailed close-up of vibrant Pipili applique textile work from Odisha. Bright reds, yellows, and blacks forming geometric patterns and stylized animal motifs like elephants and peacocks. The texture of the fabric and intricate stitching is clearly visible. The lighting is bright and even, highlighting the rich colors. Set against a clean, warm ivory background, fitting a premium digital museum archive aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeBYYktElokdETtcxe9048BHeQz3PiMy_I4z72DD-W2mRD5cfB6FB3g4QKkKpPitBIRvwKM8x8NjEr6Qhoqd1ApB7SdCG0SFrWcDspjW-Q6kX5GdbpOEbybS40lpr7xprNmkBmdVk9mP4KvYt0gsuGcRO6IY7JjViNbOe0wx-pfSxHdtNy3Oc8H2b_f0OI8AzeEKnMYBZbjhmCh47yfjdaEdNkuGbJMTHwbYEqhFoXTDoecPrxKgZ5sw"/>
+</div>
+<div>
+<h4 class="font-label-caps text-label-caps text-on-surface-variant mb-2">Description provided by contributor:</h4>
+<p class="font-body-md text-on-surface leading-relaxed p-4 bg-surface-container-low rounded-lg border-l-2 border-outline-variant">
+                                    "This is traditional applique work from my village in Pipili. We use brightly colored cloth cut into shapes of animals, flowers, and gods, and stitch them onto a darker base cloth. It is mainly used for the chariots during the Ratha Yatra festival, but now we also make umbrellas and bags."
+                                </p>
+</div>
+<div class="mt-auto pt-4 border-t border-outline-variant/20 flex items-center justify-between">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Submitted by: Ramesh Mohapatra</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">2 days ago</span>
+</div>
+</div>
+</div>
+<!-- RIGHT: AI Understanding -->
+<div class="bg-[#382e2b] rounded-xl border border-outline/30 shadow-md overflow-hidden flex flex-col relative pattern-bg">
+<div class="p-4 bg-[#221a17]/80 border-b border-outline/20 flex items-center justify-between backdrop-blur-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary-fixed-dim">psychology</span>
+<h3 class="font-label-caps text-label-caps text-tertiary-fixed-dim uppercase tracking-wider">AI-Assisted Understanding</h3>
+</div>
+<span class="font-label-caps text-[10px] text-outline px-2 py-0.5 border border-outline rounded-full">Tool Mode</span>
+</div>
+<div class="p-6 flex flex-col gap-6 relative z-10">
+<p class="font-label-caps text-[11px] text-outline italic text-center mb-2">
+                                AI suggestions support review but do not determine authenticity.
+                            </p>
+<div>
+<h4 class="font-label-caps text-label-caps text-secondary-fixed mb-2">AI Summary & Context</h4>
+<p class="font-body-md text-inverse-on-surface leading-relaxed p-4 bg-[#221a17]/50 rounded-lg font-mono text-sm border border-outline/20">
+                                    > Analysis indicates this is a verified regional craft technique known as "Chandua".
+                                    <br/>> Historical correlation: Strong link to Jagannath Temple rituals (Ratha Yatra canopy construction).
+                                    <br/>> Materials identified: Cotton fabric overlays, chain stitch, running stitch.
+                                </p>
+</div>
+<div>
+<h4 class="font-label-caps text-label-caps text-secondary-fixed mb-2">AI Extracted Cultural Tags</h4>
+<div class="flex flex-wrap gap-2">
+<span class="font-label-caps text-[11px] text-[#221a17] bg-secondary-fixed px-2 py-1 rounded">Chandua</span>
+<span class="font-label-caps text-[11px] text-[#221a17] bg-secondary-fixed px-2 py-1 rounded">Ratha Yatra</span>
+<span class="font-label-caps text-[11px] text-[#221a17] bg-secondary-fixed px-2 py-1 rounded">Textile Arts</span>
+<span class="font-label-caps text-[11px] text-[#221a17] bg-secondary-fixed px-2 py-1 rounded">Odisha Handicrafts</span>
+</div>
+</div>
+<div>
+<h4 class="font-label-caps text-label-caps text-secondary-fixed mb-2">AI Structural Translation (Draft)</h4>
+<p class="font-body-md text-inverse-on-surface leading-relaxed p-4 bg-[#221a17]/50 rounded-lg text-sm border border-outline/20">
+                                    "Pipili applique work, locally known as Chandua, is a traditional textile craft from Pipili, Odisha. The technique involves stitching vibrantly colored, precisely cut fabric shapes—depicting flora, fauna, and deities—onto a contrasting canvas base. Historically integral to the Ratha Yatra festival for adorning the divine chariots, the craft has evolved to include contemporary items like decorative umbrellas and bags."
+                                </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Verification Decision Panel -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/30 shadow-lg mt-4 relative overflow-hidden">
+<!-- Subtle top accent line -->
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-secondary to-tertiary"></div>
+<h3 class="font-headline-sm text-on-surface mb-6">Verification Decision</h3>
+<div class="mb-6">
+<label class="font-label-caps text-label-caps text-on-surface-variant block mb-2">Reviewer Notes (Optional, required for corrections/rejection)</label>
+<textarea class="w-full bg-surface-container-low border-b-2 border-outline-variant focus:border-primary focus:bg-surface-container-lowest transition-all p-3 font-body-md text-on-surface outline-none resize-none h-24" placeholder="Add specific feedback or clarification requests here..."></textarea>
+</div>
+<div class="flex flex-col sm:flex-row gap-4 items-center justify-end">
+<button class="w-full sm:w-auto px-6 py-3 bg-surface border border-outline text-on-surface-variant hover:text-error hover:border-error hover:bg-error-container/20 rounded font-label-caps text-label-caps transition-colors flex items-center justify-center gap-2 group">
+<span class="material-symbols-outlined text-[18px] group-hover:text-error">close</span> Reject
+                        </button>
+<button class="w-full sm:w-auto px-6 py-3 bg-surface border border-secondary text-secondary hover:bg-secondary-container/30 rounded font-label-caps text-label-caps transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">edit_note</span> Request Correction
+                        </button>
+<button class="w-full sm:w-auto px-8 py-3 bg-primary text-on-primary hover:bg-primary/90 rounded shadow-md font-label-caps text-label-caps transition-all active:scale-95 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">verified</span> Approve & Publish
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full mt-section-gap bg-surface-container-highest dark:bg-surface-dim border-t border-outline-variant/30 dark:border-outline/30 py-12 px-margin-mobile md:px-margin-desktop">
+<div class="flex flex-col items-center gap-8 max-w-container-max mx-auto">
+<span class="font-headline-sm text-headline-sm text-on-surface">HeritageHub</span>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-tertiary transition-colors duration-200" href="#">Archives</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-tertiary transition-colors duration-200" href="#">Community Guidelines</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-tertiary transition-colors duration-200" href="#">Privacy Policy</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-tertiary transition-colors duration-200" href="#">API Docs</a>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">© 2024 HeritageHub Preservation Society. Built with AI for Odisha.</p>
+</div>
+</footer>
+</body></html>

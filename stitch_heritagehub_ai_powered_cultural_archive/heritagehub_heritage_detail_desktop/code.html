@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pipili Applique Work - HeritageHub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#87736b",
+                        "surface-container-high": "#f5e5df",
+                        "primary-fixed-dim": "#ffb596",
+                        "surface-container-highest": "#efdfd9",
+                        "surface-variant": "#efdfd9",
+                        "secondary-fixed": "#ffdea5",
+                        "on-surface": "#221a17",
+                        "on-secondary-fixed-variant": "#5d4201",
+                        "on-tertiary-container": "#aef2ff",
+                        "tertiary-container": "#007280",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#005863",
+                        "on-primary-container": "#ffe1d6",
+                        "on-background": "#221a17",
+                        "primary-fixed": "#ffdbcd",
+                        "surface-tint": "#944925",
+                        "surface-container": "#fbeae5",
+                        "background": "#fff8f6",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#382e2b",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#9defff",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#775a19",
+                        "surface-dim": "#e7d7d1",
+                        "on-tertiary-fixed": "#001f24",
+                        "inverse-primary": "#ffb596",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#dac1b8",
+                        "tertiary-fixed-dim": "#7fd3e3",
+                        "primary-container": "#a0522d",
+                        "secondary-container": "#fed488",
+                        "surface-container-low": "#fff1ec",
+                        "on-secondary-container": "#785a1a",
+                        "on-primary-fixed": "#360f00",
+                        "on-primary-fixed-variant": "#76320f",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed-dim": "#e9c176",
+                        "on-surface-variant": "#54433c",
+                        "surface": "#fff8f6",
+                        "surface-bright": "#fff8f6",
+                        "primary": "#823b18",
+                        "on-secondary-fixed": "#261900",
+                        "inverse-on-surface": "#feede8",
+                        "on-tertiary-fixed-variant": "#004f59",
+                        "error": "#ba1a1a",
+                        "on-tertiary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "gutter": "24px",
+                        "section-gap": "120px",
+                        "margin-desktop": "64px",
+                        "margin-mobile": "16px",
+                        "container-max": "1280px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "display-md": ["Libre Caslon Text"],
+                        "headline-lg-mobile": ["Libre Caslon Text"],
+                        "label-caps": ["Plus Jakarta Sans"],
+                        "display-lg": ["Libre Caslon Text"],
+                        "headline-lg": ["Libre Caslon Text"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Libre Caslon Text"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display-md": ["48px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                        "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-sm": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        /* Custom scrollbar for timelines/carousels */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md border-b border-outline-variant/20 dark:border-outline/20">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary cursor-pointer active:scale-95 duration-200" data-icon="account_balance">account_balance</span>
+<span class="font-headline-lg-mobile text-headline-lg-mobile font-semibold text-primary dark:text-primary-fixed tracking-tight">HeritageHub</span>
+</div>
+<nav class="hidden md:flex gap-8">
+<a class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:scale-95 duration-200" href="#">Home</a>
+<a class="text-primary border-b-2 border-primary pb-1 cursor-pointer active:scale-95 duration-200" href="#">Explore</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:scale-95 duration-200" href="#">Contribute</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:scale-95 duration-200" href="#">Verify</a>
+</nav>
+<button class="font-label-caps text-label-caps text-primary hover:opacity-80 transition-opacity cursor-pointer active:scale-95 duration-200 uppercase">
+                Join
+            </button>
+</div>
+</header>
+<main class="flex-grow pt-24 pb-section-gap px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto w-full">
+<!-- Breadcrumbs -->
+<nav aria-label="Breadcrumb" class="flex items-center gap-2 text-on-surface-variant mb-8">
+<a class="font-label-caps text-label-caps hover:text-primary transition-colors uppercase" href="#">Explore Heritage</a>
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+<a class="font-label-caps text-label-caps hover:text-primary transition-colors uppercase" href="#">Traditional Crafts</a>
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+<span aria-current="page" class="font-label-caps text-label-caps text-primary uppercase">Pipili Applique</span>
+</nav>
+<!-- Immersive Hero -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-section-gap">
+<div class="md:col-span-8 relative rounded-xl overflow-hidden shadow-sm h-[60vh] min-h-[400px]">
+<img class="w-full h-full object-cover" data-alt="A highly detailed, vibrant, close-up photograph of Pipili applique work from Odisha. The image shows intricate geometric patterns and stylized animal motifs cut from brightly colored fabrics (reds, yellows, blacks, greens) and meticulously stitched onto a contrasting dark background. The lighting highlights the texture of the fabric and the precision of the hand-stitching, capturing the rich, tactile quality of this traditional craft. The overall aesthetic is culturally rich, warm, and authentic, evoking a sense of historical artistry." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsAh7TL2Cvz0yIJcXHRjBjmlAfOS_LXfjlj8S77qtMRLWCB8pF905DGa76tFdlUlB1TdAZLL3QiocpnvDlqk5rP_q3--oSCpXD6pcp7mELi2IitiNOxp7rvc_m_uTptyOoG3PjQg5CfVnZx_mh6J1C2dbkKpoAsAOHayTJsA3APHjzE7nIDOnR1v2ww-vrWebKX3iD5nNm7bgR4fz-LtYFVuNkYw_kfWezUO1tak0asM_h24QjUhKGBg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/80 via-transparent to-transparent"></div>
+<div class="absolute bottom-6 left-6 flex gap-3">
+<button class="bg-surface/90 hover:bg-surface backdrop-blur p-2 rounded-full text-on-surface shadow-sm transition-all flex items-center justify-center">
+<span class="material-symbols-outlined text-xl" data-icon="share">share</span>
+</button>
+<button class="bg-surface/90 hover:bg-surface backdrop-blur p-2 rounded-full text-on-surface shadow-sm transition-all flex items-center justify-center">
+<span class="material-symbols-outlined text-xl" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+</div>
+<div class="md:col-span-4 flex flex-col justify-end pb-4 pt-6 md:pt-0">
+<div class="inline-flex items-center gap-2 bg-secondary-container text-on-secondary-container px-3 py-1.5 rounded-full mb-6 w-fit shadow-sm border border-secondary-fixed/30">
+<span class="material-symbols-outlined fill-icon text-sm" data-icon="verified">verified</span>
+<span class="font-label-caps text-label-caps uppercase">Community Verified</span>
+</div>
+<h1 class="font-display-md text-display-md text-on-surface mb-6 leading-tight">Pipili Applique Work</h1>
+<div class="space-y-4">
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary-container" data-icon="location_on">location_on</span>
+<span class="font-body-lg text-body-lg">Pipili, Odisha</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary-container" data-icon="language">language</span>
+<span class="font-body-lg text-body-lg">Odia</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-primary-container" data-icon="category">category</span>
+<span class="font-body-lg text-body-lg">Traditional Craft</span>
+</div>
+</div>
+</div>
+</section>
+<!-- The Story Section -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-section-gap relative">
+<div class="md:col-span-8 pr-0 md:pr-8">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-8 border-b border-outline-variant/30 pb-4">About this Heritage</h2>
+<div class="prose prose-stone max-w-none text-on-surface font-body-lg text-body-lg space-y-6">
+<p class="first-letter:text-7xl first-letter:font-display-md first-letter:text-primary first-letter:mr-3 first-letter:float-left">
+                        Originating from the 12th century, the intricate applique work of Pipili is inextricably linked with the rituals of the Jagannath Temple in Puri. Historically, skilled artisans created vibrant canopies, umbrellas, and banners for the Lord's annual Rath Yatra (chariot festival).
+                    </p>
+<p>
+                        The craft involves cutting brightly colored fabrics into patterns of animals, birds, flowers, and geometric shapes, which are then meticulously stitched onto a base cloth using varied embroidery techniques. The primary colors utilized are red, yellow, green, and black, reflecting the robust and energetic spirit of Odia culture.
+                    </p>
+<p>
+                        Today, Pipili serves as a vibrant hub where this ancestral craft has evolved to include modern utility items, yet it remains a profound symbol of the region's artistic devotion and heritage, sustained by generations of craftsmen families.
+                    </p>
+</div>
+</div>
+<aside class="md:col-span-4 mt-12 md:mt-0">
+<div class="sticky top-24 bg-surface-container-lowest border border-outline-variant/20 rounded-xl p-8 shadow-[0_4px_24px_rgba(0,0,0,0.02)] relative overflow-hidden">
+<!-- Subtle Pattachitra-inspired underlay pattern -->
+<div class="absolute inset-0 opacity-5 pointer-events-none" style="background-image: url('data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' viewBox=\'0 0 20 20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 0h20v20H0V0zm10 17L3 10l7-7 7 7-7 7z\' fill=\'%23A0522D\' fill-rule=\'evenodd\'/%3E%3C/svg%3E');"></div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-6 relative z-10">Heritage Information</h3>
+<dl class="space-y-4 relative z-10 font-body-md text-body-md">
+<div class="flex flex-col border-b border-outline-variant/20 pb-3">
+<dt class="font-label-caps text-label-caps text-on-surface-variant mb-1 uppercase">Category</dt>
+<dd class="text-on-surface font-medium">Traditional Craft</dd>
+</div>
+<div class="flex flex-col border-b border-outline-variant/20 pb-3">
+<dt class="font-label-caps text-label-caps text-on-surface-variant mb-1 uppercase">Village</dt>
+<dd class="text-on-surface font-medium">Pipili</dd>
+</div>
+<div class="flex flex-col border-b border-outline-variant/20 pb-3">
+<dt class="font-label-caps text-label-caps text-on-surface-variant mb-1 uppercase">District</dt>
+<dd class="text-on-surface font-medium">Puri</dd>
+</div>
+<div class="flex flex-col border-b border-outline-variant/20 pb-3">
+<dt class="font-label-caps text-label-caps text-on-surface-variant mb-1 uppercase">State</dt>
+<dd class="text-on-surface font-medium">Odisha</dd>
+</div>
+<div class="flex flex-col border-b border-outline-variant/20 pb-3">
+<dt class="font-label-caps text-label-caps text-on-surface-variant mb-1 uppercase">Status</dt>
+<dd class="text-primary font-medium flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary inline-block"></span> Active Tradition</dd>
+</div>
+</dl>
+</div>
+</aside>
+</section>
+<!-- Cultural Media Gallery -->
+<section class="mb-section-gap">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-8 border-b border-outline-variant/30 pb-4">Experience the Heritage</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<div class="aspect-square rounded-lg overflow-hidden bg-surface-container-high relative group cursor-pointer">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="A close-up photograph of a skilled artisan's hands actively stitching intricate applique patterns onto a large, vibrant red canvas. The lighting is warm, natural light illuminating the delicate thread work and the worn, experienced hands of the craftsperson. The mood is focused and reverent, capturing the active preservation of a traditional skill." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzpY-S0H1LNPUqAZUNtY8mi9q7Csof3ucb3Du2VYvpbNgizZpzAeQEyvYsffahyPd6e04t0uJ0T7seWl04NNkT53R991uXLLmrvWMA9mLbld8aVBLk8oWGoEts7WqV7WQ_TzMtX5ulyEbYwHguxt32OK5fC0X-YH1M28q5ALdhG7ZiicggfP4ky5PkEJ-lsvEJP0kbiP8DidsAYJyDZ8aGTtllHLJkssfwaH53WHFShRyjRGAxpXAe-g"/>
+<div class="absolute inset-0 bg-inverse-surface/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-4xl" data-icon="zoom_in">zoom_in</span>
+</div>
+</div>
+<div class="aspect-square rounded-lg overflow-hidden bg-surface-container-high relative group cursor-pointer">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="A wide architectural photograph of a street in Pipili, Odisha, lined with shops displaying spectacular, enormous applique canopies and umbrellas. The scene is an explosion of bright reds, yellows, and greens against the rustic setting of the town. The atmosphere is vibrant, bustling, and steeped in cultural commerce, showing the craft integrated into daily life." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGi9yzpMlNVOtWdmOZBgYARhdqNdhyp6zkoGi8ma-3jZX_DVxqBsoj6BBIBb5umsWwJR-wrGoKNmNGUAKNOvC6nSayrtlm82o3qtQqAABUxDxMgjb6LW30UJ6Z2rMqSjFoQz7mkJgjYFLLGKrtS6yplmVuKlyXBQT2-1j186hzFP0M4d9Uer__fZQFosuxKjBvIUJB0FySe_SRUFhvlAnCR7sTpgJsuy64d7sdRRNXZTjyEPGtIOBQ2A"/>
+<div class="absolute inset-0 bg-inverse-surface/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-4xl" data-icon="zoom_in">zoom_in</span>
+</div>
+</div>
+<div class="aspect-square rounded-lg overflow-hidden bg-surface-container-high relative group cursor-pointer">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="A beautifully lit, highly detailed studio shot of a completed Pipili applique wall hanging. The artwork features a complex mandala-like pattern with a central motif of an elephant, surrounded by intricate floral borders. The contrasting colors are vivid, and the texture of the layered fabrics is clearly visible. The overall aesthetic is premium, showcasing the artwork as a high-end cultural artifact." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUj7xy6FEw7XwG_KKCM6eJhArVXz8zYxUYG0Cl9NuLwC60pLFqS_esUtBYf8LDecCos_mds33UGvjsmKKFrdcObjUfNKHJ2CkAEokK8ySWLJGq-ngnuk3h8aNkag9bS-o7amAToks1Itkz1xARUfR6ogqBAtMdupulwaT5IXrNgeu2svrYdDB2j2kZ_4Ge0IdzXDAbKu7SncKg36RueqmoEPuZU8xv2JFqLGVjeWOMtpGMkRVo3nVPFQ"/>
+<div class="absolute inset-0 bg-inverse-surface/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-4xl" data-icon="zoom_in">zoom_in</span>
+</div>
+</div>
+</div>
+<!-- Audio Player Component -->
+<div class="bg-surface-container-low rounded-xl p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 border border-outline-variant/30 shadow-sm relative overflow-hidden">
+<div class="absolute top-0 left-0 w-2 h-full bg-primary-container"></div>
+<div class="bg-primary-container/10 p-4 rounded-full text-primary-container shrink-0">
+<span class="material-symbols-outlined text-3xl" data-icon="headphones">headphones</span>
+</div>
+<div class="flex-grow w-full">
+<h4 class="font-headline-sm text-headline-sm text-on-surface mb-1">Listen to the Story</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">An artisan from Pipili shares the history of their family's craft.</p>
+<div class="flex items-center gap-4 w-full">
+<button class="bg-primary hover:bg-primary/90 text-on-primary rounded-full p-2 transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined fill-icon" data-icon="play_arrow">play_arrow</span>
+</button>
+<div class="flex-grow h-1.5 bg-outline-variant/30 rounded-full relative overflow-hidden cursor-pointer">
+<div class="absolute top-0 left-0 h-full w-1/3 bg-primary rounded-full"></div>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant w-12 text-right">01:24</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Final CTA -->
+<section class="text-center py-16 bg-surface-container rounded-2xl border border-outline-variant/20 mb-section-gap">
+<h2 class="font-display-md text-display-md text-on-surface mb-4">Know a tradition worth preserving?</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-8 max-w-2xl mx-auto">Help us document and protect Odisha's rich cultural tapestry for future generations.</p>
+<div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+<button class="bg-primary text-on-primary px-8 py-3 rounded-full font-label-caps text-label-caps uppercase tracking-wider hover:bg-primary/90 transition-colors shadow-sm w-full sm:w-auto">Document Heritage</button>
+<button class="border border-outline text-on-surface px-8 py-3 rounded-full font-label-caps text-label-caps uppercase tracking-wider hover:bg-surface-variant transition-colors w-full sm:w-auto">Explore More</button>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full mt-section-gap bg-surface-container-highest dark:bg-surface-dim border-t border-outline-variant/30 dark:border-outline/30">
+<div class="w-full py-12 px-margin-mobile md:px-margin-desktop flex flex-col items-center gap-8 max-w-container-max mx-auto">
+<div class="font-headline-sm text-headline-sm text-on-surface">HeritageHub</div>
+<nav class="flex flex-wrap justify-center gap-6">
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary hover:text-tertiary transition-colors duration-200 uppercase" href="#">Archives</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary hover:text-tertiary transition-colors duration-200 uppercase" href="#">Community Guidelines</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary hover:text-tertiary transition-colors duration-200 uppercase" href="#">Privacy Policy</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary hover:text-tertiary transition-colors duration-200 uppercase" href="#">API Docs</a>
+</nav>
+<p class="font-body-md text-body-md text-on-surface-variant text-center">© 2024 HeritageHub Preservation Society. Built with AI for Odisha.</p>
+</div>
+</footer>
+</body></html>

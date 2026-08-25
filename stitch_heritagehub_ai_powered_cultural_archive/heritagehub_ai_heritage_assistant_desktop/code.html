@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Heritage Assistant - HeritageHub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-variant": "#efdfd9",
+                      "on-primary": "#ffffff",
+                      "surface-bright": "#fff8f6",
+                      "on-secondary-container": "#785a1a",
+                      "on-background": "#221a17",
+                      "secondary-container": "#fed488",
+                      "inverse-surface": "#382e2b",
+                      "background": "#fff8f6",
+                      "error": "#ba1a1a",
+                      "primary-fixed": "#ffdbcd",
+                      "tertiary-fixed": "#9defff",
+                      "secondary-fixed-dim": "#e9c176",
+                      "on-primary-fixed-variant": "#76320f",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "surface-container-highest": "#efdfd9",
+                      "outline": "#87736b",
+                      "primary-container": "#a0522d",
+                      "surface": "#fff8f6",
+                      "secondary": "#775a19",
+                      "primary": "#823b18",
+                      "on-tertiary-fixed": "#001f24",
+                      "on-error": "#ffffff",
+                      "on-surface-variant": "#54433c",
+                      "on-error-container": "#93000a",
+                      "primary-fixed-dim": "#ffb596",
+                      "secondary-fixed": "#ffdea5",
+                      "surface-tint": "#944925",
+                      "surface-dim": "#e7d7d1",
+                      "on-surface": "#221a17",
+                      "on-tertiary": "#ffffff",
+                      "inverse-primary": "#ffb596",
+                      "on-secondary-fixed": "#261900",
+                      "tertiary": "#005863",
+                      "error-container": "#ffdad6",
+                      "surface-container-high": "#f5e5df",
+                      "tertiary-fixed-dim": "#7fd3e3",
+                      "surface-container-low": "#fff1ec",
+                      "on-tertiary-fixed-variant": "#004f59",
+                      "outline-variant": "#dac1b8",
+                      "tertiary-container": "#007280",
+                      "on-tertiary-container": "#aef2ff",
+                      "on-primary-container": "#ffe1d6",
+                      "inverse-on-surface": "#feede8",
+                      "on-secondary-fixed-variant": "#5d4201",
+                      "surface-container": "#fbeae5",
+                      "on-primary-fixed": "#360f00"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "section-gap": "120px",
+                      "margin-mobile": "16px",
+                      "gutter": "24px",
+                      "unit": "8px",
+                      "container-max": "1280px",
+                      "margin-desktop": "64px"
+              },
+              "fontFamily": {
+                      "body-lg": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "label-caps": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "headline-sm": [
+                              "Libre Caslon Text"
+                      ],
+                      "headline-lg-mobile": [
+                              "Libre Caslon Text"
+                      ],
+                      "display-lg": [
+                              "Libre Caslon Text"
+                      ],
+                      "headline-lg": [
+                              "Libre Caslon Text"
+                      ],
+                      "body-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "display-md": [
+                              "Libre Caslon Text"
+                      ]
+              },
+              "fontSize": {
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "64px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-md": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .pattern-overlay {
+            background-image: radial-gradient(#dac1b8 1px, transparent 1px);
+            background-size: 16px 16px;
+            opacity: 0.2;
+        }
+        
+        .pulse-ring {
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            80%, 100% { transform: scale(2.5); opacity: 0; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .ambient-shadow {
+            box-shadow: 0 20px 40px -15px rgba(130, 59, 24, 0.08), 0 10px 20px -10px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md fixed top-0 w-full z-50 border-b border-outline-variant/20 dark:border-outline/20">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-2 cursor-pointer active:scale-95 duration-200">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed" data-icon="account_balance">account_balance</span>
+<span class="font-headline-lg-mobile text-headline-lg-mobile font-semibold text-primary dark:text-primary-fixed tracking-tight">HeritageHub</span>
+</div>
+<nav class="hidden md:flex gap-8 items-center font-label-caps text-label-caps">
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Home</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Explore</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Contribute</a>
+<a class="text-primary dark:text-primary-fixed border-b-2 border-primary dark:border-primary-fixed pb-1" href="#">AI Assistant</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Verify</a>
+</nav>
+<button class="font-label-caps text-label-caps text-primary dark:text-primary-fixed hover:opacity-80 transition-opacity cursor-pointer active:scale-95 duration-200 uppercase">
+                Join
+            </button>
+</div>
+</header>
+<main class="flex-grow pt-32 pb-section-gap px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto w-full">
+<!-- Editorial Hero -->
+<section class="text-center max-w-3xl mx-auto mb-section-gap">
+<div class="inline-flex items-center gap-2 mb-6 text-primary">
+<span class="material-symbols-outlined" data-icon="psychology" style="font-variation-settings: 'FILL' 1;">psychology</span>
+<span class="font-label-caps text-label-caps uppercase tracking-widest text-primary">Heritage Intelligence</span>
+</div>
+<h1 class="font-display-md text-display-md md:font-display-lg md:text-display-lg text-on-surface mb-6">
+                Technology Helping Preserve Tradition
+            </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+                Transform community-documented cultural knowledge into structured, accessible and discoverable heritage records.
+            </p>
+</section>
+<!-- AI Demonstration Workspace -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-gutter mb-section-gap">
+<!-- Left Column: Original Story -->
+<div class="flex flex-col h-full">
+<h2 class="font-label-caps text-label-caps text-on-surface-variant mb-4 tracking-widest uppercase">Original Heritage Story</h2>
+<div class="bg-surface-bright border border-outline-variant/30 rounded-xl p-8 relative overflow-hidden flex-grow flex flex-col ambient-shadow">
+<!-- Subtle pattern -->
+<div class="absolute inset-0 pattern-overlay pointer-events-none"></div>
+<div class="relative z-10 flex flex-col flex-grow">
+<div class="flex justify-between items-start mb-6">
+<h3 class="font-headline-lg text-headline-lg text-on-surface">Pipili Applique Work</h3>
+<span class="material-symbols-outlined text-outline-variant" data-icon="article">article</span>
+</div>
+<div class="flex flex-wrap gap-2 mb-8">
+<span class="px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full font-label-caps text-label-caps">Craft</span>
+<span class="px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full font-label-caps text-label-caps">Language: Odia</span>
+<span class="px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full font-label-caps text-label-caps">Puri, Odisha</span>
+</div>
+<div class="font-body-lg text-body-lg text-on-surface-variant space-y-4 mb-8 flex-grow">
+<p>"The applique work of Pipili is a traditional art form where pieces of colored fabrics are stitched onto a base cloth to create intricate patterns and motifs, often depicting flowers, animals, and mythological figures. Historically used to decorate the chariots during the Rath Yatra festival in Puri. The technique involves cutting, folding, and stitching, requiring immense precision."</p>
+<p class="text-sm italic text-outline">Submitted by: Community Member #4829</p>
+</div>
+<button class="mt-auto w-full bg-primary text-on-primary py-4 px-6 rounded-lg font-label-caps text-label-caps hover:bg-surface-tint transition-colors flex items-center justify-center gap-2 group" id="enhanceBtn">
+<span class="material-symbols-outlined transition-transform group-hover:rotate-180 duration-500" data-icon="auto_awesome">auto_awesome</span>
+                            Enhance with AI
+                        </button>
+</div>
+</div>
+</div>
+<!-- Right Column: AI Assistance -->
+<div class="flex flex-col h-full">
+<h2 class="font-label-caps text-label-caps text-primary mb-4 tracking-widest uppercase flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="psychology">psychology</span>
+                    AI Assistance
+                </h2>
+<!-- State: Empty -->
+<div class="bg-surface-container-highest dark:bg-inverse-surface rounded-xl p-8 flex flex-col items-center justify-center flex-grow text-center ambient-shadow transition-opacity duration-300" id="aiEmptyState">
+<div class="relative w-24 h-24 mb-6 flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-outline-variant" data-icon="auto_awesome">auto_awesome</span>
+<div class="absolute inset-0 border border-outline-variant rounded-full border-dashed"></div>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Awaiting Analysis</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-sm">
+                        Select 'Enhance with AI' to automatically generate structured metadata, summaries, and translations.
+                    </p>
+</div>
+<!-- State: Loading -->
+<div class="hidden bg-surface-container-highest dark:bg-inverse-surface rounded-xl p-8 flex flex-col items-center justify-center flex-grow text-center ambient-shadow" id="aiLoadingState">
+<div class="relative w-24 h-24 mb-8 flex items-center justify-center">
+<div class="absolute inset-0 bg-secondary-container rounded-full pulse-ring"></div>
+<span class="material-symbols-outlined text-4xl text-primary relative z-10 animate-spin" data-icon="settings" style="animation-duration: 3s;">settings</span>
+</div>
+<div class="h-6 overflow-hidden">
+<div class="font-headline-sm text-headline-sm text-primary transition-transform duration-300" id="loadingText">Understanding context...</div>
+</div>
+</div>
+<!-- State: Results -->
+<div class="hidden bg-surface-container-low border-t-4 border-primary rounded-xl p-8 flex-col flex-grow ambient-shadow" id="aiResultState">
+<div class="flex justify-between items-start mb-8 fade-in" style="animation-delay: 0.1s;">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Structured Heritage Record</h3>
+<span class="bg-primary-container/10 text-primary px-3 py-1 rounded text-xs font-label-caps uppercase flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="verified">verified</span>
+                            Generated with AI
+                        </span>
+</div>
+<div class="space-y-6 fade-in" style="animation-delay: 0.2s;">
+<!-- Summary Block -->
+<div>
+<h4 class="font-label-caps text-label-caps text-on-surface-variant mb-2">AI Summary</h4>
+<p class="font-body-md text-body-md text-on-surface bg-surface-bright p-4 rounded-lg border border-outline-variant/30">
+                                Pipili applique is a meticulously crafted textile art native to Odisha, primarily utilizing colored fabric pieces stitched onto a base to form detailed motifs. Historically significant for its role in decorating Rath Yatra chariots in Puri, it remains a vital traditional craft.
+                            </p>
+</div>
+<!-- Tags -->
+<div>
+<h4 class="font-label-caps text-label-caps text-on-surface-variant mb-2">Cultural Tags</h4>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 bg-surface-variant border border-outline-variant/50 text-on-surface rounded-md font-body-md text-sm">Pipili Applique</span>
+<span class="px-3 py-1 bg-surface-variant border border-outline-variant/50 text-on-surface rounded-md font-body-md text-sm">Textile Art</span>
+<span class="px-3 py-1 bg-surface-variant border border-outline-variant/50 text-on-surface rounded-md font-body-md text-sm">Rath Yatra</span>
+<span class="px-3 py-1 bg-surface-variant border border-outline-variant/50 text-on-surface rounded-md font-body-md text-sm">Puri District</span>
+<span class="px-3 py-1 bg-surface-variant border border-outline-variant/50 text-on-surface rounded-md font-body-md text-sm">Traditional Craft</span>
+</div>
+</div>
+<!-- Translation -->
+<div>
+<h4 class="font-label-caps text-label-caps text-on-surface-variant mb-2">Odia Translation (Draft)</h4>
+<div class="bg-surface-variant/30 p-4 rounded-lg border border-outline-variant/30 font-body-md text-body-md text-on-surface">
+                                ପିପିଲି ଚାନ୍ଦୁଆ ଏକ ପାରମ୍ପରିକ କଳା ଯେଉଁଥିରେ ରଙ୍ଗୀନ କପଡା ଖଣ୍ଡକୁ ଏକ ମୂଳ କପଡାରେ ସିଲାଇ କରାଯାଇ ଜଟିଳ ଢାଞ୍ଚା ଏବଂ ଚିତ୍ର ତିଆରି କରାଯାଏ...
+                            </div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Responsible AI Section -->
+<section class="bg-surface-container-highest dark:bg-surface-dim rounded-2xl p-12 md:p-16 mb-section-gap relative overflow-hidden text-center max-w-4xl mx-auto">
+<!-- Decorative corner elements -->
+<div class="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-primary/20 m-6"></div>
+<div class="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-primary/20 m-6"></div>
+<span class="material-symbols-outlined text-4xl text-primary mb-6" data-icon="balance">balance</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-4">
+                AI Helps Organize Knowledge.<br/>It Does Not Decide Cultural Truth.
+            </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-8 max-w-2xl mx-auto">
+                HeritageHub uses artificial intelligence strictly as an administrative assistant. Every piece of enhanced data must be reviewed by the community before becoming a permanent record.
+            </p>
+<div class="flex flex-col md:flex-row justify-center items-center gap-4 text-sm font-label-caps text-label-caps text-on-surface-variant tracking-widest uppercase">
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined mb-2" data-icon="groups">groups</span>
+                    Community Contribution
+                </div>
+<span class="material-symbols-outlined hidden md:block text-outline-variant" data-icon="arrow_forward">arrow_forward</span>
+<span class="material-symbols-outlined md:hidden text-outline-variant" data-icon="arrow_downward">arrow_downward</span>
+<div class="flex flex-col items-center text-primary">
+<span class="material-symbols-outlined mb-2" data-icon="auto_awesome">auto_awesome</span>
+                    AI Enrichment
+                </div>
+<span class="material-symbols-outlined hidden md:block text-outline-variant" data-icon="arrow_forward">arrow_forward</span>
+<span class="material-symbols-outlined md:hidden text-outline-variant" data-icon="arrow_downward">arrow_downward</span>
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined mb-2" data-icon="verified_user">verified_user</span>
+                    Community Verification
+                </div>
+</div>
+<div class="mt-8 font-headline-sm text-primary italic">
+                "AI assists. Communities authenticate."
+            </div>
+</section>
+<!-- Next Step / Handoff -->
+<section class="max-w-2xl mx-auto flex flex-col items-center text-center">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-4">Next Step: Verification</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8">
+                Submit this AI-structured record to the community consensus queue for review.
+            </p>
+<a class="inline-flex items-center gap-2 bg-secondary text-on-secondary py-3 px-8 rounded-full font-label-caps text-label-caps hover:bg-secondary-container hover:text-on-secondary-container transition-colors shadow-sm" href="/verification">
+                Send for Verification
+                <span class="material-symbols-outlined" data-icon="send">send</span>
+</a>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-highest dark:bg-surface-dim w-full mt-section-gap border-t border-outline-variant/30 dark:border-outline/30 flat no shadows">
+<div class="w-full py-12 px-margin-mobile md:px-margin-desktop flex flex-col items-center gap-8 max-w-container-max mx-auto">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">HeritageHub</h2>
+<nav class="flex flex-wrap justify-center gap-6 font-label-caps text-label-caps">
+<a class="text-on-surface-variant hover:text-primary hover:text-tertiary transition-colors duration-200" href="#">Archives</a>
+<a class="text-on-surface-variant hover:text-primary hover:text-tertiary transition-colors duration-200" href="#">Community Guidelines</a>
+<a class="text-on-surface-variant hover:text-primary hover:text-tertiary transition-colors duration-200" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary hover:text-tertiary transition-colors duration-200" href="#">API Docs</a>
+</nav>
+<p class="font-body-md text-body-md text-on-surface-variant text-center">
+                © 2024 HeritageHub Preservation Society. Built with AI for Odisha.
+            </p>
+</div>
+</footer>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const enhanceBtn = document.getElementById('enhanceBtn');
+            const emptyState = document.getElementById('aiEmptyState');
+            const loadingState = document.getElementById('aiLoadingState');
+            const resultState = document.getElementById('aiResultState');
+            const loadingText = document.getElementById('loadingText');
+
+            const loadingMessages = [
+                "Understanding context...",
+                "Extracting historical data...",
+                "Summarizing content...",
+                "Generating cultural tags...",
+                "Translating to Odia..."
+            ];
+
+            enhanceBtn.addEventListener('click', () => {
+                // Disable button
+                enhanceBtn.disabled = true;
+                enhanceBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+                // Show loading
+                emptyState.classList.add('hidden');
+                loadingState.classList.remove('hidden');
+
+                // Animate text
+                let messageIndex = 0;
+                const textInterval = setInterval(() => {
+                    messageIndex++;
+                    if (messageIndex < loadingMessages.length) {
+                        loadingText.style.transform = 'translateY(100%)';
+                        setTimeout(() => {
+                            loadingText.textContent = loadingMessages[messageIndex];
+                            loadingText.style.transform = 'translateY(0)';
+                        }, 150);
+                    }
+                }, 800);
+
+                // Show results after delay
+                setTimeout(() => {
+                    clearInterval(textInterval);
+                    loadingState.classList.add('hidden');
+                    resultState.classList.remove('hidden');
+                    resultState.classList.add('flex');
+                    
+                    // Keep button visually disabled to show it's done
+                    enhanceBtn.innerHTML = '<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span> Processed';
+                }, 4500);
+            });
+        });
+    </script>
+</body></html>

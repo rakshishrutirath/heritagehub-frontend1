@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login - HeritageHub</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-background": "#221a17",
+                    "on-primary-container": "#ffe1d6",
+                    "surface-tint": "#944925",
+                    "inverse-surface": "#382e2b",
+                    "primary-container": "#a0522d",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed-dim": "#7fd3e3",
+                    "on-error": "#ffffff",
+                    "secondary-container": "#fed488",
+                    "on-primary-fixed": "#360f00",
+                    "secondary-fixed-dim": "#e9c176",
+                    "surface-container-highest": "#efdfd9",
+                    "tertiary-container": "#007280",
+                    "on-secondary-fixed-variant": "#5d4201",
+                    "outline": "#87736b",
+                    "tertiary-fixed": "#9defff",
+                    "surface-container-high": "#f5e5df",
+                    "on-surface-variant": "#54433c",
+                    "surface-container": "#fbeae5",
+                    "on-primary-fixed-variant": "#76320f",
+                    "on-secondary-fixed": "#261900",
+                    "primary-fixed": "#ffdbcd",
+                    "on-secondary-container": "#785a1a",
+                    "primary-fixed-dim": "#ffb596",
+                    "on-surface": "#221a17",
+                    "tertiary": "#005863",
+                    "inverse-primary": "#ffb596",
+                    "surface-bright": "#fff8f6",
+                    "on-tertiary-fixed-variant": "#004f59",
+                    "on-tertiary-fixed": "#001f24",
+                    "surface-variant": "#efdfd9",
+                    "surface-dim": "#e7d7d1",
+                    "surface-container-lowest": "#ffffff",
+                    "surface": "#fff8f6",
+                    "on-tertiary-container": "#aef2ff",
+                    "primary": "#823b18",
+                    "outline-variant": "#dac1b8",
+                    "on-primary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "error": "#ba1a1a",
+                    "surface-container-low": "#fff1ec",
+                    "secondary-fixed": "#ffdea5",
+                    "inverse-on-surface": "#feede8",
+                    "on-tertiary": "#ffffff",
+                    "background": "#fff8f6",
+                    "secondary": "#775a19",
+                    "on-secondary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "margin-desktop": "64px",
+                    "unit": "8px",
+                    "section-gap": "120px",
+                    "container-max": "1280px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "label-caps": ["Plus Jakarta Sans"],
+                    "headline-sm": ["Libre Caslon Text"],
+                    "display-lg": ["Libre Caslon Text"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "display-md": ["Libre Caslon Text"],
+                    "body-md": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Libre Caslon Text"],
+                    "headline-lg-mobile": ["Libre Caslon Text"]
+            },
+            "fontSize": {
+                    "label-caps": ["12px", { "lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "700" }],
+                    "headline-sm": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                    "display-lg": ["64px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                    "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                    "display-md": ["48px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                    "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                    "headline-lg": ["32px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                    "headline-lg-mobile": ["28px", { "lineHeight": "1.3", "fontWeight": "600" }]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .pattern-overlay {
+            background-image: radial-gradient(circle at 2px 2px, rgba(54, 69, 79, 0.05) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+        /* Custom input bottom border style */
+        .input-heritage {
+            border: none;
+            border-bottom: 1px solid var(--tw-colors-outline-variant);
+            border-radius: 0;
+            background-color: transparent;
+            padding-left: 0;
+            padding-right: 0;
+            transition: all 0.3s ease;
+        }
+        .input-heritage:focus {
+            outline: none;
+            box-shadow: none;
+            border-bottom-color: var(--tw-colors-primary);
+            background-color: var(--tw-colors-surface-container-lowest);
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased min-h-screen flex selection:bg-primary-container selection:text-on-primary-container">
+<!-- Split Screen Layout -->
+<main class="flex w-full min-h-screen">
+<!-- LEFT: Immersive Visual Panel (Hidden on Mobile) -->
+<div class="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-surface-container-highest">
+<!-- Background Image -->
+<div class="absolute inset-0 z-0">
+<div class="w-full h-full bg-cover bg-center absolute inset-0" data-alt="A breathtaking, high-resolution photograph of ancient Konark Sun Temple stone carvings in Odisha, bathed in warm, golden-hour sunlight. The intricate details of the chariot wheels and mythical figures are sharply focused, highlighting the rough texture of the aged stone against a soft, ethereal background. The lighting is dramatic yet inviting, evoking a profound sense of historical reverence and cultural preservation in a light-mode, premium editorial style." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDVNUZpj-Pvfy2j2O-jtysdFbxalJ8lfj9cr6CW90Y30EB5GMK728j8f9o4vw98pY_Ja6ZNAc95o3ayMM_b1iYxw5QSbbi0UkDEukuuREEeZxy8G4K56XE0icsnurLv57Woyhf9tiZyRM4du_SPHkGax8WMZVlpG7YVTjZt9POduTQu2U1XZ5LR0niLMiCuZ0A6tk_xadWiePUCSlX1qZMdF-INY4Befpj8-3TkjtasNrsP7MYNvHEaxw')"></div>
+<!-- Gradient Overlay for text readability -->
+<div class="absolute inset-0 bg-gradient-to-t from-on-background/80 via-on-background/30 to-transparent"></div>
+</div>
+<!-- Content -->
+<div class="relative z-10 flex flex-col justify-end p-margin-desktop w-full h-full">
+<h1 class="font-display-md text-display-md text-surface-container-lowest mb-unit max-w-lg">
+                    Preserve the Past. <br/>Shape What Remains.
+                </h1>
+<p class="font-body-lg text-body-lg text-surface-container-low/90 max-w-md">
+                    Access the world's most advanced cultural archive, blending ancient heritage with modern intelligence.
+                </p>
+</div>
+</div>
+<!-- RIGHT: Login Form -->
+<div class="w-full lg:w-1/2 flex items-center justify-center p-margin-mobile md:p-margin-desktop bg-surface relative">
+<!-- Subtle pattern overlay -->
+<div class="absolute inset-0 pattern-overlay pointer-events-none"></div>
+<div class="w-full max-w-md relative z-10 flex flex-col">
+<!-- Brand / Logo Area -->
+<div class="mb-gutter flex items-center gap-unit">
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+<span class="font-headline-sm text-headline-sm text-primary tracking-tight">HeritageHub</span>
+</div>
+<!-- Header -->
+<div class="mb-12">
+<h2 class="font-headline-lg text-headline-lg text-on-background mb-unit">Welcome Back</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                        Continue preserving and exploring cultural heritage.
+                    </p>
+</div>
+<!-- Form -->
+<form class="flex flex-col gap-8" id="loginForm">
+<!-- Username Field -->
+<div class="relative">
+<label class="font-label-caps text-label-caps text-on-surface-variant block mb-2 uppercase" for="username">Username or Email</label>
+<input class="input-heritage w-full font-body-md text-body-md text-on-background py-2" id="username" name="username" placeholder="archivist@heritagehub.org" required="" type="text"/>
+</div>
+<!-- Password Field -->
+<div class="relative">
+<label class="font-label-caps text-label-caps text-on-surface-variant block mb-2 uppercase" for="password">Password</label>
+<div class="relative flex items-center">
+<input class="input-heritage w-full font-body-md text-body-md text-on-background py-2 pr-10" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+<button class="absolute right-0 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors pr-2" id="togglePassword" type="button">
+<span class="material-symbols-outlined" id="visibilityIcon">visibility_off</span>
+</button>
+</div>
+</div>
+<!-- Actions Row -->
+<div class="flex items-center justify-between mt-2">
+<label class="flex items-center gap-2 cursor-pointer group">
+<input class="form-checkbox h-4 w-4 text-primary border-outline-variant rounded focus:ring-primary focus:ring-offset-surface bg-transparent transition-colors group-hover:border-primary" type="checkbox"/>
+<span class="font-body-md text-body-md text-on-surface-variant group-hover:text-on-background transition-colors">Remember me</span>
+</label>
+<a class="font-label-caps text-label-caps text-primary hover:text-surface-tint transition-colors uppercase" href="#">Forgot Password?</a>
+</div>
+<!-- Submit Button -->
+<button class="w-full bg-primary hover:bg-surface-tint text-on-primary font-label-caps text-label-caps uppercase py-4 rounded-full transition-all duration-300 transform active:scale-[0.98] mt-4 shadow-sm hover:shadow-md flex justify-center items-center gap-2 group" type="submit">
+                        Login
+                        <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</form>
+<!-- Footer Links -->
+<div class="mt-12 text-center">
+<p class="font-body-md text-body-md text-on-surface-variant">
+                        New to HeritageHub? 
+                        <a class="text-primary hover:text-surface-tint font-bold underline underline-offset-4 transition-colors" href="#">Join HeritageHub</a>
+</p>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Password visibility toggle
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const visibilityIcon = document.getElementById('visibilityIcon');
+
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            visibilityIcon.textContent = type === 'password' ? 'visibility_off' : 'visibility';
+        });
+
+        // Form submission mock
+        const loginForm = document.getElementById('loginForm');
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">refresh</span> Authenticating...';
+            btn.classList.add('opacity-80', 'cursor-not-allowed');
+            
+            // Simulate API call for JWT
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('opacity-80', 'cursor-not-allowed');
+                // Normally handle auth state here
+            }, 1500);
+        });
+    </script>
+</body></html>

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HeritageHub - Preserving Stories. Protecting Heritage.</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface": "#fff8f6",
+                      "on-primary-container": "#ffe1d6",
+                      "primary-fixed": "#ffdbcd",
+                      "on-secondary-container": "#785a1a",
+                      "outline-variant": "#dac1b8",
+                      "secondary": "#775a19",
+                      "tertiary-container": "#007280",
+                      "on-tertiary-fixed": "#001f24",
+                      "on-primary-fixed-variant": "#76320f",
+                      "on-error-container": "#93000a",
+                      "secondary-fixed-dim": "#e9c176",
+                      "error": "#ba1a1a",
+                      "surface-bright": "#fff8f6",
+                      "on-surface": "#221a17",
+                      "tertiary-fixed": "#9defff",
+                      "surface-container": "#fbeae5",
+                      "on-error": "#ffffff",
+                      "surface-dim": "#e7d7d1",
+                      "error-container": "#ffdad6",
+                      "on-surface-variant": "#54433c",
+                      "on-secondary": "#ffffff",
+                      "surface-container-low": "#fff1ec",
+                      "surface-container-highest": "#efdfd9",
+                      "on-tertiary": "#ffffff",
+                      "background": "#fff8f6",
+                      "surface-variant": "#efdfd9",
+                      "on-secondary-fixed": "#261900",
+                      "secondary-fixed": "#ffdea5",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-on-surface": "#feede8",
+                      "secondary-container": "#fed488",
+                      "primary": "#823b18",
+                      "primary-container": "#a0522d",
+                      "primary-fixed-dim": "#ffb596",
+                      "inverse-surface": "#382e2b",
+                      "surface-tint": "#944925",
+                      "inverse-primary": "#ffb596",
+                      "tertiary": "#005863",
+                      "tertiary-fixed-dim": "#7fd3e3",
+                      "surface-container-high": "#f5e5df",
+                      "on-primary": "#ffffff",
+                      "on-tertiary-container": "#aef2ff",
+                      "on-tertiary-fixed-variant": "#004f59",
+                      "on-secondary-fixed-variant": "#5d4201",
+                      "on-background": "#221a17",
+                      "on-primary-fixed": "#360f00",
+                      "outline": "#87736b"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "margin-mobile": "16px",
+                      "margin-desktop": "64px",
+                      "gutter": "24px",
+                      "unit": "8px",
+                      "container-max": "1440px",
+                      "section-gap": "120px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": [
+                              "Libre Caslon Text"
+                      ],
+                      "body-md": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "headline-sm": [
+                              "Libre Caslon Text"
+                      ],
+                      "label-caps": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "display-md": [
+                              "Libre Caslon Text"
+                      ],
+                      "headline-lg": [
+                              "Libre Caslon Text"
+                      ],
+                      "body-lg": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "display-lg": [
+                              "Libre Caslon Text"
+                      ]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.1em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "display-md": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg": [
+                              "64px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body { background-color: #FAF9F6; color: #221a17; }
+        .glass-panel { background: rgba(245, 245, 245, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(54, 69, 79, 0.1); }
+        .pattern-overlay { background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2.5L22.5 16 25 13.5V0h2v13.5L29.5 16 32 18.5V20h8v2h-8v1.5L29.5 26 27 28.5V40h-2V28.5L22.5 26 20 23.5V22H0v-2h20z' fill='%23a0522d' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E"); }
+        .gradient-text { background: linear-gradient(135deg, #a0522d 0%, #775a19 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        .text-clamp-h1 { font-size: clamp(40px, 5vw, 80px); line-height: 1.1; }
+    </style>
+</head>
+<body class="font-body-md bg-surface text-on-surface antialiased overflow-x-hidden pt-20">
+<!-- NavigationDrawer (Mobile Side Nav) -->
+<div class="fixed inset-y-0 left-0 z-50 flex flex-col p-unit bg-surface dark:bg-surface-container-highest h-full w-80 rounded-r-xl shadow-md dark:shadow-none transition-transform duration-300 ease-in-out -translate-x-full border-r border-outline-variant/20 md:hidden" id="sideNav">
+<div class="flex items-center justify-between px-4 py-6 border-b border-outline-variant/20 bg-surface-container-low dark:bg-surface-container-lowest">
+<span class="font-headline-lg text-headline-lg text-primary">HeritageHub Menu</span>
+<button class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:scale-95 duration-200" id="closeNavBtn">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">close</span>
+</button>
+</div>
+<nav class="flex-1 overflow-y-auto py-4 flex flex-col gap-2">
+<a class="flex items-center gap-4 px-4 py-3 bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-full font-bold hover:bg-surface-container-high dark:hover:bg-surface-variant transition-all duration-300 ease-in-out cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-full cursor-pointer active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">travel_explore</span>
+<span class="font-label-caps text-label-caps">Explore</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-full cursor-pointer active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">add_circle</span>
+<span class="font-label-caps text-label-caps">Contribute</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-full cursor-pointer active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">psychology</span>
+<span class="font-label-caps text-label-caps">AI Assistant</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-full cursor-pointer active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">verified_user</span>
+<span class="font-label-caps text-label-caps">Verify</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-full cursor-pointer active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">auto_graph</span>
+<span class="font-label-caps text-label-caps">Impact</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-full cursor-pointer active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">info</span>
+<span class="font-label-caps text-label-caps">About</span>
+</a>
+</nav>
+<div class="mt-auto p-4 border-t border-outline-variant/20 bg-surface-container-low dark:bg-surface-container-lowest">
+<a class="flex items-center gap-4 px-4 py-3 text-on-surface-variant dark:text-on-surface-variant hover:text-primary transition-colors hover:bg-surface-container-high dark:hover:bg-surface-variant rounded-full cursor-pointer active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">login</span>
+<span class="font-label-caps text-label-caps">Login/Join</span>
+</a>
+</div>
+</div>
+<!-- Overlay for Side Nav -->
+<div class="fixed inset-0 bg-surface-on/50 z-40 hidden transition-opacity duration-300 opacity-0 md:hidden" id="navOverlay"></div>
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-30 bg-surface/90 dark:bg-surface-dim/90 backdrop-blur-md h-20 border-b border-outline-variant/20 dark:border-outline/20 flex items-center justify-center">
+<div class="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex justify-between items-center">
+<div class="flex items-center gap-3">
+<button class="md:hidden text-primary dark:text-primary-fixed cursor-pointer active:scale-95 duration-200 hover:opacity-80 transition-opacity p-2 -ml-2 rounded-full" id="openNavBtn">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 0;">account_balance</span>
+<span class="font-headline-lg-mobile text-headline-lg-mobile font-semibold text-primary dark:text-primary-fixed tracking-tight">HeritageHub</span>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="font-label-caps text-label-caps text-primary hover:text-primary-container transition-colors font-bold" href="#">Home</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="#">Explore</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="#">Contribute</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="#">AI Assistant</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="#">Verify</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="#">Impact</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="#">About</a>
+</nav>
+<div class="hidden md:flex items-center gap-4">
+<button class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors cursor-pointer px-4 py-2">Login</button>
+<button class="font-label-caps text-label-caps text-on-primary bg-primary hover:bg-primary-container transition-colors cursor-pointer active:scale-95 duration-200 px-6 py-2.5 rounded-full shadow-sm">Join</button>
+</div>
+</div>
+</header>
+<main class="w-full">
+<!-- HERO SECTION -->
+<section class="relative min-h-[80vh] md:min-h-[800px] flex items-center pt-24 pb-16 bg-surface-container-lowest overflow-hidden">
+<!-- Background Gradient for Desktop -->
+<div class="absolute inset-0 bg-gradient-to-r from-surface via-surface/95 to-surface/20 z-10 hidden md:block w-[60%]"></div>
+<div class="w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative z-20">
+<div class="flex flex-col md:grid md:grid-cols-12 gap-12 items-center">
+<!-- Left Side: Text (55% -> 7 cols) -->
+<div class="md:col-span-7 flex flex-col gap-8 w-full">
+<div class="inline-flex items-center gap-2 bg-surface-container/80 backdrop-blur-sm border border-outline-variant/30 px-4 py-2 rounded-full self-start shadow-sm">
+<span class="material-symbols-outlined text-primary text-[16px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant text-[12px] uppercase tracking-wider">AI-assisted • Community-verified</span>
+</div>
+<h1 class="font-display-lg text-clamp-h1 text-on-surface leading-tight font-bold">
+                    Preserving Stories.<br/>
+<span class="gradient-text">Protecting Heritage.</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant md:w-[85%] leading-relaxed">
+                    An AI-powered, community-driven digital archive designed to digitize, translate, and safeguard endangered cultural narratives, architecture, and traditions for future generations.
+                </p>
+<div class="flex flex-col sm:flex-row gap-4 mt-4">
+<button class="bg-primary hover:bg-primary-container text-on-primary font-label-caps text-label-caps py-4 px-8 rounded-full shadow-md active:scale-95 transition-all flex items-center justify-center gap-2">
+                        Explore Heritage
+                        <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+<button class="bg-transparent border-2 border-outline/50 hover:border-primary text-primary font-label-caps text-label-caps py-4 px-8 rounded-full active:scale-95 transition-all flex items-center justify-center gap-2">
+                        Preserve a Tradition
+                        <span class="material-symbols-outlined text-[20px]">add</span>
+</button>
+</div>
+</div>
+<!-- Right Side: Visual (45% -> 5 cols) -->
+<div class="md:col-span-5 relative w-full h-[400px] md:h-[600px] rounded-2xl overflow-hidden shadow-2xl">
+<div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDokEknVXpMXJUEVuc6xiRvZS9vn0ghdnFbsiVXazoUni0WycjrDIvmb5myE-5wlFz5TZ1NOawsk3YOoljrDbeYmI9Z6c3uamULwxAypEKAKODkEgEttKRAPAe4RWQCmUTOhS8t48leMI-c1vnLum-OLkzOt_Hn3B9saupf-oC57wsUwRVSVuSyX1PGzQgDgQIRvOAn9a_8gQygim85nvhH2aPlYu82BJ_zT34X5e9OE5A0QLZwD-0_FQ')"></div>
+<!-- Layered architectural grid overlay -->
+<div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPPHBhdGggZD0iTTAgMGgxdjQwSDB6TTAgMGg0MHYxSDB6IiBmaWxsPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMSkiLz48L3N2Zz4=')] opacity-50 mix-blend-overlay"></div>
+<!-- Gradient overlay for text readability if needed -->
+<div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- THE PROBLEM -->
+<section class="py-[80px] md:py-[120px] px-margin-mobile md:px-margin-desktop bg-surface pattern-overlay">
+<div class="max-w-container-max mx-auto md:grid md:grid-cols-12 gap-16 items-center">
+<!-- Text Content -->
+<div class="md:col-span-5 flex flex-col gap-6 mb-12 md:mb-0">
+<span class="font-label-caps text-label-caps text-secondary tracking-widest uppercase">The Challenge</span>
+<h2 class="font-display-md text-display-md text-on-surface font-bold leading-tight">Our heritage is disappearing.</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Unrecorded oral traditions, intricate craftsmanship, and regional dialects are fading away with each generation. Without intervention, countless stories will be lost to time.</p>
+<a class="inline-flex items-center gap-2 text-primary font-label-caps text-label-caps mt-4 hover:opacity-80 transition-opacity" href="#">
+                Read the Full Report
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+<!-- 2x2 Grid Visual Cards -->
+<div class="md:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
+<div class="glass-panel rounded-2xl p-8 flex flex-col gap-5 border-l-4 border-l-error shadow-sm hover:shadow-md transition-shadow">
+<div class="w-14 h-14 rounded-full bg-error-container flex items-center justify-center text-on-error-container">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 0;">record_voice_over</span>
+</div>
+<h3 class="font-headline-lg text-headline-sm text-on-surface">Lost Voices</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Oral traditions lack permanent documentation, relying solely on vulnerable human memory.</p>
+</div>
+<div class="glass-panel rounded-2xl p-8 flex flex-col gap-5 border-l-4 border-l-secondary shadow-sm hover:shadow-md transition-shadow">
+<div class="w-14 h-14 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 0;">language</span>
+</div>
+<h3 class="font-headline-lg text-headline-sm text-on-surface">Fading Dialects</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Regional languages face extinction without modern, accessible digital archives.</p>
+</div>
+<div class="glass-panel rounded-2xl p-8 flex flex-col gap-5 border-l-4 border-l-tertiary shadow-sm hover:shadow-md transition-shadow">
+<div class="w-14 h-14 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 0;">architecture</span>
+</div>
+<h3 class="font-headline-lg text-headline-sm text-on-surface">Decaying Monuments</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Physical structures deteriorate over time without proper 3D preservation mapping.</p>
+</div>
+<div class="glass-panel rounded-2xl p-8 flex flex-col gap-5 border-l-4 border-l-primary shadow-sm hover:shadow-md transition-shadow">
+<div class="w-14 h-14 rounded-full bg-primary-container flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 0;">palette</span>
+</div>
+<h3 class="font-headline-lg text-headline-sm text-on-surface">Forgotten Arts</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Traditional art forms are being replaced by mass production, losing cultural nuance.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="w-full mt-section-gap border-t border-outline-variant/30 dark:border-outline/30 bg-surface-container-highest dark:bg-surface-dim py-16 px-margin-mobile md:px-margin-desktop flex flex-col items-center gap-8 max-w-container-max mx-auto">
+<div class="font-display-md text-display-md text-on-surface font-bold">HeritageHub</div>
+<nav class="flex flex-wrap justify-center gap-x-8 gap-y-4 w-full md:w-auto">
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Archives</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Community Guidelines</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Privacy Policy</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">API Docs</a>
+</nav>
+<div class="w-full max-w-4xl border-t border-outline-variant/20 dark:border-outline/20 my-4"></div>
+<p class="font-body-md text-body-md text-primary dark:text-primary-fixed-dim text-center">
+                © 2024 HeritageHub Preservation Society. Built with AI for Odisha.
+            </p>
+</footer>
+</main>
+<script>
+        // Simple Mobile Nav Toggle Logic
+        const openNavBtn = document.getElementById('openNavBtn');
+        const closeNavBtn = document.getElementById('closeNavBtn');
+        const sideNav = document.getElementById('sideNav');
+        const navOverlay = document.getElementById('navOverlay');
+
+        function toggleNav() {
+            const isClosed = sideNav.classList.contains('-translate-x-full');
+            if (isClosed) {
+                sideNav.classList.remove('-translate-x-full');
+                navOverlay.classList.remove('hidden');
+                // Small timeout to allow display:block to apply before animating opacity
+                setTimeout(() => {
+                    navOverlay.classList.remove('opacity-0');
+                    navOverlay.classList.add('opacity-100');
+                }, 10);
+            } else {
+                sideNav.classList.add('-translate-x-full');
+                navOverlay.classList.remove('opacity-100');
+                navOverlay.classList.add('opacity-0');
+                setTimeout(() => {
+                    navOverlay.classList.add('hidden');
+                }, 300); // match duration
+            }
+        }
+
+        if(openNavBtn) openNavBtn.addEventListener('click', toggleNav);
+        if(closeNavBtn) closeNavBtn.addEventListener('click', toggleNav);
+        if(navOverlay) navOverlay.addEventListener('click', toggleNav);
+    </script>
+</body></html>

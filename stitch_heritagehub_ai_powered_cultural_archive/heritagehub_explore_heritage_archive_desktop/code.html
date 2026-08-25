@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HeritageHub - Explore</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:wght@100..900&family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#efdfd9",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed-variant": "#76320f",
+                        "surface-container-low": "#fff1ec",
+                        "surface": "#fff8f6",
+                        "outline": "#87736b",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#9defff",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "primary-container": "#a0522d",
+                        "inverse-on-surface": "#feede8",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed-dim": "#7fd3e3",
+                        "surface-dim": "#e7d7d1",
+                        "surface-bright": "#fff8f6",
+                        "on-tertiary-fixed": "#001f24",
+                        "on-primary-container": "#ffe1d6",
+                        "surface-variant": "#efdfd9",
+                        "surface-tint": "#944925",
+                        "inverse-primary": "#ffb596",
+                        "tertiary-container": "#007280",
+                        "on-surface": "#221a17",
+                        "primary-fixed-dim": "#ffb596",
+                        "error-container": "#ffdad6",
+                        "on-background": "#221a17",
+                        "on-tertiary-container": "#aef2ff",
+                        "on-secondary-fixed-variant": "#5d4201",
+                        "on-primary-fixed": "#360f00",
+                        "on-error-container": "#93000a",
+                        "primary-fixed": "#ffdbcd",
+                        "on-surface-variant": "#54433c",
+                        "background": "#fff8f6",
+                        "on-secondary-container": "#785a1a",
+                        "primary": "#823b18",
+                        "outline-variant": "#dac1b8",
+                        "tertiary": "#005863",
+                        "surface-container": "#fbeae5",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-container": "#fed488",
+                        "secondary": "#775a19",
+                        "inverse-surface": "#382e2b",
+                        "surface-container-high": "#f5e5df",
+                        "on-tertiary-fixed-variant": "#004f59",
+                        "on-secondary-fixed": "#261900",
+                        "secondary-fixed": "#ffdea5",
+                        "secondary-fixed-dim": "#e9c176"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "margin-desktop": "64px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "section-gap": "120px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Libre Caslon Text"],
+                        "label-caps": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Libre Caslon Text"],
+                        "display-lg": ["Libre Caslon Text"],
+                        "headline-sm": ["Libre Caslon Text"],
+                        "display-md": ["Libre Caslon Text"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                        "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "headline-sm": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "display-md": ["48px", {"lineHeight": "1.2", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .text-shadow-sm { text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        
+        /* Pattachitra inspired pattern overlay */
+        .bg-pattern-overlay {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23a0522d' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        /* Filter Scrollbar hiding for clean UI */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased pt-16">
+<!-- TopAppBar from JSON -->
+<header class="bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md fixed top-0 w-full z-50 border-b border-outline-variant/20 dark:border-outline/20">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-2 cursor-pointer active:scale-95 duration-200">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed" data-icon="account_balance">account_balance</span>
+<span class="font-headline-lg-mobile text-headline-lg-mobile font-semibold text-primary dark:text-primary-fixed tracking-tight">HeritageHub</span>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Home</a>
+<!-- Active Navigation Applied here -->
+<a class="font-label-caps text-label-caps text-primary dark:text-primary-fixed border-b-2 border-primary dark:border-primary-fixed pb-1" href="#">Explore</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Contribute</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">About</a>
+</nav>
+<button class="font-label-caps text-label-caps text-primary dark:text-primary-fixed hover:opacity-80 transition-opacity cursor-pointer active:scale-95 duration-200 uppercase">
+                Join
+            </button>
+</div>
+</header>
+<main class="min-h-screen">
+<!-- Editorial Header -->
+<section class="relative bg-surface-container-low py-16 md:py-24 px-margin-mobile md:px-margin-desktop bg-pattern-overlay overflow-hidden">
+<div class="max-w-container-max mx-auto text-center relative z-10 flex flex-col items-center gap-4">
+<span class="font-label-caps text-label-caps text-primary tracking-[0.2em]">The Digital Archive</span>
+<h1 class="font-display-md md:text-[64px] leading-tight font-bold text-on-surface max-w-4xl">Explore Living Heritage</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mt-4">Discover community-documented traditions, crafts, languages, festivals, stories and knowledge preserved across generations.</p>
+</div>
+<!-- Decorative Subtle Shapes -->
+<div class="absolute top-0 left-0 w-full h-full pointer-events-none opacity-30">
+<div class="absolute -top-24 -left-24 w-64 h-64 rounded-full bg-secondary-container blur-3xl"></div>
+<div class="absolute top-1/2 -right-32 w-80 h-80 rounded-full bg-primary-container blur-3xl opacity-20"></div>
+</div>
+</section>
+<!-- Search & Filter Bar -->
+<section class="px-margin-mobile md:px-margin-desktop -mt-8 relative z-20">
+<div class="max-w-container-max mx-auto">
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-4 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+<!-- Search Input -->
+<div class="relative w-full mb-6">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-highest border-none rounded-lg font-body-md text-on-surface placeholder:text-on-surface-variant focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all" placeholder="Search traditions, crafts, languages, places..." type="text"/>
+</div>
+<!-- Filters -->
+<div class="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+<div class="flex flex-wrap md:flex-nowrap gap-3 w-full md:w-auto overflow-x-auto hide-scrollbar">
+<!-- Category Filter -->
+<div class="relative min-w-[140px]">
+<select class="w-full appearance-none bg-surface-container-highest border border-outline-variant/50 rounded-lg px-4 py-2.5 pr-10 font-body-md text-sm text-on-surface focus:ring-1 focus:ring-primary cursor-pointer">
+<option value="">Category</option>
+<option value="crafts">Crafts</option>
+<option value="festivals">Festivals</option>
+<option value="languages">Languages</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant" data-icon="expand_more">expand_more</span>
+</div>
+<!-- Language Filter -->
+<div class="relative min-w-[140px]">
+<select class="w-full appearance-none bg-surface-container-highest border border-outline-variant/50 rounded-lg px-4 py-2.5 pr-10 font-body-md text-sm text-on-surface focus:ring-1 focus:ring-primary cursor-pointer">
+<option value="">Language</option>
+<option value="odia">Odia</option>
+<option value="santali">Santali</option>
+<option value="kui">Kui</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant" data-icon="expand_more">expand_more</span>
+</div>
+<!-- Location Filter -->
+<div class="relative min-w-[140px]">
+<select class="w-full appearance-none bg-surface-container-highest border border-outline-variant/50 rounded-lg px-4 py-2.5 pr-10 font-body-md text-sm text-on-surface focus:ring-1 focus:ring-primary cursor-pointer">
+<option value="">Location</option>
+<option value="puri">Puri</option>
+<option value="bhubaneswar">Bhubaneswar</option>
+<option value="raghurajpur">Raghurajpur</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant" data-icon="expand_more">expand_more</span>
+</div>
+<!-- Status Filter -->
+<div class="relative min-w-[140px]">
+<select class="w-full appearance-none bg-surface-container-highest border border-outline-variant/50 rounded-lg px-4 py-2.5 pr-10 font-body-md text-sm text-on-surface focus:ring-1 focus:ring-primary cursor-pointer">
+<option value="">Status</option>
+<option value="verified">Verified</option>
+<option value="pending">Pending</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<button class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1 shrink-0 uppercase">
+<span class="material-symbols-outlined text-[16px]" data-icon="close">close</span>
+                            Clear Filters
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Archive Content -->
+<section class="py-12 px-margin-mobile md:px-margin-desktop">
+<div class="max-w-container-max mx-auto">
+<!-- Summary & Sort -->
+<div class="flex justify-between items-center mb-8 border-b border-outline-variant/30 pb-4">
+<p class="font-body-md text-on-surface-variant">Showing <span class="font-semibold text-on-surface">12</span> heritage records</p>
+<div class="flex items-center gap-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant hidden md:block uppercase">Sort by:</label>
+<select class="appearance-none bg-transparent border-none font-body-md text-on-surface focus:ring-0 cursor-pointer pl-0 pr-6 font-medium">
+<option value="newest">Newest Added</option>
+<option value="oldest">Oldest Added</option>
+<option value="az">A - Z</option>
+</select>
+</div>
+</div>
+<!-- Heritage Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-gutter">
+<!-- Card 1 -->
+<div class="group relative bg-surface-container-lowest border border-outline-variant/20 rounded-xl overflow-hidden hover:shadow-[0_12px_40px_rgb(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
+<div class="relative aspect-[4/3] overflow-hidden">
+<div class="absolute top-4 left-4 z-10">
+<span class="bg-tertiary/90 text-on-tertiary font-label-caps text-[10px] px-2 py-1 rounded-sm uppercase tracking-wider backdrop-blur-sm border border-tertiary-fixed/30 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="verified">verified</span> Verified
+                                </span>
+</div>
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="Intricate Pipili applique artwork in vibrant reds, yellows, and blacks, showcasing traditional Odishan motifs like elephants and peacocks. The fabric piece is displayed against a clean, light-mode gallery wall, highlighting its rich texture and craftsmanship. Studio lighting, highly detailed, cultural heritage photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB39OOlpFkA0OxaezXNB70pTn5dkUzc5Bmhm2p8rlJ7jVDqIwU1ZIk04LDCxg4xLCM9UfgXxvxjdTKjEoZ7b6lPhr9FAw5IwDsEmvLhg5kgOwQs_zA27Sk2b9hXuCowSLGz-RaV1fDFbyz8qFeXwdmg7l5xKkw5zphCzOqKntlfpPK45FNIhFW0hoOLbJU4o4q9H8GJ--pG4qoOzrdgNQIo2i-HXsWXAsF74oW4is6M_pfPxcWFdQwAYQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface/80 via-surface/0 to-transparent pointer-events-none"></div>
+</div>
+<div class="p-6 flex flex-col flex-grow">
+<div class="flex items-center gap-3 mb-3 font-label-caps text-label-caps text-secondary uppercase">
+<span>Crafts</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>Pipili</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2 group-hover:text-primary transition-colors">Pipili Applique Work</h3>
+<p class="font-body-md text-sm text-on-surface-variant line-clamp-2 mb-6">A traditional art form from Pipili town, involving intricate stitching of colorful fabric pieces onto a base cloth to create vibrant motifs.</p>
+<div class="mt-auto pt-4 border-t border-outline-variant/20 flex items-center justify-between">
+<span class="font-label-caps text-[11px] text-on-surface-variant">Odia Language</span>
+<button class="text-primary hover:text-primary-container flex items-center gap-1 group/btn transition-colors">
+<span class="font-label-caps text-label-caps uppercase">View Story</span>
+<span class="material-symbols-outlined text-[18px] group-hover/btn:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group relative bg-surface-container-lowest border border-outline-variant/20 rounded-xl overflow-hidden hover:shadow-[0_12px_40px_rgb(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
+<div class="relative aspect-[4/3] overflow-hidden">
+<div class="absolute top-4 left-4 z-10">
+<span class="bg-secondary/90 text-on-secondary font-label-caps text-[10px] px-2 py-1 rounded-sm uppercase tracking-wider backdrop-blur-sm border border-secondary-fixed/30 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="pending">pending</span> Pending Review
+                                </span>
+</div>
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="A detailed view of a Pattachitra scroll painting, illustrating mythological narratives with fine, precise black outlines and earthy colors on a prepared canvas. The artwork is presented in a bright, modern archival setting, emphasizing the delicate brushwork and traditional Odishan artistry. High-resolution museum documentation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVcYAjbbX7pRoFRAi6JkJ_bsvbhBU00OnHf9-RNX3mMoOejmEAay7lNWyLDc-UMUm6M4AjnqwGMwTFd9SW07KqjcPzKic0wvmjXdK-dFfCErrpW0ne11IYCNeJnO5s3kE27ncHR7R2Z26U4on_H3gy7sixx2e1hWn1VncCzwErzEhxzCTr5NeZMoQLo09YOTDcyijQyPOjyYZqTyPuLTvgirVbbsRE9kD5gDTrAyUZGj3BLD4rs-gN0w"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface/80 via-surface/0 to-transparent pointer-events-none"></div>
+</div>
+<div class="p-6 flex flex-col flex-grow">
+<div class="flex items-center gap-3 mb-3 font-label-caps text-label-caps text-secondary uppercase">
+<span>Painting</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>Raghurajpur</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2 group-hover:text-primary transition-colors">Pattachitra Traditions</h3>
+<p class="font-body-md text-sm text-on-surface-variant line-clamp-2 mb-6">Cloth-based scroll painting, known for its intricate details as well as mythological narratives and folktales inscribed in it.</p>
+<div class="mt-auto pt-4 border-t border-outline-variant/20 flex items-center justify-between">
+<span class="font-label-caps text-[11px] text-on-surface-variant">Sanskrit / Odia</span>
+<button class="text-primary hover:text-primary-container flex items-center gap-1 group/btn transition-colors">
+<span class="font-label-caps text-label-caps uppercase">View Story</span>
+<span class="material-symbols-outlined text-[18px] group-hover/btn:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group relative bg-surface-container-lowest border border-outline-variant/20 rounded-xl overflow-hidden hover:shadow-[0_12px_40px_rgb(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
+<div class="relative aspect-[4/3] overflow-hidden">
+<div class="absolute top-4 left-4 z-10">
+<span class="bg-tertiary/90 text-on-tertiary font-label-caps text-[10px] px-2 py-1 rounded-sm uppercase tracking-wider backdrop-blur-sm border border-tertiary-fixed/30 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="verified">verified</span> Verified
+                                </span>
+</div>
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="Ancient palm-leaf manuscripts (Tala Papatra) neatly tied with a thread, featuring etched Odia script and illustrations. The setting is a clean, well-lit archival preservation environment with a warm ivory background, highlighting the fragility and historical significance of the texts. Macro photography, sharp focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAv8LUrxohcosjoWEdT3VLhui_vQKI21M57Tbkd0QYv2rblZdyiZs6dVCY29jBS-NekXYycRO4dUfjdiuvLFAMhlYUbXT4Anhnc0ZbHMNK0_qA1Zwax4MGi8eJnb0AN4pf4QGnb3wowNWsPZsq1yUlmVw5gqxs3_JdL7D2Pcyf6JXRHFDtboWHjqhJehUjlVpyXz_URCwEFb4un5JTbqDpa1eGYCzDAUVfLNYC7YFmf2cNStFQZY5lhkg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface/80 via-surface/0 to-transparent pointer-events-none"></div>
+</div>
+<div class="p-6 flex flex-col flex-grow">
+<div class="flex items-center gap-3 mb-3 font-label-caps text-label-caps text-secondary uppercase">
+<span>Literature</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>Bhubaneswar</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2 group-hover:text-primary transition-colors">Palm Leaf Manuscripts</h3>
+<p class="font-body-md text-sm text-on-surface-variant line-clamp-2 mb-6">Ancient method of preserving texts and illustrations by etching on dried palm leaves using an iron stylus.</p>
+<div class="mt-auto pt-4 border-t border-outline-variant/20 flex items-center justify-between">
+<span class="font-label-caps text-[11px] text-on-surface-variant">Old Odia</span>
+<button class="text-primary hover:text-primary-container flex items-center gap-1 group/btn transition-colors">
+<span class="font-label-caps text-label-caps uppercase">View Story</span>
+<span class="material-symbols-outlined text-[18px] group-hover/btn:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="group relative bg-surface-container-lowest border border-outline-variant/20 rounded-xl overflow-hidden hover:shadow-[0_12px_40px_rgb(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
+<div class="relative aspect-[4/3] overflow-hidden">
+<div class="absolute top-4 left-4 z-10">
+<span class="bg-error/90 text-on-error font-label-caps text-[10px] px-2 py-1 rounded-sm uppercase tracking-wider backdrop-blur-sm border border-error-container/30 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]" data-icon="error">error</span> Needs Correction
+                                </span>
+</div>
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="A dynamic shot of a Gotipua dancer in traditional costume, striking an acrobatic pose. The background is a minimalist, slightly blurred architectural setting indicative of Odishan temple structures, but rendered in a modern, light-mode visual style. The lighting is dramatic yet soft, emphasizing the form and expression of the dancer." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3x0BpFEHxeOAQCIPcZ1an67vJjlgExRzq0KnEVs-dMOUBlZf4CFuMSO2_e6x5FpmTHXI6XVUiryzdjwdwUJ-bjjiAB-vAmVzT_USkySR_-Jq8lgJU_gaz_PajJGPR0T51JWjQs_jOnm2CHbHAnyMASlQT-ESHY38-590N1eTXEvUXzl2px6By-14ItOL_KeAKlW0hf7GjbGNyoKAl8ov_CQ2HfQHWYeDKRID-Kn465iYBRlveslxT2w"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface/80 via-surface/0 to-transparent pointer-events-none"></div>
+</div>
+<div class="p-6 flex flex-col flex-grow">
+<div class="flex items-center gap-3 mb-3 font-label-caps text-label-caps text-secondary uppercase">
+<span>Dance</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>Puri</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2 group-hover:text-primary transition-colors">Gotipua Dance Form</h3>
+<p class="font-body-md text-sm text-on-surface-variant line-clamp-2 mb-6">A traditional dance form of Odisha, performed by young boys who dress as women to praise Jagannath and Krishna.</p>
+<div class="mt-auto pt-4 border-t border-outline-variant/20 flex items-center justify-between">
+<span class="font-label-caps text-[11px] text-on-surface-variant">Movement / Odia</span>
+<button class="text-primary hover:text-primary-container flex items-center gap-1 group/btn transition-colors">
+<span class="font-label-caps text-label-caps uppercase">View Story</span>
+<span class="material-symbols-outlined text-[18px] group-hover/btn:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Load More / Pagination -->
+<div class="mt-16 flex justify-center">
+<button class="bg-transparent border border-outline text-on-surface hover:bg-surface-container hover:text-primary font-label-caps text-label-caps uppercase px-8 py-4 rounded-full transition-colors duration-200">
+                        Load More Records
+                    </button>
+</div>
+<!-- Architecture Note (Hidden visually but present semantically) -->
+<div class="hidden">
+<p>Backend Integration Architecture: Data dynamically fetched via <code>heritageService.js</code> utilizing demo endpoints from <code>demoData.js</code> via a centralized Axios instance.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer from JSON -->
+<footer class="bg-surface-container-highest dark:bg-surface-dim w-full mt-section-gap border-t border-outline-variant/30 dark:border-outline/30">
+<div class="w-full py-12 px-margin-mobile md:px-margin-desktop flex flex-col items-center gap-8 max-w-container-max mx-auto">
+<span class="font-headline-sm text-headline-sm text-on-surface">HeritageHub</span>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Archives</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Community Guidelines</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Privacy Policy</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">API Docs</a>
+</div>
+<p class="font-body-md text-body-md text-primary dark:text-primary-fixed-dim text-center">
+                © 2024 HeritageHub Preservation Society. Built with AI for Odisha.
+            </p>
+</div>
+</footer>
+</body></html>
