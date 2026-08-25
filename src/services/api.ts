@@ -1,4 +1,5 @@
-const DEFAULT_BACKEND_URL = 'https://heritagehub-backend1.onrender.com';
+const DEFAULT_BACKEND_URL =
+  'https://heritagehub-backend1.onrender.com';
 
 /* =========================================================
    TYPES — MATCHING DJANGO BACKEND
@@ -322,13 +323,16 @@ class HeritageApiService {
   constructor() {
     this.baseUrl =
       localStorage.getItem('hh_backend_url') ||
+      import.meta.env.VITE_API_BASE_URL ||
       DEFAULT_BACKEND_URL;
 
     this.accessToken =
-      localStorage.getItem('hh_access_token');
+      localStorage.getItem('hh_access_token') ||
+      localStorage.getItem('access_token');
 
     this.refreshToken =
-      localStorage.getItem('hh_refresh_token');
+      localStorage.getItem('hh_refresh_token') ||
+      localStorage.getItem('refresh_token');
   }
 
   /* =========================================================
@@ -350,7 +354,8 @@ class HeritageApiService {
 
   public isLoggedIn(): boolean {
     const token =
-      localStorage.getItem('hh_access_token');
+      localStorage.getItem('hh_access_token') ||
+      localStorage.getItem('access_token');
 
     this.accessToken = token;
 
@@ -362,7 +367,9 @@ class HeritageApiService {
     this.refreshToken = null;
 
     localStorage.removeItem('hh_access_token');
+    localStorage.removeItem('access_token');
     localStorage.removeItem('hh_refresh_token');
+    localStorage.removeItem('refresh_token');
     localStorage.removeItem('hh_username');
   }
 
@@ -376,30 +383,17 @@ class HeritageApiService {
   ): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
 
-    /*
-      IMPORTANT:
-      Reload tokens from localStorage before every request.
-
-      This keeps the service synchronized with login/logout
-      state even after page reloads or other UI state changes.
-    */
-
     this.accessToken =
-      localStorage.getItem('hh_access_token');
+      localStorage.getItem('hh_access_token') ||
+      localStorage.getItem('access_token');
 
     this.refreshToken =
-      localStorage.getItem('hh_refresh_token');
+      localStorage.getItem('hh_refresh_token') ||
+      localStorage.getItem('refresh_token');
 
     const headers = new Headers(
       options.headers || {}
     );
-
-    /*
-      DO NOT manually add Content-Type
-      when body is FormData.
-
-      Browser must create multipart boundary.
-    */
 
     if (!(options.body instanceof FormData)) {
       if (!headers.has('Content-Type')) {
@@ -415,10 +409,6 @@ class HeritageApiService {
       'application/json'
     );
 
-    /*
-      Attach access token whenever one exists.
-    */
-
     if (this.accessToken) {
       headers.set(
         'Authorization',
@@ -431,11 +421,6 @@ class HeritageApiService {
       headers,
     });
 
-    /*
-      If access token expired,
-      try JWT refresh once.
-    */
-
     if (
       response.status === 401 &&
       this.refreshToken
@@ -444,12 +429,9 @@ class HeritageApiService {
         await this.refreshAccessToken();
 
       if (refreshed) {
-        /*
-          Reload latest access token after refresh.
-        */
-
         this.accessToken =
-          localStorage.getItem('hh_access_token');
+          localStorage.getItem('hh_access_token') ||
+          localStorage.getItem('access_token');
 
         const retryHeaders =
           new Headers(
@@ -494,13 +476,6 @@ class HeritageApiService {
       return undefined as T;
     }
 
-    /*
-      Some APIs can return an empty body.
-
-      Read as text first so JSON parsing
-      does not crash unnecessarily.
-    */
-
     const responseText =
       await response.text();
 
@@ -529,7 +504,7 @@ class HeritageApiService {
         data.error ||
         JSON.stringify(data);
     } catch {
-      // ignore JSON parse failure
+      // Ignore JSON parse failure
     }
 
     return new Error(message);
@@ -546,7 +521,6 @@ class HeritageApiService {
       '/api/accounts/register/',
       {
         method: 'POST',
-
         body: JSON.stringify(payload),
       }
     );
@@ -555,22 +529,19 @@ class HeritageApiService {
   public async login(
     payload: LoginPayload
   ): Promise<LoginResponse> {
-    /*
-      Login request should not use an old expired token.
-    */
-
     this.accessToken = null;
     this.refreshToken = null;
 
     localStorage.removeItem('hh_access_token');
+    localStorage.removeItem('access_token');
     localStorage.removeItem('hh_refresh_token');
+    localStorage.removeItem('refresh_token');
 
     const result =
       await this.request<LoginResponse>(
         '/api/accounts/login/',
         {
           method: 'POST',
-
           body: JSON.stringify(payload),
         }
       );
@@ -587,7 +558,17 @@ class HeritageApiService {
     );
 
     localStorage.setItem(
+      'access_token',
+      result.access
+    );
+
+    localStorage.setItem(
       'hh_refresh_token',
+      result.refresh
+    );
+
+    localStorage.setItem(
+      'refresh_token',
       result.refresh
     );
 
@@ -596,12 +577,9 @@ class HeritageApiService {
 
   public async refreshAccessToken():
     Promise<boolean> {
-    /*
-      Reload refresh token before attempting refresh.
-    */
-
     this.refreshToken =
-      localStorage.getItem('hh_refresh_token');
+      localStorage.getItem('hh_refresh_token') ||
+      localStorage.getItem('refresh_token');
 
     if (!this.refreshToken) {
       return false;
@@ -612,15 +590,12 @@ class HeritageApiService {
         `${this.baseUrl}/api/accounts/login/refresh/`,
         {
           method: 'POST',
-
           headers: {
             'Content-Type':
               'application/json',
-
             Accept:
               'application/json',
           },
-
           body: JSON.stringify({
             refresh:
               this.refreshToken,
@@ -630,7 +605,6 @@ class HeritageApiService {
 
       if (!response.ok) {
         this.logout();
-
         return false;
       }
 
@@ -646,10 +620,14 @@ class HeritageApiService {
         data.access
       );
 
+      localStorage.setItem(
+        'access_token',
+        data.access
+      );
+
       return true;
     } catch {
       this.logout();
-
       return false;
     }
   }
@@ -753,7 +731,6 @@ class HeritageApiService {
       '/api/heritage/records/',
       {
         method: 'POST',
-
         body: formData,
       }
     );
@@ -846,7 +823,6 @@ class HeritageApiService {
       `/api/heritage/records/${id}/`,
       {
         method: 'PATCH',
-
         body: formData,
       }
     );
@@ -936,7 +912,6 @@ class HeritageApiService {
       `/api/community/review/${recordId}/`,
       {
         method: 'POST',
-
         body: JSON.stringify({
           action,
           comment,
@@ -1125,7 +1100,6 @@ class HeritageApiService {
       '/api/learn/translate/',
       {
         method: 'POST',
-
         body: JSON.stringify({
           english_phrase:
             englishPhrase,
@@ -1209,7 +1183,6 @@ class HeritageApiService {
       '/api/3d/generate/',
       {
         method: 'POST',
-
         body: formData,
       }
     );
@@ -1275,7 +1248,6 @@ class HeritageApiService {
       '/api/canvas/save/',
       {
         method: 'POST',
-
         body: formData,
       }
     );
