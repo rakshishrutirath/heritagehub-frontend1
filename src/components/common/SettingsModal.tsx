@@ -42,7 +42,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
   const handleSaveUrl = async () => {
     setTesting(true);
     const res = await api.setBaseUrl(backendUrl);
-    setStatus(res);
+    setStatus(null);
     setTesting(false);
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 2500);
@@ -112,7 +112,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                   <Database className="w-4 h-4 text-[#94492d]" /> Django REST Backend Target
                 </h4>
                 <p className="text-[12px] text-[#444748] mt-0.5">
-                  Default target: <code className="font-mono bg-white px-1.5 py-0.5 rounded border border-[#c4c7c7]/40 text-[#94492d]">http://127.0.0.1:8000/</code>
+                  Default target: <code className="font-mono bg-white px-1.5 py-0.5 rounded border border-[#c4c7c7]/40 text-[#94492d]">https://heritagehub-backend1.onrender.com/</code>
                 </p>
               </div>
 
@@ -134,7 +134,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                 type="text"
                 value={backendUrl}
                 onChange={(e) => setBackendUrl(e.target.value)}
-                placeholder="http://127.0.0.1:8000"
+                placeholder="https://heritagehub-backend1.onrender.com"
                 className="flex-grow px-3.5 py-2 text-[13px] font-mono rounded-lg bg-white border border-[#c4c7c7] focus:outline-none focus:border-[#94492d]"
               />
               <button
@@ -161,7 +161,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
             )}
 
             <p className="text-[11.5px] text-[#747878] leading-normal">
-              *Note: HeritageHub's API client architecture is configured for all 10 Django endpoint groups. When running your local Django server on port 8000, all requests will route directly to it.
+              *Note: HeritageHub's API client architecture is configured for all 10 Django endpoint groups.
             </p>
           </div>
 

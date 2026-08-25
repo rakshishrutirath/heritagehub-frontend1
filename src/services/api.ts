@@ -1,4 +1,4 @@
-const DEFAULT_BACKEND_URL = 'http://127.0.0.1:8000';
+const DEFAULT_BACKEND_URL = 'https://heritagehub-backend1.onrender.com';
 
 /* =========================================================
    TYPES — MATCHING DJANGO BACKEND
