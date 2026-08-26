@@ -9,10 +9,18 @@ import {
   Volume2,
   FileText,
   Calendar,
+  QrCode,
 } from "lucide-react";
 
 import api from "../services/api";
 import { useLanguage } from "../context/LanguageContext";
+
+/* =========================================================
+   BACKEND
+========================================================= */
+
+const BACKEND_URL =
+  "https://heritagehub-backend1.onrender.com";
 
 /* =========================================================
    TYPES
@@ -51,6 +59,28 @@ interface HeritageRecord {
 }
 
 /* =========================================================
+   MEDIA URL HELPER
+========================================================= */
+
+const getMediaUrl = (
+  value: string | null
+): string => {
+  if (!value) {
+    return "";
+  }
+
+  if (value.startsWith("http://")) {
+    return value;
+  }
+
+  if (value.startsWith("https://")) {
+    return value;
+  }
+
+  return `${BACKEND_URL}${value.startsWith("/") ? "" : "/"}${value}`;
+};
+
+/* =========================================================
    COMPONENT
 ========================================================= */
 
@@ -59,270 +89,221 @@ export function CommunityPage() {
      LANGUAGE
   ======================================================= */
 
-  const {
-    language,
-  } = useLanguage();
+  const { language } = useLanguage();
 
-  const isOdia =
-    language === "or";
+  const isOdia = language === "or";
 
   /* =======================================================
      TRANSLATIONS
   ======================================================= */
 
   const t = {
-    eyebrow:
-      isOdia
-        ? "ସମୁଦାୟ ଯାଞ୍ଚ"
-        : "COMMUNITY VERIFICATION",
+    eyebrow: isOdia
+      ? "ସମୁଦାୟ ଯାଞ୍ଚ"
+      : "COMMUNITY VERIFICATION",
 
-    title:
-      isOdia
-        ? "ଐତିହ୍ୟ ଯାଞ୍ଚ"
-        : "Heritage Verification",
+    title: isOdia
+      ? "ଐତିହ୍ୟ ଯାଞ୍ଚ"
+      : "Heritage Verification",
 
-    description:
-      isOdia
-        ? "ସମୁଦାୟ ଦ୍ୱାରା ଦାଖଲ ହୋଇଥିବା ସାଂସ୍କୃତିକ ଐତିହ୍ୟ ରେକର୍ଡଗୁଡ଼ିକୁ ଯାଞ୍ଚ କରନ୍ତୁ, ତାପରେ ସେଗୁଡ଼ିକ HeritageHub ର ସତ୍ୟାପିତ ସଂଗ୍ରହର ଅଂଶ ହେବ।"
-        : "Review community-submitted cultural heritage records before they become part of the verified HeritageHub archive.",
+    description: isOdia
+      ? "ସମୁଦାୟ ଦ୍ୱାରା ଦାଖଲ ହୋଇଥିବା ସାଂସ୍କୃତିକ ଐତିହ୍ୟ ରେକର୍ଡଗୁଡ଼ିକୁ ଯାଞ୍ଚ କରନ୍ତୁ, ତାପରେ ସେଗୁଡ଼ିକ HeritageHub ର ସତ୍ୟାପିତ ସଂଗ୍ରହର ଅଂଶ ହେବ।"
+      : "Review community-submitted cultural heritage records before they become part of the verified HeritageHub archive.",
 
-    loading:
-      isOdia
-        ? "ଐତିହ୍ୟ ରେକର୍ଡ ଲୋଡ୍ ହେଉଛି..."
-        : "Loading heritage records...",
+    loading: isOdia
+      ? "ଐତିହ୍ୟ ରେକର୍ଡ ଲୋଡ୍ ହେଉଛି..."
+      : "Loading heritage records...",
 
-    pending:
-      isOdia
-        ? "ଯାଞ୍ଚ ଅପେକ୍ଷାରେ"
-        : "Pending Verification",
+    pending: isOdia
+      ? "ଯାଞ୍ଚ ଅପେକ୍ଷାରେ"
+      : "Pending Verification",
 
-    refresh:
-      isOdia
-        ? "ପୁନଃ ଲୋଡ୍"
-        : "Refresh",
+    refresh: isOdia
+      ? "ପୁନଃ ଲୋଡ୍"
+      : "Refresh",
 
-    allCaughtUp:
-      isOdia
-        ? "ସବୁ ଯାଞ୍ଚ ସମ୍ପୂର୍ଣ୍ଣ"
-        : "All caught up",
+    allCaughtUp: isOdia
+      ? "ସବୁ ଯାଞ୍ଚ ସମ୍ପୂର୍ଣ୍ଣ"
+      : "All caught up",
 
-    noPending:
-      isOdia
-        ? "ବର୍ତ୍ତମାନ କୌଣସି ଐତିହ୍ୟ ରେକର୍ଡ ଯାଞ୍ଚ ପାଇଁ ଅପେକ୍ଷାରେ ନାହିଁ।"
-        : "There are currently no heritage records waiting for verification.",
+    noPending: isOdia
+      ? "ବର୍ତ୍ତମାନ କୌଣସି ଐତିହ୍ୟ ରେକର୍ଡ ଯାଞ୍ଚ ପାଇଁ ଅପେକ୍ଷାରେ ନାହିଁ।"
+      : "There are currently no heritage records waiting for verification.",
 
-    pendingReview:
-      isOdia
-        ? "ଯାଞ୍ଚ ଅପେକ୍ଷାରେ"
-        : "Pending Review",
+    pendingReview: isOdia
+      ? "ଯାଞ୍ଚ ଅପେକ୍ଷାରେ"
+      : "Pending Review",
 
-    category:
-      isOdia
-        ? "ବର୍ଗ ID"
-        : "Category ID",
+    category: isOdia
+      ? "ବର୍ଗ ID"
+      : "Category ID",
 
-    language:
-      isOdia
-        ? "ଭାଷା ID"
-        : "Language ID",
+    language: isOdia
+      ? "ଭାଷା ID"
+      : "Language ID",
 
-    location:
-      isOdia
-        ? "ସ୍ଥାନ ID"
-        : "Location ID",
+    location: isOdia
+      ? "ସ୍ଥାନ ID"
+      : "Location ID",
 
-    audio:
-      isOdia
-        ? "ସାଂସ୍କୃତିକ ଅଡିଓ"
-        : "Cultural Audio",
+    audio: isOdia
+      ? "ସାଂସ୍କୃତିକ ଅଡିଓ"
+      : "Cultural Audio",
 
-    audioUnsupported:
-      isOdia
-        ? "ଆପଣଙ୍କ ବ୍ରାଉଜର ଅଡିଓ ପ୍ଲେବ୍ୟାକ୍ ସମର୍ଥନ କରେନାହିଁ।"
-        : "Your browser does not support audio playback.",
+    audioUnsupported: isOdia
+      ? "ଆପଣଙ୍କ ବ୍ରାଉଜର ଅଡିଓ ପ୍ଲେବ୍ୟାକ୍ ସମର୍ଥନ କରେନାହିଁ।"
+      : "Your browser does not support audio playback.",
 
-    aiSummary:
-      isOdia
-        ? "AI ଐତିହ୍ୟ ସାରାଂଶ"
-        : "AI Heritage Summary",
+    aiSummary: isOdia
+      ? "AI ଐତିହ୍ୟ ସାରାଂଶ"
+      : "AI Heritage Summary",
 
-    aiTags:
-      isOdia
-        ? "AI ଟ୍ୟାଗ"
-        : "AI Tags",
+    aiTags: isOdia
+      ? "AI ଟ୍ୟାଗ"
+      : "AI Tags",
 
-    aiTranslation:
-      isOdia
-        ? "AI ଅନୁବାଦ"
-        : "AI Translation",
+    aiTranslation: isOdia
+      ? "AI ଅନୁବାଦ"
+      : "AI Translation",
 
-    consent:
-      isOdia
-        ? "ସମ୍ମତି"
-        : "Consent",
+    consent: isOdia
+      ? "ସମ୍ମତି"
+      : "Consent",
 
-    given:
-      isOdia
-        ? "ଦିଆଯାଇଛି"
-        : "Given",
+    given: isOdia
+      ? "ଦିଆଯାଇଛି"
+      : "Given",
 
-    notGiven:
-      isOdia
-        ? "ଦିଆଯାଇନାହିଁ"
-        : "Not Given",
+    notGiven: isOdia
+      ? "ଦିଆଯାଇନାହିଁ"
+      : "Not Given",
 
-    recordId:
-      isOdia
-        ? "ରେକର୍ଡ ID"
-        : "Record ID",
+    recordId: isOdia
+      ? "ରେକର୍ଡ ID"
+      : "Record ID",
 
-    approve:
-      isOdia
-        ? "ରେକର୍ଡ ଅନୁମୋଦନ"
-        : "Approve Record",
+    approve: isOdia
+      ? "ରେକର୍ଡ ଅନୁମୋଦନ"
+      : "Approve Record",
 
-    reject:
-      isOdia
-        ? "ରେକର୍ଡ ପ୍ରତ୍ୟାଖ୍ୟାନ"
-        : "Reject Record",
+    reject: isOdia
+      ? "ରେକର୍ଡ ପ୍ରତ୍ୟାଖ୍ୟାନ"
+      : "Reject Record",
 
-    processing:
-      isOdia
-        ? "ପ୍ରକ୍ରିୟା ଚାଲିଛି..."
-        : "Processing...",
+    processing: isOdia
+      ? "ପ୍ରକ୍ରିୟା ଚାଲିଛି..."
+      : "Processing...",
 
-    approvedSuccess:
-      isOdia
-        ? "ଐତିହ୍ୟ ରେକର୍ଡ ସଫଳତାର ସହ ଅନୁମୋଦିତ ହୋଇଛି।"
-        : "Heritage record approved successfully.",
+    approvedSuccess: isOdia
+      ? "ଐତିହ୍ୟ ରେକର୍ଡ ସଫଳତାର ସହ ଅନୁମୋଦିତ ହୋଇଛି।"
+      : "Heritage record approved successfully.",
 
-    rejectedSuccess:
-      isOdia
-        ? "ଐତିହ୍ୟ ରେକର୍ଡ ସଫଳତାର ସହ ପ୍ରତ୍ୟାଖ୍ୟାନ ହୋଇଛି।"
-        : "Heritage record rejected successfully.",
+    rejectedSuccess: isOdia
+      ? "ଐତିହ୍ୟ ରେକର୍ଡ ସଫଳତାର ସହ ପ୍ରତ୍ୟାଖ୍ୟାନ ହୋଇଛି।"
+      : "Heritage record rejected successfully.",
 
-    unableLoad:
-      isOdia
-        ? "ଐତିହ୍ୟ ରେକର୍ଡ ଲୋଡ୍ କରିହେଲା ନାହିଁ।"
-        : "Unable to load heritage records.",
+    unableLoad: isOdia
+      ? "ଐତିହ୍ୟ ରେକର୍ଡ ଲୋଡ୍ କରିହେଲା ନାହିଁ।"
+      : "Unable to load heritage records.",
 
-    unableReview:
-      isOdia
-        ? "ଏହି ଐତିହ୍ୟ ରେକର୍ଡକୁ ଯାଞ୍ଚ କରିହେଲା ନାହିଁ।"
-        : "Unable to review this heritage record.",
+    unableReview: isOdia
+      ? "ଏହି ଐତିହ୍ୟ ରେକର୍ଡକୁ ଯାଞ୍ଚ କରିହେଲା ନାହିଁ।"
+      : "Unable to review this heritage record.",
 
-    reviewWorkspace:
-      isOdia
-        ? "ସଂରକ୍ଷଣ ଯାଞ୍ଚ କେନ୍ଦ୍ର"
-        : "Preservation Review Workspace",
+    reviewWorkspace: isOdia
+      ? "ସଂରକ୍ଷଣ ଯାଞ୍ଚ କେନ୍ଦ୍ର"
+      : "Preservation Review Workspace",
+
+    qrTitle: isOdia
+      ? "ଐତିହ୍ୟ QR କୋଡ୍"
+      : "Heritage QR Code",
+
+    qrDescription: isOdia
+      ? "ଏହି QR କୋଡ୍ ସ୍କାନ୍ କରି ଐତିହ୍ୟ ରେକର୍ଡ ଦେଖନ୍ତୁ।"
+      : "Scan this QR code to view this heritage record.",
+
+    qrGenerating: isOdia
+      ? "QR କୋଡ୍ ପ୍ରସ୍ତୁତ ହେଉଛି..."
+      : "QR code is being generated...",
+
+    approvedRecord: isOdia
+      ? "ଅନୁମୋଦିତ ଐତିହ୍ୟ"
+      : "Approved Heritage",
   };
 
   /* =======================================================
      STATE
   ======================================================= */
 
-  const [
-    records,
-    setRecords,
-  ] =
-    useState<HeritageRecord[]>(
-      []
-    );
+  const [records, setRecords] =
+    useState<HeritageRecord[]>([]);
 
-  const [
-    loading,
-    setLoading,
-  ] =
+  const [loading, setLoading] =
     useState(true);
 
-  const [
-    processingId,
-    setProcessingId,
-  ] =
-    useState<string | null>(
-      null
-    );
+  const [processingId, setProcessingId] =
+    useState<string | null>(null);
 
-  const [
-    error,
-    setError,
-  ] =
+  const [error, setError] =
     useState("");
 
-  const [
-    message,
-    setMessage,
-  ] =
+  const [message, setMessage] =
     useState("");
+
+  /*
+   * This stores the record that was just approved.
+   * We use it to show the generated QR code.
+   */
+  const [approvedRecord, setApprovedRecord] =
+    useState<HeritageRecord | null>(null);
 
   /* =======================================================
      LOAD HERITAGE RECORDS
   ======================================================= */
 
-  const loadRecords =
-    async () => {
-      try {
-        setLoading(true);
+  const loadRecords = async () => {
+    try {
+      setLoading(true);
+      setError("");
 
-        setError("");
+      const data =
+        await api.getHeritageRecords();
 
-        const data =
-          await api.getHeritageRecords();
+      console.log(
+        "Heritage records:",
+        data
+      );
 
-        console.log(
-          "Heritage records:",
-          data
-        );
-
-        if (
-          !Array.isArray(
-            data
-          )
-        ) {
-          setRecords(
-            []
-          );
-
-          return;
-        }
-
-        const pendingRecords =
-          data.filter(
-            (
-              record
-            ) =>
-              record.status ===
-              "pending"
-          );
-
-        setRecords(
-          pendingRecords
-        );
-      } catch (
-        err
-      ) {
-        console.error(
-          "Failed to load heritage records:",
-          err
-        );
-
-        if (
-          err instanceof Error
-        ) {
-          setError(
-            err.message
-          );
-        } else {
-          setError(
-            t.unableLoad
-          );
-        }
-      } finally {
-        setLoading(
-          false
-        );
+      if (!Array.isArray(data)) {
+        setRecords([]);
+        return;
       }
-    };
+
+      /*
+       * Community page only shows pending records.
+       */
+      const pendingRecords =
+        data.filter(
+          (record: HeritageRecord) =>
+            record.status === "pending"
+        );
+
+      setRecords(pendingRecords);
+    } catch (err) {
+      console.error(
+        "Failed to load heritage records:",
+        err
+      );
+
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError(t.unableLoad);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   /* =======================================================
      INITIAL LOAD
@@ -336,88 +317,118 @@ export function CommunityPage() {
      REVIEW
   ======================================================= */
 
-  const handleReview =
-    async (
-      recordId: string,
-      action:
-        | "approved"
-        | "rejected"
-    ) => {
-      try {
-        setProcessingId(
-          recordId
+  const handleReview = async (
+    recordId: string,
+    action:
+      | "approved"
+      | "rejected"
+  ) => {
+    try {
+      setProcessingId(recordId);
+
+      setError("");
+      setMessage("");
+      setApprovedRecord(null);
+
+      const comment =
+        action === "approved"
+          ? "Heritage record verified by community reviewer."
+          : "Heritage record rejected by community reviewer.";
+
+      const response =
+        await api.reviewRecord(
+          recordId,
+          action,
+          comment
         );
 
-        setError("");
-        setMessage("");
+      console.log(
+        "Review response:",
+        response
+      );
 
-        const comment =
-          action === "approved"
-            ? "Heritage record verified by community reviewer."
-            : "Heritage record rejected by community reviewer.";
-
-        const response =
-          await api.reviewRecord(
-            recordId,
-            action,
-            comment
-          );
-
-        console.log(
-          "Review response:",
-          response
+      if (action === "approved") {
+        setMessage(
+          t.approvedSuccess
         );
 
-        if (
-          action ===
-          "approved"
-        ) {
-          setMessage(
-            t.approvedSuccess
-          );
-        } else {
-          setMessage(
-            t.rejectedSuccess
+        /*
+         * IMPORTANT:
+         *
+         * The review endpoint currently returns only:
+         * {
+         *   status: "ok",
+         *   record_status: "approved"
+         * }
+         *
+         * So we fetch the records again to get
+         * the newly generated qr_code.
+         */
+        try {
+          const updatedData =
+            await api.getHeritageRecords();
+
+          if (Array.isArray(updatedData)) {
+            const updatedRecord =
+              updatedData.find(
+                (record: HeritageRecord) =>
+                  record.id === recordId
+              );
+
+            if (updatedRecord) {
+              console.log(
+                "Approved record:",
+                updatedRecord
+              );
+
+              console.log(
+                "QR code:",
+                updatedRecord.qr_code
+              );
+
+              setApprovedRecord(
+                updatedRecord
+              );
+            }
+          }
+        } catch (qrError) {
+          console.error(
+            "Could not fetch approved record:",
+            qrError
           );
         }
-
-        setRecords(
-          (
-            previousRecords
-          ) =>
-            previousRecords.filter(
-              (
-                record
-              ) =>
-                record.id !==
-                recordId
-            )
-        );
-      } catch (
-        err
-      ) {
-        console.error(
-          "Heritage review failed:",
-          err
-        );
-
-        if (
-          err instanceof Error
-        ) {
-          setError(
-            err.message
-          );
-        } else {
-          setError(
-            t.unableReview
-          );
-        }
-      } finally {
-        setProcessingId(
-          null
+      } else {
+        setMessage(
+          t.rejectedSuccess
         );
       }
-    };
+
+      /*
+       * Remove the reviewed record
+       * from pending verification.
+       */
+      setRecords(
+        (previousRecords) =>
+          previousRecords.filter(
+            (record) =>
+              record.id !== recordId
+          )
+      );
+    } catch (err) {
+      console.error(
+        "Heritage review failed:",
+        err
+      );
+
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError(t.unableReview);
+      }
+    } finally {
+      setProcessingId(null);
+    }
+  };
 
   /* =======================================================
      LOADING
@@ -506,9 +517,7 @@ export function CommunityPage() {
               mb-4
             "
           >
-            <ShieldCheck
-              size={18}
-            />
+            <ShieldCheck size={18} />
 
             <span
               className="
@@ -607,6 +616,191 @@ export function CommunityPage() {
         )}
 
         {/* =================================================
+            APPROVED RECORD + QR CODE
+        ================================================= */}
+
+        {approvedRecord && (
+          <section
+            className="
+              mb-12
+              border
+              border-green-300
+              dark:border-green-900
+              bg-white
+              dark:bg-[#1c1917]
+              p-8
+              md:p-10
+              shadow-sm
+            "
+          >
+            <div
+              className="
+                grid
+                grid-cols-1
+                md:grid-cols-[1fr_auto]
+                gap-10
+                items-center
+              "
+            >
+              <div>
+                <div
+                  className="
+                    flex
+                    items-center
+                    gap-2
+                    text-green-700
+                    dark:text-green-400
+                    mb-4
+                  "
+                >
+                  <CheckCircle size={20} />
+
+                  <span
+                    className="
+                      text-[10px]
+                      uppercase
+                      tracking-[0.18em]
+                      font-bold
+                    "
+                  >
+                    {t.approvedRecord}
+                  </span>
+                </div>
+
+                <h2
+                  className="
+                    font-display
+                    text-3xl
+                    md:text-4xl
+                    mb-4
+                  "
+                >
+                  {approvedRecord.title}
+                </h2>
+
+                <p
+                  className="
+                    text-[#555550]
+                    dark:text-[#c1bab4]
+                    leading-7
+                    mb-5
+                  "
+                >
+                  {t.qrDescription}
+                </p>
+
+                {approvedRecord.qr_code ? (
+                  <p
+                    className="
+                      text-xs
+                      text-green-700
+                      dark:text-green-400
+                    "
+                  >
+                    QR code generated successfully.
+                  </p>
+                ) : (
+                  <p
+                    className="
+                      text-xs
+                      text-[#94492d]
+                      dark:text-[#d97955]
+                    "
+                  >
+                    {t.qrGenerating}
+                  </p>
+                )}
+              </div>
+
+              {/* QR CODE */}
+
+              <div
+                className="
+                  flex
+                  flex-col
+                  items-center
+                  justify-center
+                  min-w-[240px]
+                "
+              >
+                <div
+                  className="
+                    flex
+                    items-center
+                    gap-2
+                    mb-4
+                    text-[#94492d]
+                    dark:text-[#d97955]
+                  "
+                >
+                  <QrCode size={18} />
+
+                  <span
+                    className="
+                      text-[10px]
+                      uppercase
+                      tracking-[0.15em]
+                      font-bold
+                    "
+                  >
+                    {t.qrTitle}
+                  </span>
+                </div>
+
+                {approvedRecord.qr_code ? (
+                  <div
+                    className="
+                      bg-white
+                      p-4
+                      border
+                      border-[#d5d0ca]
+                      dark:border-[#4a433e]
+                      shadow-sm
+                    "
+                  >
+                    <img
+                      src={getMediaUrl(
+                        approvedRecord.qr_code
+                      )}
+                      alt={`QR Code for ${approvedRecord.title}`}
+                      className="
+                        w-52
+                        h-52
+                        object-contain
+                      "
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className="
+                      w-52
+                      h-52
+                      flex
+                      items-center
+                      justify-center
+                      border
+                      border-[#d5d0ca]
+                      dark:border-[#4a433e]
+                      bg-[#f7f5f1]
+                      dark:bg-[#151311]
+                    "
+                  >
+                    <RefreshCw
+                      className="
+                        w-8
+                        h-8
+                        animate-spin
+                        text-[#94492d]
+                      "
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* =================================================
             SUMMARY BAR
         ================================================= */}
 
@@ -649,9 +843,7 @@ export function CommunityPage() {
 
           <button
             type="button"
-            onClick={
-              loadRecords
-            }
+            onClick={loadRecords}
             className="
               flex
               items-center
@@ -671,10 +863,7 @@ export function CommunityPage() {
               transition-colors
             "
           >
-            <RefreshCw
-              size={15}
-            />
-
+            <RefreshCw size={15} />
             {t.refresh}
           </button>
         </section>
@@ -683,8 +872,7 @@ export function CommunityPage() {
             EMPTY STATE
         ================================================= */}
 
-        {records.length ===
-          0 && (
+        {records.length === 0 && (
           <section
             className="
               border
@@ -735,414 +923,216 @@ export function CommunityPage() {
         ================================================= */}
 
         <div className="space-y-10">
-          {records.map(
-            (
-              record
-            ) => (
-              <article
-                key={
-                  record.id
-                }
-                className="
-                  border
-                  border-[#d5d0ca]
-                  dark:border-[#3b3531]
-                  bg-white
-                  dark:bg-[#1c1917]
-                  overflow-hidden
-                  shadow-sm
-                "
-              >
-                {/* IMAGE */}
+          {records.map((record) => (
+            <article
+              key={record.id}
+              className="
+                border
+                border-[#d5d0ca]
+                dark:border-[#3b3531]
+                bg-white
+                dark:bg-[#1c1917]
+                overflow-hidden
+                shadow-sm
+              "
+            >
+              {/* IMAGE */}
 
-                {record.image && (
-                  <div
+              {record.image && (
+                <div
+                  className="
+                    w-full
+                    h-[300px]
+                    md:h-[420px]
+                    overflow-hidden
+                    bg-[#efeeea]
+                    dark:bg-[#151311]
+                  "
+                >
+                  <img
+                    src={getMediaUrl(record.image)}
+                    alt={record.title}
                     className="
                       w-full
-                      h-[300px]
-                      md:h-[420px]
-                      overflow-hidden
-                      bg-[#efeeea]
-                      dark:bg-[#151311]
+                      h-full
+                      object-cover
                     "
-                  >
-                    <img
-                      src={
-                        record.image
-                      }
-                      alt={
-                        record.title
-                      }
-                      className="
-                        w-full
-                        h-full
-                        object-cover
-                      "
-                    />
-                  </div>
-                )}
+                  />
+                </div>
+              )}
 
-                {/* CONTENT */}
+              {/* CONTENT */}
+
+              <div
+                className="
+                  p-7
+                  md:p-10
+                "
+              >
+                {/* STATUS */}
 
                 <div
                   className="
-                    p-7
-                    md:p-10
+                    flex
+                    flex-col
+                    sm:flex-row
+                    sm:items-center
+                    justify-between
+                    gap-3
+                    mb-7
                   "
                 >
-                  {/* STATUS */}
-
-                  <div
+                  <span
                     className="
-                      flex
-                      flex-col
-                      sm:flex-row
-                      sm:items-center
-                      justify-between
-                      gap-3
-                      mb-7
+                      text-[10px]
+                      tracking-[0.18em]
+                      uppercase
+                      text-[#94492d]
+                      dark:text-[#d97955]
+                      font-bold
                     "
                   >
-                    <span
-                      className="
-                        text-[10px]
-                        tracking-[0.18em]
-                        uppercase
-                        text-[#94492d]
-                        dark:text-[#d97955]
-                        font-bold
-                      "
-                    >
-                      {t.pendingReview}
-                    </span>
+                    {t.pendingReview}
+                  </span>
 
-                    <span
+                  <span
+                    className="
+                      text-xs
+                      text-[#9a9893]
+                      dark:text-[#77716c]
+                      flex
+                      items-center
+                      gap-1.5
+                    "
+                  >
+                    <Calendar
                       className="
-                        text-xs
-                        text-[#9a9893]
-                        dark:text-[#77716c]
+                        w-3.5
+                        h-3.5
+                      "
+                    />
+
+                    {record.created_at
+                      ? new Date(
+                          record.created_at
+                        ).toLocaleDateString()
+                      : ""}
+                  </span>
+                </div>
+
+                {/* TITLE */}
+
+                <h2
+                  className="
+                    font-display
+                    text-3xl
+                    md:text-4xl
+                    tracking-[-0.02em]
+                    mb-5
+                  "
+                >
+                  {record.title}
+                </h2>
+
+                {/* DESCRIPTION */}
+
+                <p
+                  className="
+                    text-[#555550]
+                    dark:text-[#c1bab4]
+                    leading-7
+                    mb-8
+                  "
+                >
+                  {record.description}
+                </p>
+
+                {/* METADATA */}
+
+                <div
+                  className="
+                    grid
+                    grid-cols-1
+                    sm:grid-cols-3
+                    gap-5
+                    border-y
+                    border-[#e2ded9]
+                    dark:border-[#39332f]
+                    py-6
+                    mb-8
+                  "
+                >
+                  <MetadataItem
+                    label={t.category}
+                    value={record.category ?? "—"}
+                  />
+
+                  <MetadataItem
+                    label={t.language}
+                    value={record.language ?? "—"}
+                  />
+
+                  <MetadataItem
+                    label={t.location}
+                    value={record.location ?? "—"}
+                  />
+                </div>
+
+                {/* AUDIO */}
+
+                {record.audio && (
+                  <section className="mb-8">
+                    <div
+                      className="
                         flex
                         items-center
-                        gap-1.5
+                        gap-2
+                        text-[10px]
+                        uppercase
+                        tracking-[0.15em]
+                        font-bold
+                        text-[#747878]
+                        dark:text-[#aaa39c]
+                        mb-3
                       "
                     >
-                      <Calendar
+                      <Volume2
                         className="
-                          w-3.5
-                          h-3.5
+                          w-4
+                          h-4
                         "
                       />
 
-                      {record.created_at
-                        ? new Date(
-                            record.created_at
-                          ).toLocaleDateString()
-                        : ""}
-                    </span>
-                  </div>
+                      {t.audio}
+                    </div>
 
-                  {/* TITLE */}
-
-                  <h2
-                    className="
-                      font-display
-                      text-3xl
-                      md:text-4xl
-                      tracking-[-0.02em]
-                      mb-5
-                    "
-                  >
-                    {record.title}
-                  </h2>
-
-                  {/* DESCRIPTION */}
-
-                  <p
-                    className="
-                      text-[#555550]
-                      dark:text-[#c1bab4]
-                      leading-7
-                      mb-8
-                    "
-                  >
-                    {
-                      record.description
-                    }
-                  </p>
-
-                  {/* METADATA */}
-
-                  <div
-                    className="
-                      grid
-                      grid-cols-1
-                      sm:grid-cols-3
-                      gap-5
-                      border-y
-                      border-[#e2ded9]
-                      dark:border-[#39332f]
-                      py-6
-                      mb-8
-                    "
-                  >
-                    <MetadataItem
-                      label={
-                        t.category
-                      }
-                      value={
-                        record.category ??
-                        "—"
-                      }
-                    />
-
-                    <MetadataItem
-                      label={
-                        t.language
-                      }
-                      value={
-                        record.language ??
-                        "—"
-                      }
-                    />
-
-                    <MetadataItem
-                      label={
-                        t.location
-                      }
-                      value={
-                        record.location ??
-                        "—"
-                      }
-                    />
-                  </div>
-
-                  {/* AUDIO */}
-
-                  {record.audio && (
-                    <section className="mb-8">
-                      <div
-                        className="
-                          flex
-                          items-center
-                          gap-2
-                          text-[10px]
-                          uppercase
-                          tracking-[0.15em]
-                          font-bold
-                          text-[#747878]
-                          dark:text-[#aaa39c]
-                          mb-3
-                        "
-                      >
-                        <Volume2
-                          className="
-                            w-4
-                            h-4
-                          "
-                        />
-
-                        {t.audio}
-                      </div>
-
-                      <audio
-                        controls
-                        className="w-full"
-                      >
-                        <source
-                          src={
-                            record.audio
-                          }
-                        />
-
-                        {
-                          t.audioUnsupported
-                        }
-                      </audio>
-                    </section>
-                  )}
-
-                  {/* AI SUMMARY */}
-
-                  {record.ai_summary && (
-                    <section
-                      className="
-                        bg-[#f4efe9]
-                        dark:bg-[#151311]
-                        border
-                        border-[#ded6cf]
-                        dark:border-[#39332f]
-                        p-6
-                        mb-7
-                      "
+                    <audio
+                      controls
+                      className="w-full"
                     >
-                      <div
-                        className="
-                          flex
-                          items-center
-                          gap-2
-                          text-[10px]
-                          uppercase
-                          tracking-[0.15em]
-                          text-[#94492d]
-                          dark:text-[#d97955]
-                          font-bold
-                          mb-3
-                        "
-                      >
-                        <Sparkles
-                          className="
-                            w-4
-                            h-4
-                          "
-                        />
+                      <source
+                        src={getMediaUrl(
+                          record.audio
+                        )}
+                      />
 
-                        {t.aiSummary}
-                      </div>
-
-                      <p
-                        className="
-                          text-sm
-                          leading-7
-                          text-[#555550]
-                          dark:text-[#c1bab4]
-                        "
-                      >
-                        {
-                          record.ai_summary
-                        }
-                      </p>
-                    </section>
-                  )}
-
-                  {/* AI TAGS */}
-
-                  {record.ai_tags && (
-                    <section className="mb-7">
-                      <p
-                        className="
-                          text-[10px]
-                          uppercase
-                          tracking-[0.15em]
-                          text-[#747878]
-                          dark:text-[#aaa39c]
-                          mb-3
-                          font-bold
-                        "
-                      >
-                        {t.aiTags}
-                      </p>
-
-                      <div
-                        className="
-                          flex
-                          flex-wrap
-                          gap-2
-                        "
-                      >
-                        {record.ai_tags
-                          .split(",")
-                          .map(
-                            (
-                              tag
-                            ) =>
-                              tag.trim()
-                          )
-                          .filter(
-                            Boolean
-                          )
-                          .map(
-                            (
-                              tag
-                            ) => (
-                              <span
-                                key={
-                                  tag
-                                }
-                                className="
-                                  px-3
-                                  py-1.5
-                                  border
-                                  border-[#d5d0ca]
-                                  dark:border-[#4a433e]
-                                  text-xs
-                                  text-[#555550]
-                                  dark:text-[#c1bab4]
-                                "
-                              >
-                                #{tag}
-                              </span>
-                            )
-                          )}
-                      </div>
-                    </section>
-                  )}
-
-                  {/* AI TRANSLATION */}
-
-                  {record.ai_translation && (
-                    <section className="mb-7">
-                      <p
-                        className="
-                          text-[10px]
-                          uppercase
-                          tracking-[0.15em]
-                          text-[#747878]
-                          dark:text-[#aaa39c]
-                          mb-3
-                          font-bold
-                        "
-                      >
-                        {
-                          t.aiTranslation
-                        }
-                      </p>
-
-                      <p
-                        className="
-                          text-sm
-                          leading-7
-                          text-[#555550]
-                          dark:text-[#c1bab4]
-                        "
-                      >
-                        {
-                          record.ai_translation
-                        }
-                      </p>
-                    </section>
-                  )}
-
-                  {/* CONSENT */}
-
-                  <section className="mb-7">
-                    <p className="text-sm">
-                      {t.consent}:
-
-                      <span
-                        className={
-                          record.consent_given
-                            ? "text-green-700 dark:text-green-400 font-semibold ml-2"
-                            : "text-red-700 dark:text-red-400 font-semibold ml-2"
-                        }
-                      >
-                        {record.consent_given
-                          ? t.given
-                          : t.notGiven}
-                      </span>
-                    </p>
+                      {t.audioUnsupported}
+                    </audio>
                   </section>
+                )}
 
-                  {/* RECORD ID */}
+                {/* AI SUMMARY */}
 
+                {record.ai_summary && (
                   <section
                     className="
-                      bg-[#f7f5f1]
+                      bg-[#f4efe9]
                       dark:bg-[#151311]
                       border
-                      border-[#e0dcd6]
+                      border-[#ded6cf]
                       dark:border-[#39332f]
-                      p-5
-                      mb-8
+                      p-6
+                      mb-7
                     "
                   >
                     <div
@@ -1152,141 +1142,287 @@ export function CommunityPage() {
                         gap-2
                         text-[10px]
                         uppercase
-                        tracking-[0.14em]
-                        text-[#8b8882]
-                        dark:text-[#77716c]
-                        mb-2
+                        tracking-[0.15em]
+                        text-[#94492d]
+                        dark:text-[#d97955]
                         font-bold
+                        mb-3
                       "
                     >
-                      <FileText
+                      <Sparkles
                         className="
-                          w-3.5
-                          h-3.5
+                          w-4
+                          h-4
                         "
                       />
 
-                      {t.recordId}
+                      {t.aiSummary}
                     </div>
 
                     <p
                       className="
-                        text-xs
-                        md:text-sm
-                        break-all
-                        font-mono
+                        text-sm
+                        leading-7
                         text-[#555550]
-                        dark:text-[#bdb5ae]
+                        dark:text-[#c1bab4]
                       "
                     >
-                      {record.id}
+                      {record.ai_summary}
                     </p>
                   </section>
+                )}
 
-                  {/* REVIEW */}
+                {/* AI TAGS */}
 
-                  <section
+                {record.ai_tags && (
+                  <section className="mb-7">
+                    <p
+                      className="
+                        text-[10px]
+                        uppercase
+                        tracking-[0.15em]
+                        text-[#747878]
+                        dark:text-[#aaa39c]
+                        mb-3
+                        font-bold
+                      "
+                    >
+                      {t.aiTags}
+                    </p>
+
+                    <div
+                      className="
+                        flex
+                        flex-wrap
+                        gap-2
+                      "
+                    >
+                      {record.ai_tags
+                        .split(",")
+                        .map((tag) =>
+                          tag.trim()
+                        )
+                        .filter(Boolean)
+                        .map((tag) => (
+                          <span
+                            key={tag}
+                            className="
+                              px-3
+                              py-1.5
+                              border
+                              border-[#d5d0ca]
+                              dark:border-[#4a433e]
+                              text-xs
+                              text-[#555550]
+                              dark:text-[#c1bab4]
+                            "
+                          >
+                            #{tag}
+                          </span>
+                        ))}
+                    </div>
+                  </section>
+                )}
+
+                {/* AI TRANSLATION */}
+
+                {record.ai_translation && (
+                  <section className="mb-7">
+                    <p
+                      className="
+                        text-[10px]
+                        uppercase
+                        tracking-[0.15em]
+                        text-[#747878]
+                        dark:text-[#aaa39c]
+                        mb-3
+                        font-bold
+                      "
+                    >
+                      {t.aiTranslation}
+                    </p>
+
+                    <p
+                      className="
+                        text-sm
+                        leading-7
+                        text-[#555550]
+                        dark:text-[#c1bab4]
+                      "
+                    >
+                      {record.ai_translation}
+                    </p>
+                  </section>
+                )}
+
+                {/* CONSENT */}
+
+                <section className="mb-7">
+                  <p className="text-sm">
+                    {t.consent}:
+
+                    <span
+                      className={
+                        record.consent_given
+                          ? "text-green-700 dark:text-green-400 font-semibold ml-2"
+                          : "text-red-700 dark:text-red-400 font-semibold ml-2"
+                      }
+                    >
+                      {record.consent_given
+                        ? t.given
+                        : t.notGiven}
+                    </span>
+                  </p>
+                </section>
+
+                {/* RECORD ID */}
+
+                <section
+                  className="
+                    bg-[#f7f5f1]
+                    dark:bg-[#151311]
+                    border
+                    border-[#e0dcd6]
+                    dark:border-[#39332f]
+                    p-5
+                    mb-8
+                  "
+                >
+                  <div
                     className="
-                      grid
-                      grid-cols-1
-                      sm:grid-cols-2
-                      gap-4
+                      flex
+                      items-center
+                      gap-2
+                      text-[10px]
+                      uppercase
+                      tracking-[0.14em]
+                      text-[#8b8882]
+                      dark:text-[#77716c]
+                      mb-2
+                      font-bold
                     "
                   >
-                    {/* APPROVE */}
-
-                    <button
-                      type="button"
-                      disabled={
-                        processingId ===
-                        record.id
-                      }
-                      onClick={() =>
-                        handleReview(
-                          record.id,
-                          "approved"
-                        )
-                      }
+                    <FileText
                       className="
-                        flex
-                        items-center
-                        justify-center
-                        gap-2
-                        bg-[#94492d]
-                        dark:bg-[#b85b38]
-                        text-white
-                        py-4
-                        px-5
-                        text-[11px]
-                        font-bold
-                        uppercase
-                        tracking-[0.12em]
-                        hover:bg-[#783923]
-                        dark:hover:bg-[#cf6944]
-                        transition
-                        disabled:opacity-50
-                        disabled:cursor-not-allowed
+                        w-3.5
+                        h-3.5
                       "
-                    >
-                      <CheckCircle
-                        size={18}
-                      />
+                    />
 
-                      {processingId ===
+                    {t.recordId}
+                  </div>
+
+                  <p
+                    className="
+                      text-xs
+                      md:text-sm
+                      break-all
+                      font-mono
+                      text-[#555550]
+                      dark:text-[#bdb5ae]
+                    "
+                  >
+                    {record.id}
+                  </p>
+                </section>
+
+                {/* REVIEW */}
+
+                <section
+                  className="
+                    grid
+                    grid-cols-1
+                    sm:grid-cols-2
+                    gap-4
+                  "
+                >
+                  {/* APPROVE */}
+
+                  <button
+                    type="button"
+                    disabled={
+                      processingId ===
                       record.id
-                        ? t.processing
-                        : t.approve}
-                    </button>
+                    }
+                    onClick={() =>
+                      handleReview(
+                        record.id,
+                        "approved"
+                      )
+                    }
+                    className="
+                      flex
+                      items-center
+                      justify-center
+                      gap-2
+                      bg-[#94492d]
+                      dark:bg-[#b85b38]
+                      text-white
+                      py-4
+                      px-5
+                      text-[11px]
+                      font-bold
+                      uppercase
+                      tracking-[0.12em]
+                      hover:bg-[#783923]
+                      dark:hover:bg-[#cf6944]
+                      transition
+                      disabled:opacity-50
+                      disabled:cursor-not-allowed
+                    "
+                  >
+                    <CheckCircle size={18} />
 
-                    {/* REJECT */}
+                    {processingId === record.id
+                      ? t.processing
+                      : t.approve}
+                  </button>
 
-                    <button
-                      type="button"
-                      disabled={
-                        processingId ===
-                        record.id
-                      }
-                      onClick={() =>
-                        handleReview(
-                          record.id,
-                          "rejected"
-                        )
-                      }
-                      className="
-                        flex
-                        items-center
-                        justify-center
-                        gap-2
-                        border
-                        border-[#aaa6a0]
-                        dark:border-[#5a524c]
-                        py-4
-                        px-5
-                        text-[11px]
-                        font-bold
-                        uppercase
-                        tracking-[0.12em]
-                        hover:bg-[#efeeea]
-                        dark:hover:bg-[#211d1a]
-                        transition
-                        disabled:opacity-50
-                        disabled:cursor-not-allowed
-                      "
-                    >
-                      <XCircle
-                        size={18}
-                      />
+                  {/* REJECT */}
 
-                      {processingId ===
+                  <button
+                    type="button"
+                    disabled={
+                      processingId ===
                       record.id
-                        ? t.processing
-                        : t.reject}
-                    </button>
-                  </section>
-                </div>
-              </article>
-            )
-          )}
+                    }
+                    onClick={() =>
+                      handleReview(
+                        record.id,
+                        "rejected"
+                      )
+                    }
+                    className="
+                      flex
+                      items-center
+                      justify-center
+                      gap-2
+                      border
+                      border-[#aaa6a0]
+                      dark:border-[#5a524c]
+                      py-4
+                      px-5
+                      text-[11px]
+                      font-bold
+                      uppercase
+                      tracking-[0.12em]
+                      hover:bg-[#efeeea]
+                      dark:hover:bg-[#211d1a]
+                      transition
+                      disabled:opacity-50
+                      disabled:cursor-not-allowed
+                    "
+                  >
+                    <XCircle size={18} />
+
+                    {processingId === record.id
+                      ? t.processing
+                      : t.reject}
+                  </button>
+                </section>
+              </div>
+            </article>
+          ))}
         </div>
 
         {/* =================================================
