@@ -36,7 +36,7 @@ import Footer from "./components/layout/Footer";
 ========================================================= */
 
 import { HomePage } from "./pages/HomePage";
-import { ExplorePage } from "./pages/ExplorePage";
+import ExplorePage from "./pages/ExplorePage";
 import { LearnPage } from "./pages/LearnPage";
 import { ContributePage } from "./pages/ContributePage";
 import { CommunityPage } from "./pages/CommunityPage";
