@@ -1,5 +1,5 @@
 const DEFAULT_BACKEND_URL =
-  'https://heritagehub-backend1.onrender.com';
+  'https://rakshi.pythonanywhere.com';
 
 /* =========================================================
    TYPES — MATCHING DJANGO BACKEND
@@ -321,10 +321,20 @@ class HeritageApiService {
   private refreshToken: string | null;
 
   constructor() {
-    this.baseUrl =
+    const configuredUrl =
       localStorage.getItem('hh_backend_url') ||
       import.meta.env.VITE_API_BASE_URL ||
       DEFAULT_BACKEND_URL;
+
+    /*
+      IMPORTANT:
+      All API endpoints below already start with /api/...
+
+      Therefore baseUrl must NEVER end with /api.
+    */
+    this.baseUrl = configuredUrl
+      .replace(/\/api\/?$/, '')
+      .replace(/\/$/, '');
 
     this.accessToken =
       localStorage.getItem('hh_access_token') ||
@@ -344,7 +354,9 @@ class HeritageApiService {
   }
 
   public setBaseUrl(url: string): void {
-    this.baseUrl = url.replace(/\/$/, '');
+    this.baseUrl = url
+      .replace(/\/api\/?$/, '')
+      .replace(/\/$/, '');
 
     localStorage.setItem(
       'hh_backend_url',
@@ -381,7 +393,18 @@ class HeritageApiService {
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
-    const url = `${this.baseUrl}${endpoint}`;
+    const cleanBaseUrl =
+      this.baseUrl
+        .replace(/\/api\/?$/, '')
+        .replace(/\/$/, '');
+
+    const cleanEndpoint =
+      endpoint.startsWith('/')
+        ? endpoint
+        : `/${endpoint}`;
+
+    const url =
+      `${cleanBaseUrl}${cleanEndpoint}`;
 
     this.accessToken =
       localStorage.getItem('hh_access_token') ||
@@ -421,6 +444,10 @@ class HeritageApiService {
       headers,
     });
 
+    /*
+      If access token expired, refresh it
+      and retry the original request.
+    */
     if (
       response.status === 401 &&
       this.refreshToken
