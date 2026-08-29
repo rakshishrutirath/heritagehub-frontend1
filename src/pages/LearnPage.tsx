@@ -154,17 +154,6 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
     "hisid halay hoy": "ହିସିଦ ହାଲାୟ ହୋୟ",
     "jaga to kala ranga": "ଜଗା ତୋ କଳା ରଙ୍ଗ",
     "keshari loo": "କେଶରୀ ଲୋ",
-    "rim jhim pani": "ରିମଝିମ ପାଣି",
-    "rinjodi": "ରିଞ୍ଜୋଡ଼ି",
-    "tora daya hele": "ତୋର ଦୟା ହେଲେ",
-    "tora daya hele tora malaya bahe": "ତୋର ଦୟା ହେଲେ ତୋର ମଲୟ ବହେ",
-    "mo jaga kalia re": "ମୋ ଜଗା କାଳିଆ ରେ",
-    "pan baha": "ପାନ ବାହା",
-    "rani guri": "ରାଣୀ ଗୁରି",
-    "lusadini lagne enej": "ଲୁସାଦିନି ଲାଗ୍ନେ ଏନେଜ",
-    "mahuriya dada re": "ମାହୁରିଆ ଦାଦା ରେ",
-    "mate kari bhabapura": "ମତେ କରି ଭାବପୁର",
-    "mate kari bhabapuri": "ମତେ କରି ଭାବପୁରୀ",
 
     // Known artists currently shown in the project
     "pankaj tandi": "ପଙ୍କଜ ତାଣ୍ଡି",
@@ -174,16 +163,6 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
     "satya adhikari": "ସତ୍ୟ ଅଧିକାରୀ",
     "uday hansda": "ଉଦୟ ହାଁସଦା",
     "sumita soren": "ସୁମିତା ସୋରେନ",
-    "aseema panda": "ଅସୀମା ପଣ୍ଡା",
-    "sunil kumar": "ସୁନୀଲ କୁମାର",
-    "sourav bharadwaj": "ସୌରଭ ଭରଦ୍ୱାଜ",
-    "biswajit & sarathi hembram": "ବିଶ୍ୱଜିତ ଓ ସାରଥି ହେମ୍ବ୍ରମ",
-    "biswajit and sarathi hembram": "ବିଶ୍ୱଜିତ ଓ ସାରଥି ହେମ୍ବ୍ରମ",
-    "mantu chhuria": "ମଣ୍ଟୁ ଛୁରିଆ",
-    "sukhadev barik": "ସୁଖଦେବ ବାରିକ",
-    "md.aziz": "ମହମ୍ମଦ ଅଜିଜ୍",
-    "md. aziz": "ମହମ୍ମଦ ଅଜିଜ୍",
-    "unknown": "ଅଜ୍ଞାତ",
 
     // Dance forms / poses
     "odissi dance": "ଓଡ଼ିଶୀ ନୃତ୍ୟ",
@@ -224,11 +203,7 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
     if (!isOdia) return value;
 
     const translated = getLocalOdia(value);
-
-    // In Odia mode, never show raw English backend text.
-    // Unknown content is translated automatically in the background.
-    // Until that finishes, show an Odia-only placeholder.
-    return translated || "ଓଡ଼ିଆ ରୂପାନ୍ତର ହେଉଛି...";
+    return translated || value;
   };
 
   const saveTranslation = (english: string, odia: string) => {
@@ -670,6 +645,52 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
     setPlayingPhrase(null);
   };
 
+  const playAudio = (url: string | null | undefined, type: "song" | "phrase", id: number) => {
+    stopAudio();
+
+    const cleanUrl = typeof url === "string" ? url.trim() : "";
+
+    if (!cleanUrl) {
+      return;
+    }
+
+    const audio = new Audio();
+    audio.preload = "auto";
+    audio.src = cleanUrl;
+    audioRef.current = audio;
+
+    const reset = () => {
+      if (audioRef.current === audio) {
+        audioRef.current = null;
+      }
+
+      setPlayingSong(null);
+      setPlayingPhrase(null);
+    };
+
+    audio.onended = reset;
+    audio.onerror = () => {
+      // A missing/invalid backend audio file should not leave the UI
+      // stuck in the playing state or produce an unhandled promise error.
+      console.warn(`Unable to load ${type} audio:`, cleanUrl);
+      reset();
+    };
+
+    if (type === "song") {
+      setPlayingSong(id);
+    } else {
+      setPlayingPhrase(id);
+    }
+
+    const playPromise = audio.play();
+
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        reset();
+      });
+    }
+  };
+
   const playSong = (song: Song) => {
     const id = Number(song.id);
 
@@ -678,24 +699,7 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
       return;
     }
 
-    stopAudio();
-
-    if (!song.audio) return;
-
-    const audio = new Audio(song.audio);
-
-    audioRef.current = audio;
-
-    audio.play().catch((error) => {
-      console.error("Song playback failed:", error);
-    });
-
-    setPlayingSong(id);
-
-    audio.onended = () => {
-      setPlayingSong(null);
-      audioRef.current = null;
-    };
+    playAudio(song.audio, "song", id);
   };
 
   const playPhrase = (phrase: LanguagePhrase) => {
@@ -706,24 +710,7 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
       return;
     }
 
-    stopAudio();
-
-    if (!phrase.audio) return;
-
-    const audio = new Audio(phrase.audio);
-
-    audioRef.current = audio;
-
-    audio.play().catch((error) => {
-      console.error("Phrase playback failed:", error);
-    });
-
-    setPlayingPhrase(id);
-
-    audio.onended = () => {
-      setPlayingPhrase(null);
-      audioRef.current = null;
-    };
+    playAudio(phrase.audio, "phrase", id);
   };
 
   useEffect(() => {
@@ -875,7 +862,7 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
                       rel="noopener noreferrer"
                       className="mt-5 inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.12em] font-bold text-[#94492d] dark:text-[#d58b6e]"
                     >
-                      {isOdia ? "ୟୁଟ୍ୟୁବ" : "YouTube"}
+                      YouTube
                       <ExternalLink className="w-3.5 h-3.5" />
                     </a>
                   )}
