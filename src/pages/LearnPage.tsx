@@ -645,50 +645,16 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
     setPlayingPhrase(null);
   };
 
-  const playAudio = (url: string | null | undefined, type: "song" | "phrase", id: number) => {
-    stopAudio();
+  const getSongAudioUrl = (song: Song): string | null => {
+    // Cloudinary RAW/Video URL is the permanent playable source.
+    // Fall back to the Django FileField URL for older records.
+    const cloudinaryUrl = song.cloudinary_audio_url?.trim();
+    if (cloudinaryUrl) return cloudinaryUrl;
 
-    const cleanUrl = typeof url === "string" ? url.trim() : "";
+    const legacyUrl = song.audio?.trim();
+    if (legacyUrl) return legacyUrl;
 
-    if (!cleanUrl) {
-      return;
-    }
-
-    const audio = new Audio();
-    audio.preload = "auto";
-    audio.src = cleanUrl;
-    audioRef.current = audio;
-
-    const reset = () => {
-      if (audioRef.current === audio) {
-        audioRef.current = null;
-      }
-
-      setPlayingSong(null);
-      setPlayingPhrase(null);
-    };
-
-    audio.onended = reset;
-    audio.onerror = () => {
-      // A missing/invalid backend audio file should not leave the UI
-      // stuck in the playing state or produce an unhandled promise error.
-      console.warn(`Unable to load ${type} audio:`, cleanUrl);
-      reset();
-    };
-
-    if (type === "song") {
-      setPlayingSong(id);
-    } else {
-      setPlayingPhrase(id);
-    }
-
-    const playPromise = audio.play();
-
-    if (playPromise !== undefined) {
-      playPromise.catch(() => {
-        reset();
-      });
-    }
+    return null;
   };
 
   const playSong = (song: Song) => {
@@ -699,7 +665,26 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
       return;
     }
 
-    playAudio(song.audio, "song", id);
+    stopAudio();
+
+    const audioUrl = getSongAudioUrl(song);
+
+    if (!audioUrl) return;
+
+    const audio = new Audio(audioUrl);
+
+    audioRef.current = audio;
+
+    audio.play().catch((error) => {
+      console.error("Song playback failed:", error);
+    });
+
+    setPlayingSong(id);
+
+    audio.onended = () => {
+      setPlayingSong(null);
+      audioRef.current = null;
+    };
   };
 
   const playPhrase = (phrase: LanguagePhrase) => {
@@ -710,7 +695,24 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
       return;
     }
 
-    playAudio(phrase.audio, "phrase", id);
+    stopAudio();
+
+    if (!phrase.audio) return;
+
+    const audio = new Audio(phrase.audio);
+
+    audioRef.current = audio;
+
+    audio.play().catch((error) => {
+      console.error("Phrase playback failed:", error);
+    });
+
+    setPlayingPhrase(id);
+
+    audio.onended = () => {
+      setPlayingPhrase(null);
+      audioRef.current = null;
+    };
   };
 
   useEffect(() => {
