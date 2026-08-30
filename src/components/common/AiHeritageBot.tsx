@@ -80,7 +80,7 @@ declare global {
 ========================================================= */
 
 const AI_CHAT_URL =
-  "https://heritagehub-backend1.onrender.com/api/ai/chat/";
+  "https://rakshi.pythonanywhere.com/api/ai/chat/";
 
 /* =========================================================
    COMPONENT

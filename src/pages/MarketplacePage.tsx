@@ -22,7 +22,7 @@ import {
 } from "../services/api";
 
 const API_BASE =
-  "https://heritagehub-backend1.onrender.com";
+  "https://rakshi.pythonanywhere.com";
 
 /* =========================================================
    TYPES

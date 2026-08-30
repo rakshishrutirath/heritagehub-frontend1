@@ -112,8 +112,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                   <Database className="w-4 h-4 text-[#94492d]" /> Django REST Backend Target
                 </h4>
                 <p className="text-[12px] text-[#444748] mt-0.5">
-                  Default target: <code className="font-mono bg-white px-1.5 py-0.5 rounded border border-[#c4c7c7]/40 text-[#94492d]">https://heritagehub-backend1.onrender.com/</code>
-                </p>
+                  Default target: <code className="font-mono bg-white px-1.5 py-0.5 rounded border border-[#c4c7c7]/40 text-[#94492d]">/</code>
+                </p>https://rakshi.pythonanywhere.com
               </div>
 
               <div className="flex items-center gap-2">
@@ -134,7 +134,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                 type="text"
                 value={backendUrl}
                 onChange={(e) => setBackendUrl(e.target.value)}
-                placeholder="https://heritagehub-backend1.onrender.com"
+                placeholder="https://rakshi.pythonanywhere.com"
                 className="flex-grow px-3.5 py-2 text-[13px] font-mono rounded-lg bg-white border border-[#c4c7c7] focus:outline-none focus:border-[#94492d]"
               />
               <button

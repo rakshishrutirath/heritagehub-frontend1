@@ -20,7 +20,7 @@ import { useLanguage } from "../context/LanguageContext";
 ========================================================= */
 
 const BACKEND_URL =
-  "https://heritagehub-backend1.onrender.com";
+  "https://rakshi.pythonanywhere.com";
 
 /* =========================================================
    TYPES
