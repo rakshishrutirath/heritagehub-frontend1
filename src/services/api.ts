@@ -153,7 +153,6 @@ export interface Song {
   youtube_url: string;
 
   audio: string | null;
-  cloudinary_audio_url?: string | null;
 
   lyrics: string;
   cultural_context: string;
@@ -322,10 +321,14 @@ class HeritageApiService {
   private refreshToken: string | null;
 
   constructor() {
-    this.baseUrl =
-      localStorage.getItem('hh_backend_url') ||
+    // Always use the current PythonAnywhere backend.
+    // Do not use an old backend URL saved in localStorage.
+    const configuredUrl =
       import.meta.env.VITE_API_BASE_URL ||
       DEFAULT_BACKEND_URL;
+
+    this.baseUrl = configuredUrl
+      .replace(/\/+$|\s+$/g, '');
 
     this.accessToken =
       localStorage.getItem('hh_access_token') ||

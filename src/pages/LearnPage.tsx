@@ -645,18 +645,6 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
     setPlayingPhrase(null);
   };
 
-  const getSongAudioUrl = (song: Song): string | null => {
-    // Cloudinary RAW/Video URL is the permanent playable source.
-    // Fall back to the Django FileField URL for older records.
-    const cloudinaryUrl = song.cloudinary_audio_url?.trim();
-    if (cloudinaryUrl) return cloudinaryUrl;
-
-    const legacyUrl = song.audio?.trim();
-    if (legacyUrl) return legacyUrl;
-
-    return null;
-  };
-
   const playSong = (song: Song) => {
     const id = Number(song.id);
 
@@ -667,11 +655,9 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
 
     stopAudio();
 
-    const audioUrl = getSongAudioUrl(song);
+    if (!song.audio) return;
 
-    if (!audioUrl) return;
-
-    const audio = new Audio(audioUrl);
+    const audio = new Audio(song.audio);
 
     audioRef.current = audio;
 
