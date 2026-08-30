@@ -1,5 +1,5 @@
 const DEFAULT_BACKEND_URL =
-  'https://heritagehub-backend1.onrender.com';
+  'https://rakshi.pythonanywhere.com';
 
 /* =========================================================
    TYPES — MATCHING DJANGO BACKEND
@@ -153,7 +153,7 @@ export interface Song {
   youtube_url: string;
 
   audio: string | null;
-  cloudinary_audio_url: string | null;
+  cloudinary_audio_url?: string | null;
 
   lyrics: string;
   cultural_context: string;
