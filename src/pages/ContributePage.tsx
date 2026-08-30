@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 import {
   api,
@@ -6,9 +6,9 @@ import {
   Language,
   Location,
   HeritageRecord,
-} from '../services/api';
+} from "../services/api";
 
-import { useLanguage } from '../context/LanguageContext';
+import { useLanguage } from "../context/LanguageContext";
 
 import {
   Upload,
@@ -19,22 +19,30 @@ import {
   FileText,
   QrCode,
   Sparkles,
-} from 'lucide-react';
+  LogIn,
+} from "lucide-react";
 
 export const ContributePage: React.FC = () => {
   const { language: siteLanguage } = useLanguage();
-  const isOdia = siteLanguage === 'or';
+  const isOdia = siteLanguage === "or";
+
+  // =========================================================
+  // STATE
+  // =========================================================
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [languages, setLanguages] = useState<Language[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
 
-  const [category, setCategory] = useState<number | ''>('');
-  const [language, setLanguage] = useState<number | ''>('');
-  const [location, setLocation] = useState<number | ''>('');
+  // IMPORTANT:
+  // Select values are strings in HTML.
+  // Convert them to numbers only when submitting.
+  const [category, setCategory] = useState<string>("");
+  const [language, setLanguage] = useState<string>("");
+  const [location, setLocation] = useState<string>("");
 
   const [consentGiven, setConsentGiven] = useState(false);
 
@@ -44,7 +52,7 @@ export const ContributePage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [loadingOptions, setLoadingOptions] = useState(true);
 
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const [successRecord, setSuccessRecord] =
     useState<HeritageRecord | null>(null);
@@ -54,137 +62,194 @@ export const ContributePage: React.FC = () => {
   // =========================================================
 
   const t = {
-    eyebrow: isOdia ? 'ଐତିହ୍ୟ ଅବଦାନ' : 'HERITAGE CONTRIBUTION',
+    eyebrow: isOdia
+      ? "ଐତିହ୍ୟ ଅବଦାନ"
+      : "HERITAGE CONTRIBUTION",
 
     heading: isOdia
-      ? 'ସାଂସ୍କୃତିକ ଐତିହ୍ୟ ଯୋଗଦାନ କରନ୍ତୁ'
-      : 'Contribute Cultural Heritage',
+      ? "ସାଂସ୍କୃତିକ ଐତିହ୍ୟ ଯୋଗଦାନ କରନ୍ତୁ"
+      : "Contribute Cultural Heritage",
 
     description: isOdia
-      ? 'ସଂରକ୍ଷଣ ଏବଂ ସମୁଦାୟ ଯାଞ୍ଚ ପାଇଁ ଏକ ଐତିହ୍ୟ ରେକର୍ଡ ଦାଖଲ କରନ୍ତୁ।'
-      : 'Submit a heritage record for preservation and community verification.',
+      ? "ସଂରକ୍ଷଣ ଏବଂ ସମୁଦାୟ ଯାଞ୍ଚ ପାଇଁ ଏକ ଐତିହ୍ୟ ରେକର୍ଡ ଦାଖଲ କରନ୍ତୁ।"
+      : "Submit a heritage record for preservation and community verification.",
 
-    title: isOdia ? 'ଐତିହ୍ୟ ଶୀର୍ଷକ' : 'Heritage Title',
+    title: isOdia
+      ? "ଐତିହ୍ୟ ଶୀର୍ଷକ"
+      : "Heritage Title",
 
     titlePlaceholder: isOdia
-      ? 'ଉଦାହରଣ: କୋଟପାଡ଼ ପ୍ରାକୃତିକ ରଙ୍ଗ ବୁଣାକାମ'
-      : 'e.g. Kotpad Natural Dye Weaving',
+      ? "ଉଦାହରଣ: କୋଟପାଡ଼ ପ୍ରାକୃତିକ ରଙ୍ଗ ବୁଣାକାମ"
+      : "e.g. Kotpad Natural Dye Weaving",
 
-    recordDescription: isOdia ? 'ବିବରଣୀ' : 'Description',
+    recordDescription: isOdia
+      ? "ବିବରଣୀ"
+      : "Description",
 
     descriptionPlaceholder: isOdia
-      ? 'ସାଂସ୍କୃତିକ ଐତିହ୍ୟ, ପରମ୍ପରା, ବସ୍ତୁ, ପ୍ରଥା କିମ୍ବା କାହାଣୀ ବିଷୟରେ ବର୍ଣ୍ଣନା କରନ୍ତୁ...'
-      : 'Describe the cultural heritage, tradition, object, practice or story...',
+      ? "ସାଂସ୍କୃତିକ ଐତିହ୍ୟ, ପରମ୍ପରା, ବସ୍ତୁ, ପ୍ରଥା କିମ୍ବା କାହାଣୀ ବିଷୟରେ ବର୍ଣ୍ଣନା କରନ୍ତୁ..."
+      : "Describe the cultural heritage, tradition, object, practice or story...",
 
-    category: isOdia ? 'ବର୍ଗ' : 'Category',
-    language: isOdia ? 'ଭାଷା' : 'Language',
-    location: isOdia ? 'ସ୍ଥାନ' : 'Location',
+    category: isOdia ? "ବର୍ଗ" : "Category",
 
-    selectCategory: isOdia ? 'ବର୍ଗ ବାଛନ୍ତୁ' : 'Select Category',
-    selectLanguage: isOdia ? 'ଭାଷା ବାଛନ୍ତୁ' : 'Select Language',
-    selectLocation: isOdia ? 'ସ୍ଥାନ ବାଛନ୍ତୁ' : 'Select Location',
+    language: isOdia ? "ଭାଷା" : "Language",
 
-    image: isOdia ? 'ଛବି' : 'Image',
-    audio: isOdia ? 'ଅଡିଓ' : 'Audio',
+    location: isOdia ? "ସ୍ଥାନ" : "Location",
 
-    chooseImage: isOdia ? 'ଛବି ବାଛନ୍ତୁ' : 'Choose Image',
-    chooseAudio: isOdia ? 'ଅଡିଓ ବାଛନ୍ତୁ' : 'Choose Audio',
+    selectCategory: isOdia
+      ? "ବର୍ଗ ବାଛନ୍ତୁ"
+      : "Select Category",
 
-    consent: isOdia ? 'ସମ୍ମତି' : 'Consent Given',
+    selectLanguage: isOdia
+      ? "ଭାଷା ବାଛନ୍ତୁ"
+      : "Select Language",
+
+    selectLocation: isOdia
+      ? "ସ୍ଥାନ ବାଛନ୍ତୁ"
+      : "Select Location",
+
+    image: isOdia ? "ଛବି" : "Image",
+
+    audio: isOdia ? "ଅଡିଓ" : "Audio",
+
+    chooseImage: isOdia
+      ? "ଛବି ବାଛନ୍ତୁ"
+      : "Choose Image",
+
+    chooseAudio: isOdia
+      ? "ଅଡିଓ ବାଛନ୍ତୁ"
+      : "Choose Audio",
+
+    consent: isOdia
+      ? "ସମ୍ମତି"
+      : "Consent Given",
 
     consentDescription: isOdia
-      ? 'ସାଂସ୍କୃତିକ ସଂରକ୍ଷଣ ପାଇଁ ଏହି ଐତିହ୍ୟ ସାମଗ୍ରୀକୁ HeritageHub ରେ ସଂରକ୍ଷଣ ଏବଂ ବ୍ୟବହାର କରିବାକୁ ମୁଁ ସମ୍ମତି ଦେଉଛି।'
-      : 'I consent to this heritage material being stored and used by HeritageHub for cultural preservation.',
+      ? "ସାଂସ୍କୃତିକ ସଂରକ୍ଷଣ ପାଇଁ ଏହି ଐତିହ୍ୟ ସାମଗ୍ରୀକୁ HeritageHub ରେ ସଂରକ୍ଷଣ ଏବଂ ବ୍ୟବହାର କରିବାକୁ ମୁଁ ସମ୍ମତି ଦେଉଛି।"
+      : "I consent to this heritage material being stored and used by HeritageHub for cultural preservation.",
 
     submit: isOdia
-      ? 'ଐତିହ୍ୟ ରେକର୍ଡ ଦାଖଲ କରନ୍ତୁ'
-      : 'Submit Heritage Record',
+      ? "ଐତିହ୍ୟ ରେକର୍ଡ ଦାଖଲ କରନ୍ତୁ"
+      : "Submit Heritage Record",
 
-    submitting: isOdia ? 'ଦାଖଲ ହେଉଛି...' : 'Submitting...',
+    submitting: isOdia
+      ? "ଦାଖଲ ହେଉଛି..."
+      : "Submitting...",
 
-    workflow: isOdia ? 'ସଂରକ୍ଷଣ ପ୍ରକ୍ରିୟା' : 'Preservation Workflow',
+    workflow: isOdia
+      ? "ସଂରକ୍ଷଣ ପ୍ରକ୍ରିୟା"
+      : "Preservation Workflow",
 
-    workflowOne: isOdia ? '୧. ରେକର୍ଡ ଦାଖଲ' : '1. Submit Record',
+    workflowOne: isOdia
+      ? "୧. ରେକର୍ଡ ଦାଖଲ"
+      : "1. Submit Record",
 
     workflowOneText: isOdia
-      ? 'ଶୀର୍ଷକ, ବିବରଣୀ, ବର୍ଗ, ଭାଷା, ସ୍ଥାନ, ଛବି ଏବଂ ଅଡିଓ Django କୁ ପଠାଯାଏ।'
-      : 'Your title, description, category, language, location, image and audio are sent to Django.',
+      ? "ଶୀର୍ଷକ, ବିବରଣୀ, ବର୍ଗ, ଭାଷା, ସ୍ଥାନ, ଛବି ଏବଂ ଅଡିଓ Django କୁ ପଠାଯାଏ।"
+      : "Your title, description, category, language, location, image and audio are sent to Django.",
 
-    workflowTwo: isOdia ? '୨. AI ସହାୟତା' : '2. AI Assistance',
+    workflowTwo: isOdia
+      ? "୨. AI ସହାୟତା"
+      : "2. AI Assistance",
 
     workflowTwoText: isOdia
-      ? 'HeritageHub ରେକର୍ଡ ପାଇଁ ସାରାଂଶ, ଟ୍ୟାଗ ଏବଂ ଅନୁବାଦ ସୃଷ୍ଟି କରିପାରିବ।'
-      : 'HeritageHub can generate summary, tags and translation for the record.',
+      ? "HeritageHub ରେକର୍ଡ ପାଇଁ ସାରାଂଶ, ଟ୍ୟାଗ ଏବଂ ଅନୁବାଦ ସୃଷ୍ଟି କରିପାରିବ।"
+      : "HeritageHub can generate summary, tags and translation for the record.",
 
     workflowThree: isOdia
-      ? '୩. ସମୁଦାୟ ଯାଞ୍ଚ'
-      : '3. Community Review',
+      ? "୩. ସମୁଦାୟ ଯାଞ୍ଚ"
+      : "3. Community Review",
 
     workflowThreeText: isOdia
-      ? 'ରେକର୍ଡଟି ଅନୁମୋଦନ, ପ୍ରତ୍ୟାଖ୍ୟାନ କିମ୍ବା ସଂଶୋଧନ ପାଇଁ ପଠାଯାଇପାରିବ।'
-      : 'The record can be approved, rejected or sent for correction.',
+      ? "ରେକର୍ଡଟି ଅନୁମୋଦନ, ପ୍ରତ୍ୟାଖ୍ୟାନ କିମ୍ବା ସଂଶୋଧନ ପାଇଁ ପଠାଯାଇପାରିବ।"
+      : "The record can be approved, rejected or sent for correction.",
 
     submitted: isOdia
-      ? 'ଐତିହ୍ୟ ରେକର୍ଡ ଦାଖଲ ହୋଇଛି'
-      : 'Heritage Record Submitted',
+      ? "ଐତିହ୍ୟ ରେକର୍ଡ ଦାଖଲ ହୋଇଛି"
+      : "Heritage Record Submitted",
 
     submittedDescription: isOdia
-      ? 'ଆପଣଙ୍କ ଐତିହ୍ୟ ରେକର୍ଡ Django backend କୁ ସଫଳତାର ସହ ପଠାଯାଇଛି।'
-      : 'Your heritage record was submitted to the Django backend successfully.',
+      ? "ଆପଣଙ୍କ ଐତିହ୍ୟ ରେକର୍ଡ Django backend କୁ ସଫଳତାର ସହ ପଠାଯାଇଛି।"
+      : "Your heritage record was submitted to the Django backend successfully.",
 
-    recordId: isOdia ? 'ରେକର୍ଡ ID' : 'Record ID',
-    status: isOdia ? 'ସ୍ଥିତି' : 'Status',
+    recordId: isOdia ? "ରେକର୍ଡ ID" : "Record ID",
 
-    aiSummary: isOdia ? 'AI ସାରାଂଶ' : 'AI Summary',
-    aiTags: isOdia ? 'AI ଟ୍ୟାଗ' : 'AI Tags',
-    aiTranslation: isOdia ? 'AI ଅନୁବାଦ' : 'AI Translation',
+    status: isOdia ? "ସ୍ଥିତି" : "Status",
 
-    qrCode: isOdia ? 'QR କୋଡ୍' : 'QR Code',
+    aiSummary: isOdia ? "AI ସାରାଂଶ" : "AI Summary",
+
+    aiTags: isOdia ? "AI ଟ୍ୟାଗ" : "AI Tags",
+
+    aiTranslation: isOdia
+      ? "AI ଅନୁବାଦ"
+      : "AI Translation",
+
+    qrCode: isOdia ? "QR କୋଡ୍" : "QR Code",
 
     submitAnother: isOdia
-      ? 'ଆଉ ଏକ ରେକର୍ଡ ଦାଖଲ କରନ୍ତୁ'
-      : 'Submit Another Record',
+      ? "ଆଉ ଏକ ରେକର୍ଡ ଦାଖଲ କରନ୍ତୁ"
+      : "Submit Another Record",
 
-    loading: isOdia ? 'ଲୋଡ୍ ହେଉଛି...' : 'Loading...',
+    loading: isOdia
+      ? "ଲୋଡ୍ ହେଉଛି..."
+      : "Loading...",
+
+    loginRequired: isOdia
+      ? "ଦାଖଲ କରିବା ପୂର୍ବରୁ ଦୟାକରି ଲଗଇନ୍ କରନ୍ତୁ।"
+      : "Please log in before submitting a heritage record.",
+
+    loginButton: isOdia
+      ? "ଲଗଇନ୍ କରନ୍ତୁ"
+      : "Log In",
   };
 
   // =========================================================
-  // LOAD OPTIONS
+  // LOAD CATEGORIES / LANGUAGES / LOCATIONS
   // =========================================================
 
   useEffect(() => {
     const loadOptions = async () => {
       try {
         setLoadingOptions(true);
+        setError("");
 
-        const [categoryData, languageData, locationData] =
-          await Promise.all([
-            api.getCategories(),
-            api.getLanguages(),
-            api.getLocations(),
-          ]);
+        const [
+          categoryData,
+          languageData,
+          locationData,
+        ] = await Promise.all([
+          api.getCategories(),
+          api.getLanguages(),
+          api.getLocations(),
+        ]);
 
         setCategories(
-          Array.isArray(categoryData) ? categoryData : []
+          Array.isArray(categoryData)
+            ? categoryData
+            : []
         );
 
         setLanguages(
-          Array.isArray(languageData) ? languageData : []
+          Array.isArray(languageData)
+            ? languageData
+            : []
         );
 
         setLocations(
-          Array.isArray(locationData) ? locationData : []
+          Array.isArray(locationData)
+            ? locationData
+            : []
         );
       } catch (err) {
         console.error(
-          'Failed to load contribution options:',
+          "Failed to load contribution options:",
           err
         );
 
         setError(
           isOdia
-            ? 'ବର୍ଗ, ଭାଷା କିମ୍ବା ସ୍ଥାନ ଲୋଡ୍ କରିହେଲା ନାହିଁ।'
-            : 'Unable to load categories, languages or locations.'
+            ? "ବର୍ଗ, ଭାଷା କିମ୍ବା ସ୍ଥାନ ଲୋଡ୍ କରିହେଲା ନାହିଁ।"
+            : "Unable to load categories, languages or locations."
         );
       } finally {
         setLoadingOptions(false);
@@ -192,22 +257,49 @@ export const ContributePage: React.FC = () => {
     };
 
     loadOptions();
-  }, []);
+  }, [isOdia]);
+
+  // =========================================================
+  // CHECK LOGIN
+  // =========================================================
+
+  const checkAuthentication = (): boolean => {
+    const accessToken =
+      localStorage.getItem("hh_access_token") ||
+      localStorage.getItem("access_token");
+
+    return Boolean(accessToken);
+  };
 
   // =========================================================
   // SUBMIT
   // =========================================================
 
   const handleSubmit = async (
-    event: React.FormEvent
+    event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
+
+    setError("");
+
+    // -------------------------------------------------------
+    // LOGIN
+    // -------------------------------------------------------
+
+    if (!checkAuthentication()) {
+      setError(t.loginRequired);
+      return;
+    }
+
+    // -------------------------------------------------------
+    // VALIDATION
+    // -------------------------------------------------------
 
     if (!title.trim()) {
       setError(
         isOdia
-          ? 'ଶୀର୍ଷକ ଆବଶ୍ୟକ।'
-          : 'Title is required.'
+          ? "ଶୀର୍ଷକ ଆବଶ୍ୟକ।"
+          : "Title is required."
       );
       return;
     }
@@ -215,8 +307,35 @@ export const ContributePage: React.FC = () => {
     if (!description.trim()) {
       setError(
         isOdia
-          ? 'ବିବରଣୀ ଆବଶ୍ୟକ।'
-          : 'Description is required.'
+          ? "ବିବରଣୀ ଆବଶ୍ୟକ।"
+          : "Description is required."
+      );
+      return;
+    }
+
+    if (!category) {
+      setError(
+        isOdia
+          ? "ଦୟାକରି ବର୍ଗ ବାଛନ୍ତୁ।"
+          : "Please select a category."
+      );
+      return;
+    }
+
+    if (!language) {
+      setError(
+        isOdia
+          ? "ଦୟାକରି ଭାଷା ବାଛନ୍ତୁ।"
+          : "Please select a language."
+      );
+      return;
+    }
+
+    if (!location) {
+      setError(
+        isOdia
+          ? "ଦୟାକରି ସ୍ଥାନ ବାଛନ୍ତୁ।"
+          : "Please select a location."
       );
       return;
     }
@@ -224,49 +343,136 @@ export const ContributePage: React.FC = () => {
     if (!consentGiven) {
       setError(
         isOdia
-          ? 'ଦାଖଲ କରିବା ପୂର୍ବରୁ ସମ୍ମତି ଦେବା ଆବଶ୍ୟକ।'
-          : 'You must give consent before submitting.'
+          ? "ଦାଖଲ କରିବା ପୂର୍ବରୁ ସମ୍ମତି ଦେବା ଆବଶ୍ୟକ।"
+          : "You must give consent before submitting."
       );
       return;
     }
 
+    // -------------------------------------------------------
+    // CONVERT SELECT VALUES TO NUMBERS
+    // -------------------------------------------------------
+
+    const categoryId = Number(category);
+    const languageId = Number(language);
+    const locationId = Number(location);
+
+    if (
+      !Number.isInteger(categoryId) ||
+      categoryId <= 0
+    ) {
+      setError(
+        isOdia
+          ? "ଅବୈଧ ବର୍ଗ।"
+          : "Invalid category."
+      );
+      return;
+    }
+
+    if (
+      !Number.isInteger(languageId) ||
+      languageId <= 0
+    ) {
+      setError(
+        isOdia
+          ? "ଅବୈଧ ଭାଷା।"
+          : "Invalid language."
+      );
+      return;
+    }
+
+    if (
+      !Number.isInteger(locationId) ||
+      locationId <= 0
+    ) {
+      setError(
+        isOdia
+          ? "ଅବୈଧ ସ୍ଥାନ।"
+          : "Invalid location."
+      );
+      return;
+    }
+
+    // -------------------------------------------------------
+    // SUBMIT TO DJANGO
+    // -------------------------------------------------------
+
     try {
       setSubmitting(true);
-      setError('');
+
+      console.log(
+        "Submitting heritage record..."
+      );
+
+      console.log(
+        "Authenticated:",
+        checkAuthentication()
+      );
 
       const result =
         await api.createHeritageRecord({
           title: title.trim(),
+
           description: description.trim(),
 
-          category:
-            category === '' ? null : category,
+          category: categoryId,
 
-          language:
-            language === '' ? null : language,
+          language: languageId,
 
-          location:
-            location === '' ? null : location,
+          location: locationId,
 
           consent_given: consentGiven,
 
-          image,
-          audio,
+          image: image,
+
+          audio: audio,
         });
 
+      console.log(
+        "Heritage record created:",
+        result
+      );
+
       setSuccessRecord(result);
-    } catch (err: any) {
+
+    } catch (err: unknown) {
       console.error(
-        'Heritage submission failed:',
+        "Heritage submission failed:",
         err
       );
 
+      let message =
+        "Unable to submit heritage record.";
+
+      if (err instanceof Error) {
+        message = err.message;
+      }
+
+      const lowerMessage =
+        message.toLowerCase();
+
+      if (
+        lowerMessage.includes("401") ||
+        lowerMessage.includes("authentication") ||
+        lowerMessage.includes("credentials") ||
+        lowerMessage.includes("unauthorized")
+      ) {
+        setError(
+          isOdia
+            ? "ଆପଣଙ୍କ ଲଗଇନ୍ ସେସନ୍ ସମାପ୍ତ ହୋଇଛି। ଦୟାକରି ପୁଣି ଲଗଇନ୍ କରନ୍ତୁ।"
+            : "Your login session has expired. Please log in again."
+        );
+
+        return;
+      }
+
       setError(
-        err?.message ||
+        message ||
           (isOdia
-            ? 'ଐତିହ୍ୟ ରେକର୍ଡ ଦାଖଲ କରିହେଲା ନାହିଁ।'
-            : 'Unable to submit heritage record.')
+            ? "ଐତିହ୍ୟ ରେକର୍ଡ ଦାଖଲ କରିହେଲା ନାହିଁ।"
+            : "Unable to submit heritage record.")
       );
+
     } finally {
       setSubmitting(false);
     }
@@ -277,15 +483,19 @@ export const ContributePage: React.FC = () => {
   // =========================================================
 
   const handleReset = () => {
-    setTitle('');
-    setDescription('');
-    setCategory('');
-    setLanguage('');
-    setLocation('');
+    setTitle("");
+    setDescription("");
+
+    setCategory("");
+    setLanguage("");
+    setLocation("");
+
     setConsentGiven(false);
+
     setImage(null);
     setAudio(null);
-    setError('');
+
+    setError("");
     setSuccessRecord(null);
   };
 
@@ -303,7 +513,6 @@ export const ContributePage: React.FC = () => {
           text-[#1b1c1a]
           dark:text-[#f3eee7]
           px-5 md:px-16 py-16
-          transition-colors duration-300
         "
       >
         <div className="max-w-4xl mx-auto">
@@ -339,7 +548,6 @@ export const ContributePage: React.FC = () => {
                 tracking-[0.16em]
                 font-bold
                 text-[#94492d]
-                dark:text-[#d97955]
               "
             >
               HeritageHub Archive
@@ -368,7 +576,16 @@ export const ContributePage: React.FC = () => {
               {t.submittedDescription}
             </p>
 
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* RECORD INFO */}
+
+            <div
+              className="
+                mt-8
+                grid grid-cols-1
+                md:grid-cols-2
+                gap-5
+              "
+            >
               <div
                 className="
                   border border-[#c4c7c7]/60
@@ -384,13 +601,19 @@ export const ContributePage: React.FC = () => {
                     uppercase
                     tracking-wider
                     text-[#747878]
-                    dark:text-[#aaa39c]
                   "
                 >
                   {t.recordId}
                 </span>
 
-                <div className="font-mono text-sm mt-2 break-all">
+                <div
+                  className="
+                    font-mono
+                    text-sm
+                    mt-2
+                    break-all
+                  "
+                >
                   {successRecord.id}
                 </div>
               </div>
@@ -410,7 +633,6 @@ export const ContributePage: React.FC = () => {
                     uppercase
                     tracking-wider
                     text-[#747878]
-                    dark:text-[#aaa39c]
                   "
                 >
                   {t.status}
@@ -420,8 +642,8 @@ export const ContributePage: React.FC = () => {
                   className="
                     font-bold
                     text-[#94492d]
-                    dark:text-[#d97955]
-                    mt-2 capitalize
+                    mt-2
+                    capitalize
                   "
                 >
                   {successRecord.status}
@@ -429,16 +651,24 @@ export const ContributePage: React.FC = () => {
               </div>
             </div>
 
+            {/* TITLE */}
+
             <div
               className="
                 mt-8
                 border-t
                 border-[#c4c7c7]
-                dark:border-[#3b3531]
                 pt-7
               "
             >
-              <h2 className="font-display text-2xl md:text-3xl font-bold">
+              <h2
+                className="
+                  font-display
+                  text-2xl
+                  md:text-3xl
+                  font-bold
+                "
+              >
                 {successRecord.title}
               </h2>
 
@@ -454,11 +684,14 @@ export const ContributePage: React.FC = () => {
               </p>
             </div>
 
+            {/* AI SUMMARY */}
+
             {successRecord.ai_summary && (
               <div
                 className="
                   mt-7
-                  border border-[#c4c7c7]/60
+                  border
+                  border-[#c4c7c7]/60
                   dark:border-[#3b3531]
                   bg-[#faf9f5]
                   dark:bg-[#151311]
@@ -467,11 +700,13 @@ export const ContributePage: React.FC = () => {
               >
                 <div
                   className="
-                    flex items-center gap-2
+                    flex items-center
+                    gap-2
                     text-[#94492d]
-                    dark:text-[#d97955]
-                    text-xs uppercase
-                    tracking-wider font-bold
+                    text-xs
+                    uppercase
+                    tracking-wider
+                    font-bold
                   "
                 >
                   <Sparkles className="w-4 h-4" />
@@ -491,11 +726,14 @@ export const ContributePage: React.FC = () => {
               </div>
             )}
 
+            {/* AI TAGS */}
+
             {successRecord.ai_tags && (
               <div
                 className="
                   mt-5
-                  border border-[#c4c7c7]/60
+                  border
+                  border-[#c4c7c7]/60
                   dark:border-[#3b3531]
                   bg-[#faf9f5]
                   dark:bg-[#151311]
@@ -504,9 +742,10 @@ export const ContributePage: React.FC = () => {
               >
                 <span
                   className="
-                    text-xs uppercase tracking-wider
+                    text-xs
+                    uppercase
+                    tracking-wider
                     text-[#94492d]
-                    dark:text-[#d97955]
                     font-bold
                   "
                 >
@@ -525,11 +764,14 @@ export const ContributePage: React.FC = () => {
               </div>
             )}
 
+            {/* AI TRANSLATION */}
+
             {successRecord.ai_translation && (
               <div
                 className="
                   mt-5
-                  border border-[#c4c7c7]/60
+                  border
+                  border-[#c4c7c7]/60
                   dark:border-[#3b3531]
                   bg-[#faf9f5]
                   dark:bg-[#151311]
@@ -538,9 +780,10 @@ export const ContributePage: React.FC = () => {
               >
                 <span
                   className="
-                    text-xs uppercase tracking-wider
+                    text-xs
+                    uppercase
+                    tracking-wider
                     text-[#94492d]
-                    dark:text-[#d97955]
                     font-bold
                   "
                 >
@@ -559,39 +802,64 @@ export const ContributePage: React.FC = () => {
               </div>
             )}
 
+            {/* QR CODE */}
+
             {successRecord.qr_code && (
               <div
                 className="
                   mt-7
                   border-t
                   border-[#c4c7c7]
-                  dark:border-[#3b3531]
                   pt-7
                 "
               >
-                <div className="flex items-center gap-2 mb-4">
+                <div
+                  className="
+                    flex
+                    items-center
+                    gap-2
+                    mb-4
+                  "
+                >
                   <QrCode
                     className="
                       w-5 h-5
                       text-[#94492d]
-                      dark:text-[#d97955]
                     "
                   />
 
-                  <h3 className="font-display text-xl font-bold">
+                  <h3
+                    className="
+                      font-display
+                      text-xl
+                      font-bold
+                    "
+                  >
                     {t.qrCode}
                   </h3>
                 </div>
 
-                <div className="bg-white inline-block p-3">
+                <div
+                  className="
+                    bg-white
+                    inline-block
+                    p-3
+                  "
+                >
                   <img
                     src={successRecord.qr_code}
                     alt="Heritage QR Code"
-                    className="w-40 h-40 object-contain"
+                    className="
+                      w-40
+                      h-40
+                      object-contain
+                    "
                   />
                 </div>
               </div>
             )}
+
+            {/* SUBMIT ANOTHER */}
 
             <button
               onClick={handleReset}
@@ -599,11 +867,10 @@ export const ContributePage: React.FC = () => {
                 mt-9
                 bg-[#94492d]
                 hover:bg-[#773319]
-                dark:bg-[#b85b38]
-                dark:hover:bg-[#cf6944]
                 text-white
                 px-7 py-3.5
-                text-xs uppercase
+                text-xs
+                uppercase
                 tracking-wider
                 font-bold
                 transition-colors
@@ -631,11 +898,11 @@ export const ContributePage: React.FC = () => {
         dark:text-[#f3eee7]
         px-5 md:px-16
         py-14 md:py-20
-        transition-colors duration-300
       "
     >
       <div className="max-w-[1200px] mx-auto">
-        {/* PAGE HEADING */}
+
+        {/* PAGE HEADER */}
 
         <div className="mb-12">
           <span
@@ -644,7 +911,6 @@ export const ContributePage: React.FC = () => {
               uppercase
               tracking-[0.16em]
               text-[#94492d]
-              dark:text-[#d97955]
               font-bold
             "
           >
@@ -689,7 +955,8 @@ export const ContributePage: React.FC = () => {
               mb-7
               bg-red-50
               dark:bg-red-950/30
-              border border-red-200
+              border
+              border-red-200
               dark:border-red-900
               text-red-700
               dark:text-red-300
@@ -697,11 +964,23 @@ export const ContributePage: React.FC = () => {
               text-sm
             "
           >
-            {error}
+            <div className="flex items-center gap-2">
+              <LogIn className="w-4 h-4" />
+              {error}
+            </div>
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div
+          className="
+            grid
+            grid-cols-1
+            lg:grid-cols-12
+            gap-8
+            items-start
+          "
+        >
+
           {/* FORM */}
 
           <form
@@ -719,6 +998,7 @@ export const ContributePage: React.FC = () => {
               shadow-sm
             "
           >
+
             {/* TITLE */}
 
             <div>
@@ -729,8 +1009,6 @@ export const ContributePage: React.FC = () => {
                   uppercase
                   tracking-wider
                   font-bold
-                  text-[#444748]
-                  dark:text-[#c5beb7]
                   mb-2
                 "
               >
@@ -750,17 +1028,11 @@ export const ContributePage: React.FC = () => {
                   px-4 py-3.5
                   bg-[#faf9f5]
                   dark:bg-[#151311]
-                  text-[#1b1c1a]
-                  dark:text-[#f3eee7]
-                  placeholder:text-[#9a9a96]
-                  dark:placeholder:text-[#6f6964]
                   border
                   border-[#c4c7c7]
                   dark:border-[#3b3531]
                   focus:outline-none
                   focus:border-[#94492d]
-                  dark:focus:border-[#d97955]
-                  transition-colors
                 "
               />
             </div>
@@ -775,8 +1047,6 @@ export const ContributePage: React.FC = () => {
                   uppercase
                   tracking-wider
                   font-bold
-                  text-[#444748]
-                  dark:text-[#c5beb7]
                   mb-2
                 "
               >
@@ -790,31 +1060,35 @@ export const ContributePage: React.FC = () => {
                 onChange={(event) =>
                   setDescription(event.target.value)
                 }
-                placeholder={t.descriptionPlaceholder}
+                placeholder={
+                  t.descriptionPlaceholder
+                }
                 className="
                   w-full
                   px-4 py-3.5
                   bg-[#faf9f5]
                   dark:bg-[#151311]
-                  text-[#1b1c1a]
-                  dark:text-[#f3eee7]
-                  placeholder:text-[#9a9a96]
-                  dark:placeholder:text-[#6f6964]
                   border
                   border-[#c4c7c7]
                   dark:border-[#3b3531]
                   focus:outline-none
                   focus:border-[#94492d]
-                  dark:focus:border-[#d97955]
                   resize-y
-                  transition-colors
                 "
               />
             </div>
 
             {/* DROPDOWNS */}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div
+              className="
+                grid
+                grid-cols-1
+                md:grid-cols-3
+                gap-4
+              "
+            >
+
               {/* CATEGORY */}
 
               <div>
@@ -825,8 +1099,6 @@ export const ContributePage: React.FC = () => {
                     uppercase
                     tracking-wider
                     font-bold
-                    text-[#444748]
-                    dark:text-[#c5beb7]
                     mb-2
                   "
                 >
@@ -839,8 +1111,6 @@ export const ContributePage: React.FC = () => {
                   onChange={(event) =>
                     setCategory(
                       event.target.value
-                        ? Number(event.target.value)
-                        : ''
                     )
                   }
                   className="
@@ -848,14 +1118,10 @@ export const ContributePage: React.FC = () => {
                     px-4 py-3.5
                     bg-[#faf9f5]
                     dark:bg-[#151311]
-                    text-[#1b1c1a]
-                    dark:text-[#f3eee7]
                     border
                     border-[#c4c7c7]
                     dark:border-[#3b3531]
                     focus:outline-none
-                    focus:border-[#94492d]
-                    dark:focus:border-[#d97955]
                   "
                 >
                   <option value="">
@@ -867,7 +1133,7 @@ export const ContributePage: React.FC = () => {
                   {categories.map((item) => (
                     <option
                       key={item.id}
-                      value={item.id}
+                      value={String(item.id)}
                     >
                       {item.name}
                     </option>
@@ -885,8 +1151,6 @@ export const ContributePage: React.FC = () => {
                     uppercase
                     tracking-wider
                     font-bold
-                    text-[#444748]
-                    dark:text-[#c5beb7]
                     mb-2
                   "
                 >
@@ -899,8 +1163,6 @@ export const ContributePage: React.FC = () => {
                   onChange={(event) =>
                     setLanguage(
                       event.target.value
-                        ? Number(event.target.value)
-                        : ''
                     )
                   }
                   className="
@@ -908,14 +1170,10 @@ export const ContributePage: React.FC = () => {
                     px-4 py-3.5
                     bg-[#faf9f5]
                     dark:bg-[#151311]
-                    text-[#1b1c1a]
-                    dark:text-[#f3eee7]
                     border
                     border-[#c4c7c7]
                     dark:border-[#3b3531]
                     focus:outline-none
-                    focus:border-[#94492d]
-                    dark:focus:border-[#d97955]
                   "
                 >
                   <option value="">
@@ -927,7 +1185,7 @@ export const ContributePage: React.FC = () => {
                   {languages.map((item) => (
                     <option
                       key={item.id}
-                      value={item.id}
+                      value={String(item.id)}
                     >
                       {item.name}
                     </option>
@@ -945,8 +1203,6 @@ export const ContributePage: React.FC = () => {
                     uppercase
                     tracking-wider
                     font-bold
-                    text-[#444748]
-                    dark:text-[#c5beb7]
                     mb-2
                   "
                 >
@@ -959,8 +1215,6 @@ export const ContributePage: React.FC = () => {
                   onChange={(event) =>
                     setLocation(
                       event.target.value
-                        ? Number(event.target.value)
-                        : ''
                     )
                   }
                   className="
@@ -968,14 +1222,10 @@ export const ContributePage: React.FC = () => {
                     px-4 py-3.5
                     bg-[#faf9f5]
                     dark:bg-[#151311]
-                    text-[#1b1c1a]
-                    dark:text-[#f3eee7]
                     border
                     border-[#c4c7c7]
                     dark:border-[#3b3531]
                     focus:outline-none
-                    focus:border-[#94492d]
-                    dark:focus:border-[#d97955]
                   "
                 >
                   <option value="">
@@ -987,12 +1237,12 @@ export const ContributePage: React.FC = () => {
                   {locations.map((item) => (
                     <option
                       key={item.id}
-                      value={item.id}
+                      value={String(item.id)}
                     >
                       {item.village_or_area}
-                      {' — '}
+                      {" — "}
                       {item.district}
-                      {', '}
+                      {", "}
                       {item.state}
                     </option>
                   ))}
@@ -1002,7 +1252,15 @@ export const ContributePage: React.FC = () => {
 
             {/* MEDIA */}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div
+              className="
+                grid
+                grid-cols-1
+                md:grid-cols-2
+                gap-5
+              "
+            >
+
               {/* IMAGE */}
 
               <div>
@@ -1013,8 +1271,6 @@ export const ContributePage: React.FC = () => {
                     uppercase
                     tracking-wider
                     font-bold
-                    text-[#444748]
-                    dark:text-[#c5beb7]
                     mb-2
                   "
                 >
@@ -1031,24 +1287,29 @@ export const ContributePage: React.FC = () => {
                     bg-[#faf9f5]
                     dark:bg-[#151311]
                     p-6
-                    flex flex-col
+                    flex
+                    flex-col
                     items-center
                     justify-center
                     cursor-pointer
                     hover:border-[#94492d]
-                    dark:hover:border-[#d97955]
-                    transition-colors
                   "
                 >
                   <ImageIcon
                     className="
                       w-8 h-8
                       text-[#94492d]
-                      dark:text-[#d97955]
                     "
                   />
 
-                  <span className="text-sm font-semibold mt-3 text-center">
+                  <span
+                    className="
+                      text-sm
+                      font-semibold
+                      mt-3
+                      text-center
+                    "
+                  >
                     {image
                       ? image.name
                       : t.chooseImage}
@@ -1058,7 +1319,6 @@ export const ContributePage: React.FC = () => {
                     className="
                       text-[11px]
                       text-[#747878]
-                      dark:text-[#8e8882]
                       mt-2
                     "
                   >
@@ -1089,8 +1349,6 @@ export const ContributePage: React.FC = () => {
                     uppercase
                     tracking-wider
                     font-bold
-                    text-[#444748]
-                    dark:text-[#c5beb7]
                     mb-2
                   "
                 >
@@ -1107,24 +1365,29 @@ export const ContributePage: React.FC = () => {
                     bg-[#faf9f5]
                     dark:bg-[#151311]
                     p-6
-                    flex flex-col
+                    flex
+                    flex-col
                     items-center
                     justify-center
                     cursor-pointer
                     hover:border-[#94492d]
-                    dark:hover:border-[#d97955]
-                    transition-colors
                   "
                 >
                   <Mic
                     className="
                       w-8 h-8
                       text-[#94492d]
-                      dark:text-[#d97955]
                     "
                   />
 
-                  <span className="text-sm font-semibold mt-3 text-center">
+                  <span
+                    className="
+                      text-sm
+                      font-semibold
+                      mt-3
+                      text-center
+                    "
+                  >
                     {audio
                       ? audio.name
                       : t.chooseAudio}
@@ -1134,7 +1397,6 @@ export const ContributePage: React.FC = () => {
                     className="
                       text-[11px]
                       text-[#747878]
-                      dark:text-[#8e8882]
                       mt-2
                     "
                   >
@@ -1168,7 +1430,14 @@ export const ContributePage: React.FC = () => {
                 p-5
               "
             >
-              <label className="flex items-start gap-3 cursor-pointer">
+              <label
+                className="
+                  flex
+                  items-start
+                  gap-3
+                  cursor-pointer
+                "
+              >
                 <input
                   type="checkbox"
                   checked={consentGiven}
@@ -1177,16 +1446,23 @@ export const ContributePage: React.FC = () => {
                       event.target.checked
                     )
                   }
-                  className="mt-1 accent-[#94492d]"
+                  className="mt-1"
                 />
 
                 <div>
-                  <div className="font-bold text-sm flex items-center gap-2">
+                  <div
+                    className="
+                      font-bold
+                      text-sm
+                      flex
+                      items-center
+                      gap-2
+                    "
+                  >
                     <ShieldCheck
                       className="
                         w-4 h-4
                         text-[#94492d]
-                        dark:text-[#d97955]
                       "
                     />
 
@@ -1197,7 +1473,6 @@ export const ContributePage: React.FC = () => {
                     className="
                       text-xs
                       text-[#747878]
-                      dark:text-[#aaa39c]
                       mt-2
                       leading-relaxed
                     "
@@ -1220,8 +1495,6 @@ export const ContributePage: React.FC = () => {
                 w-full
                 bg-[#94492d]
                 hover:bg-[#773319]
-                dark:bg-[#b85b38]
-                dark:hover:bg-[#cf6944]
                 disabled:opacity-50
                 disabled:cursor-not-allowed
                 text-white
@@ -1230,10 +1503,10 @@ export const ContributePage: React.FC = () => {
                 uppercase
                 tracking-[0.12em]
                 font-bold
-                flex items-center
+                flex
+                items-center
                 justify-center
                 gap-2
-                transition-colors
               "
             >
               <Upload className="w-4 h-4" />
@@ -1246,16 +1519,22 @@ export const ContributePage: React.FC = () => {
 
           {/* RIGHT SIDE */}
 
-          <aside className="lg:col-span-4 space-y-5 lg:sticky lg:top-28">
+          <aside
+            className="
+              lg:col-span-4
+              space-y-5
+              lg:sticky
+              lg:top-28
+            "
+          >
+
+            {/* WORKFLOW */}
+
             <div
               className="
                 bg-[#1c1b1b]
-                dark:bg-[#211d1a]
                 text-white
                 p-7
-                border
-                border-[#292626]
-                dark:border-[#3b3531]
               "
             >
               <div
@@ -1281,12 +1560,24 @@ export const ContributePage: React.FC = () => {
                   gap-2
                 "
               >
-                <FileText className="w-5 h-5 text-[#fd9e7b]" />
+                <FileText
+                  className="
+                    w-5 h-5
+                    text-[#fd9e7b]
+                  "
+                />
 
                 {t.workflow}
               </h3>
 
-              <div className="space-y-6 mt-7 text-sm">
+              <div
+                className="
+                  space-y-6
+                  mt-7
+                  text-sm
+                "
+              >
+
                 <div>
                   <div className="font-bold">
                     {t.workflowOne}
@@ -1307,8 +1598,21 @@ export const ContributePage: React.FC = () => {
                 <div className="h-px bg-white/10" />
 
                 <div>
-                  <div className="font-bold flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-[#fd9e7b]" />
+                  <div
+                    className="
+                      font-bold
+                      flex
+                      items-center
+                      gap-2
+                    "
+                  >
+                    <Sparkles
+                      className="
+                        w-4 h-4
+                        text-[#fd9e7b]
+                      "
+                    />
+
                     {t.workflowTwo}
                   </div>
 
@@ -1342,6 +1646,7 @@ export const ContributePage: React.FC = () => {
                     {t.workflowThreeText}
                   </p>
                 </div>
+
               </div>
             </div>
 
@@ -1351,9 +1656,7 @@ export const ContributePage: React.FC = () => {
               className="
                 border
                 border-[#c4c7c7]
-                dark:border-[#3b3531]
                 bg-[#efe1d7]
-                dark:bg-[#241b17]
                 p-6
               "
             >
@@ -1361,33 +1664,41 @@ export const ContributePage: React.FC = () => {
                 className="
                   w-6 h-6
                   text-[#94492d]
-                  dark:text-[#d97955]
                 "
               />
 
-              <h4 className="font-display text-xl font-bold mt-4">
+              <h4
+                className="
+                  font-display
+                  text-xl
+                  font-bold
+                  mt-4
+                "
+              >
                 {isOdia
-                  ? 'ଆପଣଙ୍କ ଐତିହ୍ୟକୁ ସଂରକ୍ଷଣ କରନ୍ତୁ'
-                  : 'Preserve Your Heritage'}
+                  ? "ଆପଣଙ୍କ ଐତିହ୍ୟକୁ ସଂରକ୍ଷଣ କରନ୍ତୁ"
+                  : "Preserve Your Heritage"}
               </h4>
 
               <p
                 className="
                   text-sm
                   text-[#5d5d59]
-                  dark:text-[#aaa39c]
                   leading-6
                   mt-2
                 "
               >
                 {isOdia
-                  ? 'ଆଜି ଆପଣ ଯାହା ଡକ୍ୟୁମେଣ୍ଟ କରୁଛନ୍ତି, ତାହା ଆଗାମୀ ପିଢ଼ି ପାଇଁ ଓଡ଼ିଶାର ସାଂସ୍କୃତିକ ସ୍ମୃତିର ଅଂଶ ହୋଇପାରେ।'
+                  ? "ଆଜି ଆପଣ ଯାହା ଡକ୍ୟୁମେଣ୍ଟ କରୁଛନ୍ତି, ତାହା ଆଗାମୀ ପିଢ଼ି ପାଇଁ ଓଡ଼ିଶାର ସାଂସ୍କୃତିକ ସ୍ମୃତିର ଅଂଶ ହୋଇପାରେ।"
                   : "What you document today can become part of Odisha's cultural memory for future generations."}
               </p>
             </div>
+
           </aside>
         </div>
       </div>
     </div>
   );
 };
+
+export default ContributePage;
