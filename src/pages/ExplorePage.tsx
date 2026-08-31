@@ -273,6 +273,30 @@ React.FC<ExplorePageProps> = () => {
     "mahaprasad":
       "ମହାପ୍ରସାଦ",
 
+    "mahaprasad - sacred food tradition":
+      "ମହାପ୍ରସାଦ – ପବିତ୍ର ଖାଦ୍ୟ ପରମ୍ପରା",
+
+    "temple cuisine:":
+      "ମନ୍ଦିର ରୋଷେଇ ପରମ୍ପରା:",
+
+    "traditional food is prepared as an offering to the deities following established temple customs and cooking practices.":
+      "ପ୍ରତିଷ୍ଠିତ ମନ୍ଦିର ପରମ୍ପରା ଓ ରାନ୍ଧଣ ପ୍ରଣାଳୀ ଅନୁସରଣ କରି ଦେବଦେବୀଙ୍କୁ ଭୋଗ ଭାବେ ପାରମ୍ପରିକ ଖାଦ୍ୟ ପ୍ରସ୍ତୁତ କରାଯାଏ।",
+
+    "after being offered to the deities, the sacred food is known as mahaprasad. it is shared among devotees and represents devotion, community and equality.":
+      "ଦେବଦେବୀଙ୍କୁ ଭୋଗ ଲାଗିବା ପରେ ଏହି ପବିତ୍ର ଖାଦ୍ୟକୁ ମହାପ୍ରସାଦ କୁହାଯାଏ। ଏହା ଭକ୍ତମାନଙ୍କ ମଧ୍ୟରେ ବଣ୍ଟନ କରାଯାଏ ଏବଂ ଭକ୍ତି, ସମୁଦାୟ ଓ ସମାନତାର ପ୍ରତୀକ ଅଟେ।",
+
+    "traditional preparation:":
+      "ପାରମ୍ପରିକ ପ୍ରସ୍ତୁତି:",
+
+    "the temple kitchen is famous for its traditional cooking practices, including the use of earthen pots. rice, dal, vegetables, sweets and other preparations form part of the temple food tradition.":
+      "ମନ୍ଦିର ରୋଷେଇ ମାଟି ପାତ୍ରର ବ୍ୟବହାର ସହିତ ପାରମ୍ପରିକ ରାନ୍ଧଣ ପ୍ରଣାଳୀ ପାଇଁ ପ୍ରସିଦ୍ଧ। ଭାତ, ଡାଲି, ପନିପରିବା, ମିଠା ଏବଂ ଅନ୍ୟାନ୍ୟ ପଦାର୍ଥ ମନ୍ଦିର ଖାଦ୍ୟ ପରମ୍ପରାର ଅଂଶ।",
+
+    "cultural significance:":
+      "ସାଂସ୍କୃତିକ ମହତ୍ତ୍ୱ:",
+
+    "mahaprasad is more than food; it forms an important part of jagannath culture and odisha's living culinary heritage.":
+      "ମହାପ୍ରସାଦ କେବଳ ଖାଦ୍ୟ ନୁହେଁ; ଏହା ଜଗନ୍ନାଥ ସଂସ୍କୃତି ଏବଂ ଓଡ଼ିଶାର ଜୀବନ୍ତ ଖାଦ୍ୟ ଐତିହ୍ୟର ଏକ ଗୁରୁତ୍ୱପୂର୍ଣ୍ଣ ଅଂଶ।",
+
     "temple food tradition":
       "ମନ୍ଦିର ଖାଦ୍ୟ ପରମ୍ପରା",
 
