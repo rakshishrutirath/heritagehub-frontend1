@@ -645,6 +645,52 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
     setPlayingPhrase(null);
   };
 
+  const playAudio = (url: string | null | undefined, type: "song" | "phrase", id: number) => {
+    stopAudio();
+
+    const cleanUrl = typeof url === "string" ? url.trim() : "";
+
+    if (!cleanUrl) {
+      return;
+    }
+
+    const audio = new Audio();
+    audio.preload = "auto";
+    audio.src = cleanUrl;
+    audioRef.current = audio;
+
+    const reset = () => {
+      if (audioRef.current === audio) {
+        audioRef.current = null;
+      }
+
+      setPlayingSong(null);
+      setPlayingPhrase(null);
+    };
+
+    audio.onended = reset;
+    audio.onerror = () => {
+      // A missing/invalid backend audio file should not leave the UI
+      // stuck in the playing state or produce an unhandled promise error.
+      console.warn(`Unable to load ${type} audio:`, cleanUrl);
+      reset();
+    };
+
+    if (type === "song") {
+      setPlayingSong(id);
+    } else {
+      setPlayingPhrase(id);
+    }
+
+    const playPromise = audio.play();
+
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        reset();
+      });
+    }
+  };
+
   const playSong = (song: Song) => {
     const id = Number(song.id);
 
@@ -653,24 +699,7 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
       return;
     }
 
-    stopAudio();
-
-    if (!song.audio) return;
-
-    const audio = new Audio(song.audio);
-
-    audioRef.current = audio;
-
-    audio.play().catch((error) => {
-      console.error("Song playback failed:", error);
-    });
-
-    setPlayingSong(id);
-
-    audio.onended = () => {
-      setPlayingSong(null);
-      audioRef.current = null;
-    };
+    playAudio(song.audio, "song", id);
   };
 
   const playPhrase = (phrase: LanguagePhrase) => {
@@ -681,24 +710,7 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
       return;
     }
 
-    stopAudio();
-
-    if (!phrase.audio) return;
-
-    const audio = new Audio(phrase.audio);
-
-    audioRef.current = audio;
-
-    audio.play().catch((error) => {
-      console.error("Phrase playback failed:", error);
-    });
-
-    setPlayingPhrase(id);
-
-    audio.onended = () => {
-      setPlayingPhrase(null);
-      audioRef.current = null;
-    };
+    playAudio(phrase.audio, "phrase", id);
   };
 
   useEffect(() => {
@@ -927,12 +939,10 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
                       </p>
                     )}
 
-                    {(item.tutorial_link ||
-                      item.tutorial_url ||
+                    {(item.tutorial_url ||
                       item.youtube_url) && (
                       <a
                         href={
-                          item.tutorial_link ||
                           item.tutorial_url ||
                           item.youtube_url
                         }
