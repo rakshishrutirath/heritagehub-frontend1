@@ -39,6 +39,138 @@ interface LearnPageProps {
   onSelectArtifact?: (artifact: any) => void;
 }
 
+interface HistoricalLearnItem {
+  id: string;
+  type: "battle" | "extinct_district";
+  title: string;
+  titleOr: string;
+  region: string;
+  regionOr: string;
+  period: string;
+  periodOr: string;
+  description: string;
+  descriptionOr: string;
+  significance: string;
+  significanceOr: string;
+}
+
+/*
+ * Historical content shown inside Learn -> Rituals.
+ * The former-district entries describe older administrative
+ * configurations that were later reorganised, rather than
+ * claiming that the modern districts themselves disappeared.
+ */
+const historicalLearnItems: HistoricalLearnItem[] = [
+  {
+    id: "battle-kalinga-war",
+    type: "battle",
+    title: "Kalinga War",
+    titleOr: "କଳିଙ୍ଗ ଯୁଦ୍ଧ",
+    region: "Kalinga",
+    regionOr: "କଳିଙ୍ଗ",
+    period: "261 BCE",
+    periodOr: "ଖ୍ରୀଷ୍ଟପୂର୍ବ ୨୬୧",
+    description:
+      "In 261 BCE, Ashoka of the Mauryan Empire invaded Kalinga. The war was devastating and became a major turning point in Ashoka's life and policy.",
+    descriptionOr:
+      "ଖ୍ରୀଷ୍ଟପୂର୍ବ ୨୬୧ ମସିହାରେ ମୌର୍ଯ୍ୟ ସମ୍ରାଟ ଅଶୋକ କଳିଙ୍ଗ ଉପରେ ଆକ୍ରମଣ କରିଥିଲେ। ଏହି ଯୁଦ୍ଧର ଭୟାବହ ପରିଣାମ ଅଶୋକଙ୍କ ଜୀବନ ଓ ନୀତିରେ ଏକ ବଡ଼ ପରିବର୍ତ୍ତନ ଆଣିଥିଲା।",
+    significance:
+      "The Kalinga War is one of the defining events in Odisha's ancient history and is closely associated with Ashoka's turn toward Buddhism and Dhamma.",
+    significanceOr:
+      "କଳିଙ୍ଗ ଯୁଦ୍ଧ ଓଡ଼ିଶାର ପ୍ରାଚୀନ ଇତିହାସର ଏକ ପ୍ରମୁଖ ଘଟଣା। ଏହା ଅଶୋକଙ୍କ ବୌଦ୍ଧ ଧର୍ମ ଓ ଧମ୍ମ ଦିଗକୁ ପରିବର୍ତ୍ତନ ସହିତ ଜଡ଼ିତ।",
+  },
+  {
+    id: "battle-paika-rebellion",
+    type: "battle",
+    title: "Paika Rebellion",
+    titleOr: "ପାଇକ ବିଦ୍ରୋହ",
+    region: "Khordha and surrounding areas",
+    regionOr: "ଖୋର୍ଦ୍ଧା ଓ ଆଖପାଖ ଅଞ୍ଚଳ",
+    period: "1817–1818",
+    periodOr: "୧୮୧୭–୧୮୧୮",
+    description:
+      "The Paika Rebellion began in Khordha in 1817 and spread to other parts of Odisha. Paikas and other local groups resisted East India Company rule under leaders including Bakshi Jagabandhu.",
+    descriptionOr:
+      "୧୮୧୭ ମସିହାରେ ଖୋର୍ଦ୍ଧାରୁ ପାଇକ ବିଦ୍ରୋହ ଆରମ୍ଭ ହୋଇ ଓଡ଼ିଶାର ଅନ୍ୟ ଅଞ୍ଚଳକୁ ବ୍ୟାପିଥିଲା। ବକ୍ସି ଜଗବନ୍ଧୁଙ୍କ ସମେତ ବିଭିନ୍ନ ନେତାଙ୍କ ଅଧୀନରେ ପାଇକ ଓ ସ୍ଥାନୀୟ ଲୋକମାନେ ଇଷ୍ଟ ଇଣ୍ଡିଆ କମ୍ପାନୀର ଶାସନକୁ ପ୍ରତିରୋଧ କରିଥିଲେ।",
+    significance:
+      "It remains a major chapter in Odisha's history of resistance to British rule, with Khordha as an important centre of the uprising.",
+    significanceOr:
+      "ଏହା ବ୍ରିଟିଶ ଶାସନ ବିରୋଧରେ ଓଡ଼ିଶାର ପ୍ରତିରୋଧ ଇତିହାସର ଏକ ପ୍ରମୁଖ ଅଧ୍ୟାୟ। ଖୋର୍ଦ୍ଧା ଏହି ବିଦ୍ରୋହର ଏକ ମୁଖ୍ୟ କେନ୍ଦ୍ର ଥିଲା।",
+  },
+  {
+    id: "former-koraput-district",
+    type: "extinct_district",
+    title: "Undivided Koraput District",
+    titleOr: "ଅବିଭକ୍ତ କୋରାପୁଟ ଜିଲ୍ଲା",
+    region: "Southern Odisha",
+    regionOr: "ଦକ୍ଷିଣ ଓଡ଼ିଶା",
+    period: "Before the 1992 reorganisation",
+    periodOr: "୧୯୯୨ ପୁନର୍ଗଠନ ପୂର୍ବରୁ",
+    description:
+      "The historic Koraput district was much larger than the present-day district. In 1992, the district was reorganised and four new districts were created from its territory: Koraput, Malkangiri, Nabarangapur and Rayagada.",
+    descriptionOr:
+      "ଐତିହାସିକ କୋରାପୁଟ ଜିଲ୍ଲା ବର୍ତ୍ତମାନର କୋରାପୁଟ ଜିଲ୍ଲାଠାରୁ ଅଧିକ ବିସ୍ତୃତ ଥିଲା। ୧୯୯୨ ମସିହାରେ ଏହାର ପୁନର୍ଗଠନ ହୋଇ କୋରାପୁଟ, ମାଲକାନଗିରି, ନବରଙ୍ଗପୁର ଓ ରାୟଗଡ଼ା ଜିଲ୍ଲା ଗଠିତ ହୋଇଥିଲା।",
+    significance:
+      "The former extent of Koraput helps explain the modern administrative map of southern Odisha.",
+    significanceOr:
+      "ପୁରୁଣା କୋରାପୁଟ ଜିଲ୍ଲାର ବିସ୍ତୃତି ଦକ୍ଷିଣ ଓଡ଼ିଶାର ଆଧୁନିକ ପ୍ରଶାସନିକ ମାନଚିତ୍ର କିପରି ଗଠିତ ହେଲା ତାହା ବୁଝିବାରେ ସାହାଯ୍ୟ କରେ।",
+  },
+  {
+    id: "former-sambalpur-district",
+    type: "extinct_district",
+    title: "Undivided Sambalpur District",
+    titleOr: "ଅବିଭକ୍ତ ସମ୍ବଲପୁର ଜିଲ୍ଲା",
+    region: "Western Odisha",
+    regionOr: "ପଶ୍ଚିମ ଓଡ଼ିଶା",
+    period: "Before the 1993 reorganisation",
+    periodOr: "୧୯୯୩ ପୁନର୍ଗଠନ ପୂର୍ବରୁ",
+    description:
+      "The erstwhile Sambalpur district covered a much larger area. During the 1992–1994 district reorganisation, its territory was divided and new districts including Bargarh, Jharsuguda and Deogarh were formed.",
+    descriptionOr:
+      "ପୂର୍ବତନ ସମ୍ବଲପୁର ଜିଲ୍ଲା ଏକ ବହୁତ ବଡ଼ ଅଞ୍ଚଳକୁ ଆବୃତ କରୁଥିଲା। ୧୯୯୨–୧୯୯୪ ମସିହାର ଜିଲ୍ଲା ପୁନର୍ଗଠନ ସମୟରେ ଏହାର ଅଞ୍ଚଳ ବିଭାଜିତ ହୋଇ ବରଗଡ଼, ଝାରସୁଗୁଡ଼ା ଓ ଦେବଗଡ଼ ଭଳି ନୂତନ ଜିଲ୍ଲା ଗଠିତ ହୋଇଥିଲା।",
+    significance:
+      "The history of undivided Sambalpur shows how western Odisha's present districts emerged from earlier administrative boundaries.",
+    significanceOr:
+      "ଅବିଭକ୍ତ ସମ୍ବଲପୁରର ଇତିହାସ ପଶ୍ଚିମ ଓଡ଼ିଶାର ବର୍ତ୍ତମାନର ଜିଲ୍ଲାଗୁଡ଼ିକ ପୁରୁଣା ପ୍ରଶାସନିକ ସୀମାରୁ କିପରି ଗଠିତ ହେଲା ତାହା ଦର୍ଶାଏ।",
+  },
+  {
+    id: "former-puri-district",
+    type: "extinct_district",
+    title: "Old Puri District",
+    titleOr: "ପୁରୁଣା ପୁରୀ ଜିଲ୍ଲା",
+    region: "Central Odisha",
+    regionOr: "ମଧ୍ୟ ଓଡ଼ିଶା",
+    period: "Before the 1990s reorganisation",
+    periodOr: "୧୯୯୦ ଦଶକର ପୁନର୍ଗଠନ ପୂର୍ବରୁ",
+    description:
+      "The old Puri district included areas that later became separate districts. The historic district was reorganised into Puri, Khordha and Nayagarh administrative units.",
+    descriptionOr:
+      "ପୁରୁଣା ପୁରୀ ଜିଲ୍ଲାରେ ଏମିତି ଅନେକ ଅଞ୍ଚଳ ଥିଲା ଯେଉଁଗୁଡ଼ିକ ପରେ ଅଲଗା ଜିଲ୍ଲା ହୋଇଥିଲା। ପୁରୁଣା ଜିଲ୍ଲାର ପୁନର୍ଗଠନ ପରେ ପୁରୀ, ଖୋର୍ଦ୍ଧା ଓ ନୟାଗଡ଼ ଭଳି ପ୍ରଶାସନିକ ଏକକ ଗଠିତ ହୋଇଥିଲା।",
+    significance:
+      "Old Puri is useful for understanding how central Odisha's administrative boundaries changed over time.",
+    significanceOr:
+      "ପୁରୁଣା ପୁରୀର ଇତିହାସ ମଧ୍ୟ ଓଡ଼ିଶାର ପ୍ରଶାସନିକ ସୀମା ସମୟ ସହିତ କିପରି ବଦଳିଲା ତାହା ବୁଝିବାରେ ଉପଯୋଗୀ।",
+  },
+  {
+    id: "former-ganjam-paralakhemundi",
+    type: "extinct_district",
+    title: "Former Ganjam Administrative Extent",
+    titleOr: "ପୂର୍ବତନ ଗଞ୍ଜାମ ପ୍ରଶାସନିକ ବିସ୍ତୃତି",
+    region: "Southern Odisha",
+    regionOr: "ଦକ୍ଷିଣ ଓଡ଼ିଶା",
+    period: "Before the 1992 reorganisation",
+    periodOr: "୧୯୯୨ ପୁନର୍ଗଠନ ପୂର୍ବରୁ",
+    description:
+      "Before the 1992 district reorganisation, Ganjam included the Parlakhemundi subdivision. Seven blocks of that subdivision were separated and the new Gajapati district was formed.",
+    descriptionOr:
+      "୧୯୯୨ ମସିହାର ଜିଲ୍ଲା ପୁନର୍ଗଠନ ପୂର୍ବରୁ ଗଞ୍ଜାମ ଜିଲ୍ଲାରେ ପାରଳାଖେମୁଣ୍ଡି ଉପଖଣ୍ଡ ଅନ୍ତର୍ଭୁକ୍ତ ଥିଲା। ଏହି ଉପଖଣ୍ଡର ସାତଟି ବ୍ଲକ୍ ଅଲଗା କରାଯାଇ ଗଜପତି ଜିଲ୍ଲା ଗଠିତ ହୋଇଥିଲା।",
+    significance:
+      "This reorganisation is an important example of how southern Odisha's modern district structure developed.",
+    significanceOr:
+      "ଏହି ପୁନର୍ଗଠନ ଦକ୍ଷିଣ ଓଡ଼ିଶାର ଆଧୁନିକ ଜିଲ୍ଲା ଗଠନ କିପରି ବିକଶିତ ହେଲା ତାହାର ଏକ ଗୁରୁତ୍ୱପୂର୍ଣ୍ଣ ଉଦାହରଣ।",
+  },
+];
+
 /* =========================================================
    COMPONENT
 ========================================================= */
@@ -453,6 +585,22 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
       ? "ଓଡ଼ିଶାର ସମୁଦାୟମାନଙ୍କ ମଧ୍ୟରେ ପ୍ରଚଳିତ ପାରମ୍ପରିକ ଆଚାର ଓ ପ୍ରଥା ଜାଣନ୍ତୁ।"
       : "Discover traditional rituals and community practices preserved across Odisha.",
 
+    battles: isOdia
+      ? "ଯୁଦ୍ଧ"
+      : "Battles",
+
+    battlesDescription: isOdia
+      ? "ଓଡ଼ିଶାର ଇତିହାସକୁ ପ୍ରଭାବିତ କରିଥିବା ପ୍ରମୁଖ ଯୁଦ୍ଧ ଓ ପ୍ରତିରୋଧ ବିଷୟରେ ଜାଣନ୍ତୁ।"
+      : "Explore major battles and resistance movements that shaped Odisha's history.",
+
+    extinctDistricts: isOdia
+      ? "ବିଲୁପ୍ତ ଜିଲ୍ଲା"
+      : "Extinct Districts",
+
+    extinctDistrictsDescription: isOdia
+      ? "ପୁରୁଣା ପ୍ରଶାସନିକ ଜିଲ୍ଲା ଓ ସୀମାଗୁଡ଼ିକ କିପରି ପୁନର୍ଗଠିତ ହେଲା ତାହା ଜାଣନ୍ତୁ।"
+      : "Explore former administrative districts and how Odisha's boundaries evolved.",
+
     searchSongs: isOdia
       ? "ସଙ୍ଗୀତ, କଳାକାର କିମ୍ବା ଅଞ୍ଚଳ ଖୋଜନ୍ତୁ..."
       : "Search songs, artists or regions...",
@@ -466,8 +614,8 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
       : "Search words or phrases...",
 
     searchRituals: isOdia
-      ? "ପରମ୍ପରା କିମ୍ବା ଅଞ୍ଚଳ ଖୋଜନ୍ତୁ..."
-      : "Search rituals or regions...",
+      ? "ପରମ୍ପରା, ଯୁଦ୍ଧ କିମ୍ବା ଜିଲ୍ଲା ଖୋଜନ୍ତୁ..."
+      : "Search rituals, battles or districts...",
 
     noResults: isOdia
       ? "କୌଣସି ଫଳାଫଳ ମିଳିଲା ନାହିଁ"
@@ -1608,119 +1756,237 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
      RITUALS
   ========================================================= */
 
-  const renderRituals = () => (
-    <div>
+  const renderRituals = () => {
+    const battles = historicalLearnItems.filter(
+      (item) => item.type === "battle"
+    );
 
-      <SectionHeading
-        icon={
-          <BookOpen className="w-5 h-5" />
-        }
-        title={text.ritualsTitle}
-        description={
-          text.ritualsDescription
-        }
-        archiveLabel={
-          isOdia
-            ? "ହେରିଟେଜ୍ ହବ୍ ଅଭିଲେଖ"
-            : "HeritageHub Archive"
-        }
-      />
+    const extinctDistricts = historicalLearnItems.filter(
+      (item) => item.type === "extinct_district"
+    );
 
-      <div className="grid md:grid-cols-2 gap-6">
+    const matchesSearch = (item: HistoricalLearnItem) => {
+      if (!normalizedSearch) return true;
 
-        {filteredRituals.length === 0
-          ? renderEmptyState()
-          : filteredRituals.map(
-              (ritual) => {
-                const item =
-                  ritual as any;
+      const searchable = [
+        item.title,
+        item.titleOr,
+        item.region,
+        item.regionOr,
+        item.period,
+        item.periodOr,
+        item.description,
+        item.descriptionOr,
+        item.significance,
+        item.significanceOr,
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      return searchable.includes(normalizedSearch);
+    };
+
+    const renderHistoricalCard = (
+      item: HistoricalLearnItem
+    ) => (
+      <article
+        key={item.id}
+        className="group border border-[#d9d6cf] dark:border-[#3d3935] bg-white dark:bg-[#201d1a] overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+      >
+        <div className="h-2 bg-[#94492d] dark:bg-[#d58b6e]" />
+
+        <div className="p-7">
+          <div className="flex items-start justify-between gap-4">
+            <span className="text-[10px] uppercase tracking-[0.14em] font-bold text-[#94492d] dark:text-[#d58b6e]">
+              {item.type === "battle"
+                ? text.battles
+                : text.extinctDistricts}
+            </span>
+
+            <span className="flex items-center gap-1 text-[11px] text-[#747878] dark:text-[#aaa39c] text-right">
+              <MapPin className="w-3 h-3 shrink-0" />
+              {isOdia ? item.regionOr : item.region}
+            </span>
+          </div>
+
+          <h3 className="font-display text-2xl md:text-3xl mt-4 text-[#1b1c1a] dark:text-[#f3eee7]">
+            {isOdia ? item.titleOr : item.title}
+          </h3>
+
+          <div className="mt-4">
+            <span className="text-[10px] uppercase tracking-[0.14em] font-bold text-[#747878] dark:text-[#aaa39c]">
+              {isOdia ? "କାଳ" : "Period"}
+            </span>
+
+            <p className="mt-1 text-sm text-[#444748] dark:text-[#c8c1ba]">
+              {isOdia ? item.periodOr : item.period}
+            </p>
+          </div>
+
+          <p className="mt-5 text-sm leading-7 text-[#444748] dark:text-[#c8c1ba]">
+            {isOdia
+              ? item.descriptionOr
+              : item.description}
+          </p>
+
+          <div className="mt-6 pt-5 border-t border-[#d9d6cf] dark:border-[#3d3935]">
+            <span className="text-[10px] uppercase tracking-[0.14em] font-bold text-[#94492d] dark:text-[#d58b6e]">
+              {isOdia
+                ? "ଗୁରୁତ୍ୱ"
+                : "Significance"}
+            </span>
+
+            <p className="mt-2 text-sm leading-7 text-[#444748] dark:text-[#c8c1ba]">
+              {isOdia
+                ? item.significanceOr
+                : item.significance}
+            </p>
+          </div>
+        </div>
+      </article>
+    );
+
+    const filteredHistoricalBattles = battles.filter(matchesSearch);
+    const filteredHistoricalDistricts = extinctDistricts.filter(matchesSearch);
+
+    return (
+      <div>
+        {/* EXISTING RITUALS */}
+        <SectionHeading
+          icon={<BookOpen className="w-5 h-5" />}
+          title={text.ritualsTitle}
+          description={text.ritualsDescription}
+          archiveLabel={
+            isOdia
+              ? "ହେରିଟେଜ୍ ହବ୍ ଅଭିଲେଖ"
+              : "HeritageHub Archive"
+          }
+        />
+
+        <div className="grid md:grid-cols-2 gap-6">
+          {filteredRituals.length === 0
+            ? renderEmptyState()
+            : filteredRituals.map((ritual) => {
+                const item = ritual as any;
 
                 return (
                   <article
                     key={ritual.id}
-                    className="border border-[#d9d6cf] dark:border-[#3d3935] bg-white dark:bg-[#201d1a]"
+                    className="border border-[#d9d6cf] dark:border-[#3d3935] bg-white dark:bg-[#201d1a] overflow-hidden"
                   >
-
                     {item.image && (
                       <div className="aspect-[16/9] overflow-hidden">
-
                         <img
                           src={item.image}
-                          alt={toOdia(
-                            item.name ||
-                              item.title ||
-                              (isOdia
-                                ? "ପରମ୍ପରା"
-                                : "Ritual")
-                          )}
+                          alt={
+                            isOdia
+                              ? item.nameOr ||
+                                item.titleOr ||
+                                "ପରମ୍ପରା"
+                              : item.name ||
+                                item.title ||
+                                "Ritual"
+                          }
                           className="w-full h-full object-cover"
                         />
-
                       </div>
                     )}
 
                     <div className="p-7">
-
                       <div className="flex justify-between gap-4">
-
                         <span className="text-[10px] uppercase tracking-[0.14em] font-bold text-[#94492d] dark:text-[#d58b6e]">
-
-                          {toOdia(
-                            item.category ||
+                          {isOdia
+                            ? item.categoryOr ||
+                              toOdia(item.category) ||
                               text.rituals
-                          )}
-
+                            : item.category ||
+                              text.rituals}
                         </span>
 
                         {item.region && (
                           <span className="flex items-center gap-1 text-[11px] text-[#747878] dark:text-[#aaa39c]">
-
                             <MapPin className="w-3 h-3" />
-
-                            {toOdia(
-                              item.region
-                            )}
-
+                            {toOdia(item.region)}
                           </span>
                         )}
-
                       </div>
 
                       <h3 className="font-display text-2xl mt-3 text-[#1b1c1a] dark:text-[#f3eee7]">
-
-                        {toOdia(
-                          item.name ||
+                        {isOdia
+                          ? item.nameOr ||
+                            item.titleOr ||
+                            toOdia(
+                              item.name ||
+                                item.title ||
+                                text.rituals
+                            )
+                          : item.name ||
                             item.title ||
-                            text.rituals
-                        )}
-
+                            text.rituals}
                       </h3>
 
-                      {(
-                        item.description ||
-                        item.cultural_context
-                      ) && (
+                      {(item.description ||
+                        item.cultural_context) && (
                         <p className="mt-4 text-sm leading-7 text-[#444748] dark:text-[#c8c1ba]">
-
-                          {toOdia(
-                            item.description ||
-                              item.cultural_context
-                          )}
-
+                          {isOdia
+                            ? item.descriptionOr ||
+                              item.cultural_contextOr ||
+                              toOdia(
+                                item.description ||
+                                  item.cultural_context
+                              )
+                            : item.description ||
+                              item.cultural_context}
                         </p>
                       )}
-
                     </div>
-
                   </article>
                 );
-              }
-            )}
+              })}
+        </div>
 
+        {/* BATTLES */}
+        <div className="mt-20">
+          <SectionHeading
+            icon={<Sparkles className="w-5 h-5" />}
+            title={text.battles}
+            description={text.battlesDescription}
+            archiveLabel={
+              isOdia
+                ? "ଇତିହାସିକ ଅଭିଲେଖ"
+                : "Historical Archive"
+            }
+          />
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {filteredHistoricalBattles.length === 0
+              ? renderEmptyState()
+              : filteredHistoricalBattles.map(renderHistoricalCard)}
+          </div>
+        </div>
+
+        {/* EXTINCT DISTRICTS */}
+        <div className="mt-20">
+          <SectionHeading
+            icon={<MapPin className="w-5 h-5" />}
+            title={text.extinctDistricts}
+            description={text.extinctDistrictsDescription}
+            archiveLabel={
+              isOdia
+                ? "ପ୍ରଶାସନିକ ଇତିହାସ"
+                : "Administrative History"
+            }
+          />
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {filteredHistoricalDistricts.length === 0
+              ? renderEmptyState()
+              : filteredHistoricalDistricts.map(renderHistoricalCard)}
+          </div>
+        </div>
       </div>
-
-    </div>
-  );
+    );
+  };
 
   /* =========================================================
      MAIN
