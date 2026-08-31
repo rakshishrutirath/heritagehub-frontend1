@@ -1,4 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import {
   Music,
@@ -12,8 +17,15 @@ import {
   Sparkles,
   Search,
   X,
+  Swords,
+  MapPinned,
+  CalendarDays,
   ArrowRight,
-  Loader2,
+  Landmark,
+  Shield,
+  History,
+  Clock3,
+  ChevronRight,
 } from "lucide-react";
 
 import {
@@ -30,7 +42,13 @@ import { useLanguage } from "../context/LanguageContext";
    TYPES
 ========================================================= */
 
-type LearnSection = "songs" | "dance" | "language" | "rituals";
+type LearnSection =
+  | "songs"
+  | "dance"
+  | "language"
+  | "rituals"
+  | "battles"
+  | "extinct-districts";
 
 interface LearnPageProps {
   timeline?: unknown[];
@@ -39,135 +57,77 @@ interface LearnPageProps {
   onSelectArtifact?: (artifact: any) => void;
 }
 
-interface HistoricalLearnItem {
-  id: string;
-  type: "battle" | "extinct_district";
+interface BattleRecord {
+  id: number;
   title: string;
-  titleOr: string;
   region: string;
-  regionOr: string;
   period: string;
-  periodOr: string;
   description: string;
-  descriptionOr: string;
   significance: string;
-  significanceOr: string;
+  type: string;
 }
 
-/*
- * Historical content shown inside Learn -> Rituals.
- * The former-district entries describe older administrative
- * configurations that were later reorganised, rather than
- * claiming that the modern districts themselves disappeared.
- */
-const historicalLearnItems: HistoricalLearnItem[] = [
+interface ExtinctDistrictRecord {
+  id: number;
+  title: string;
+  region: string;
+  period: string;
+  description: string;
+  significance: string;
+  type: string;
+}
+
+/* =========================================================
+   HISTORICAL DATA
+========================================================= */
+
+const BATTLES: BattleRecord[] = [
   {
-    id: "battle-kalinga-war",
-    type: "battle",
+    id: 1,
     title: "Kalinga War",
-    titleOr: "କଳିଙ୍ଗ ଯୁଦ୍ଧ",
     region: "Kalinga",
-    regionOr: "କଳିଙ୍ଗ",
     period: "261 BCE",
-    periodOr: "ଖ୍ରୀଷ୍ଟପୂର୍ବ ୨୬୧",
+    type: "Ancient History",
     description:
       "In 261 BCE, Ashoka of the Mauryan Empire invaded Kalinga. The war was devastating and became a major turning point in Ashoka's life and policy.",
-    descriptionOr:
-      "ଖ୍ରୀଷ୍ଟପୂର୍ବ ୨୬୧ ମସିହାରେ ମୌର୍ଯ୍ୟ ସମ୍ରାଟ ଅଶୋକ କଳିଙ୍ଗ ଉପରେ ଆକ୍ରମଣ କରିଥିଲେ। ଏହି ଯୁଦ୍ଧର ଭୟାବହ ପରିଣାମ ଅଶୋକଙ୍କ ଜୀବନ ଓ ନୀତିରେ ଏକ ବଡ଼ ପରିବର୍ତ୍ତନ ଆଣିଥିଲା।",
     significance:
       "The Kalinga War is one of the defining events in Odisha's ancient history and is closely associated with Ashoka's turn toward Buddhism and Dhamma.",
-    significanceOr:
-      "କଳିଙ୍ଗ ଯୁଦ୍ଧ ଓଡ଼ିଶାର ପ୍ରାଚୀନ ଇତିହାସର ଏକ ପ୍ରମୁଖ ଘଟଣା। ଏହା ଅଶୋକଙ୍କ ବୌଦ୍ଧ ଧର୍ମ ଓ ଧମ୍ମ ଦିଗକୁ ପରିବର୍ତ୍ତନ ସହିତ ଜଡ଼ିତ।",
   },
   {
-    id: "battle-paika-rebellion",
-    type: "battle",
+    id: 2,
     title: "Paika Rebellion",
-    titleOr: "ପାଇକ ବିଦ୍ରୋହ",
     region: "Khordha and surrounding areas",
-    regionOr: "ଖୋର୍ଦ୍ଧା ଓ ଆଖପାଖ ଅଞ୍ଚଳ",
     period: "1817–1818",
-    periodOr: "୧୮୧୭–୧୮୧୮",
+    type: "Resistance Movement",
     description:
-      "The Paika Rebellion began in Khordha in 1817 and spread to other parts of Odisha. Paikas and other local groups resisted East India Company rule under leaders including Bakshi Jagabandhu.",
-    descriptionOr:
-      "୧୮୧୭ ମସିହାରେ ଖୋର୍ଦ୍ଧାରୁ ପାଇକ ବିଦ୍ରୋହ ଆରମ୍ଭ ହୋଇ ଓଡ଼ିଶାର ଅନ୍ୟ ଅଞ୍ଚଳକୁ ବ୍ୟାପିଥିଲା। ବକ୍ସି ଜଗବନ୍ଧୁଙ୍କ ସମେତ ବିଭିନ୍ନ ନେତାଙ୍କ ଅଧୀନରେ ପାଇକ ଓ ସ୍ଥାନୀୟ ଲୋକମାନେ ଇଷ୍ଟ ଇଣ୍ଡିଆ କମ୍ପାନୀର ଶାସନକୁ ପ୍ରତିରୋଧ କରିଥିଲେ।",
+      "The Paika Rebellion began in Khordha in 1817 and spread to other parts of Odisha. Paikas and other local groups resisted East India Company rule under leaders including Buxi Jagabandhu.",
     significance:
       "It remains a major chapter in Odisha's history of resistance to British rule, with Khordha as an important centre of the uprising.",
-    significanceOr:
-      "ଏହା ବ୍ରିଟିଶ ଶାସନ ବିରୋଧରେ ଓଡ଼ିଶାର ପ୍ରତିରୋଧ ଇତିହାସର ଏକ ପ୍ରମୁଖ ଅଧ୍ୟାୟ। ଖୋର୍ଦ୍ଧା ଏହି ବିଦ୍ରୋହର ଏକ ମୁଖ୍ୟ କେନ୍ଦ୍ର ଥିଲା।",
   },
+];
+
+const EXTINCT_DISTRICTS: ExtinctDistrictRecord[] = [
   {
-    id: "former-koraput-district",
-    type: "extinct_district",
+    id: 1,
     title: "Undivided Koraput District",
-    titleOr: "ଅବିଭକ୍ତ କୋରାପୁଟ ଜିଲ୍ଲା",
     region: "Southern Odisha",
-    regionOr: "ଦକ୍ଷିଣ ଓଡ଼ିଶା",
     period: "Before the 1992 reorganisation",
-    periodOr: "୧୯୯୨ ପୁନର୍ଗଠନ ପୂର୍ବରୁ",
+    type: "Administrative History",
     description:
-      "The historic Koraput district was much larger than the present-day district. In 1992, the district was reorganised and four new districts were created from its territory: Koraput, Malkangiri, Nabarangapur and Rayagada.",
-    descriptionOr:
-      "ଐତିହାସିକ କୋରାପୁଟ ଜିଲ୍ଲା ବର୍ତ୍ତମାନର କୋରାପୁଟ ଜିଲ୍ଲାଠାରୁ ଅଧିକ ବିସ୍ତୃତ ଥିଲା। ୧୯୯୨ ମସିହାରେ ଏହାର ପୁନର୍ଗଠନ ହୋଇ କୋରାପୁଟ, ମାଲକାନଗିରି, ନବରଙ୍ଗପୁର ଓ ରାୟଗଡ଼ା ଜିଲ୍ଲା ଗଠିତ ହୋଇଥିଲା।",
+      "The historic Koraput district was much larger than the present-day district. In 1992, the district was reorganised and four new districts were created from its territory: Koraput, Malkangiri, Nabarangpur and Rayagada.",
     significance:
       "The former extent of Koraput helps explain the modern administrative map of southern Odisha.",
-    significanceOr:
-      "ପୁରୁଣା କୋରାପୁଟ ଜିଲ୍ଲାର ବିସ୍ତୃତି ଦକ୍ଷିଣ ଓଡ଼ିଶାର ଆଧୁନିକ ପ୍ରଶାସନିକ ମାନଚିତ୍ର କିପରି ଗଠିତ ହେଲା ତାହା ବୁଝିବାରେ ସାହାଯ୍ୟ କରେ।",
   },
   {
-    id: "former-sambalpur-district",
-    type: "extinct_district",
+    id: 2,
     title: "Undivided Sambalpur District",
-    titleOr: "ଅବିଭକ୍ତ ସମ୍ବଲପୁର ଜିଲ୍ଲା",
     region: "Western Odisha",
-    regionOr: "ପଶ୍ଚିମ ଓଡ଼ିଶା",
     period: "Before the 1993 reorganisation",
-    periodOr: "୧୯୯୩ ପୁନର୍ଗଠନ ପୂର୍ବରୁ",
+    type: "Administrative History",
     description:
       "The erstwhile Sambalpur district covered a much larger area. During the 1992–1994 district reorganisation, its territory was divided and new districts including Bargarh, Jharsuguda and Deogarh were formed.",
-    descriptionOr:
-      "ପୂର୍ବତନ ସମ୍ବଲପୁର ଜିଲ୍ଲା ଏକ ବହୁତ ବଡ଼ ଅଞ୍ଚଳକୁ ଆବୃତ କରୁଥିଲା। ୧୯୯୨–୧୯୯୪ ମସିହାର ଜିଲ୍ଲା ପୁନର୍ଗଠନ ସମୟରେ ଏହାର ଅଞ୍ଚଳ ବିଭାଜିତ ହୋଇ ବରଗଡ଼, ଝାରସୁଗୁଡ଼ା ଓ ଦେବଗଡ଼ ଭଳି ନୂତନ ଜିଲ୍ଲା ଗଠିତ ହୋଇଥିଲା।",
     significance:
       "The history of undivided Sambalpur shows how western Odisha's present districts emerged from earlier administrative boundaries.",
-    significanceOr:
-      "ଅବିଭକ୍ତ ସମ୍ବଲପୁରର ଇତିହାସ ପଶ୍ଚିମ ଓଡ଼ିଶାର ବର୍ତ୍ତମାନର ଜିଲ୍ଲାଗୁଡ଼ିକ ପୁରୁଣା ପ୍ରଶାସନିକ ସୀମାରୁ କିପରି ଗଠିତ ହେଲା ତାହା ଦର୍ଶାଏ।",
-  },
-  {
-    id: "former-puri-district",
-    type: "extinct_district",
-    title: "Old Puri District",
-    titleOr: "ପୁରୁଣା ପୁରୀ ଜିଲ୍ଲା",
-    region: "Central Odisha",
-    regionOr: "ମଧ୍ୟ ଓଡ଼ିଶା",
-    period: "Before the 1990s reorganisation",
-    periodOr: "୧୯୯୦ ଦଶକର ପୁନର୍ଗଠନ ପୂର୍ବରୁ",
-    description:
-      "The old Puri district included areas that later became separate districts. The historic district was reorganised into Puri, Khordha and Nayagarh administrative units.",
-    descriptionOr:
-      "ପୁରୁଣା ପୁରୀ ଜିଲ୍ଲାରେ ଏମିତି ଅନେକ ଅଞ୍ଚଳ ଥିଲା ଯେଉଁଗୁଡ଼ିକ ପରେ ଅଲଗା ଜିଲ୍ଲା ହୋଇଥିଲା। ପୁରୁଣା ଜିଲ୍ଲାର ପୁନର୍ଗଠନ ପରେ ପୁରୀ, ଖୋର୍ଦ୍ଧା ଓ ନୟାଗଡ଼ ଭଳି ପ୍ରଶାସନିକ ଏକକ ଗଠିତ ହୋଇଥିଲା।",
-    significance:
-      "Old Puri is useful for understanding how central Odisha's administrative boundaries changed over time.",
-    significanceOr:
-      "ପୁରୁଣା ପୁରୀର ଇତିହାସ ମଧ୍ୟ ଓଡ଼ିଶାର ପ୍ରଶାସନିକ ସୀମା ସମୟ ସହିତ କିପରି ବଦଳିଲା ତାହା ବୁଝିବାରେ ଉପଯୋଗୀ।",
-  },
-  {
-    id: "former-ganjam-paralakhemundi",
-    type: "extinct_district",
-    title: "Former Ganjam Administrative Extent",
-    titleOr: "ପୂର୍ବତନ ଗଞ୍ଜାମ ପ୍ରଶାସନିକ ବିସ୍ତୃତି",
-    region: "Southern Odisha",
-    regionOr: "ଦକ୍ଷିଣ ଓଡ଼ିଶା",
-    period: "Before the 1992 reorganisation",
-    periodOr: "୧୯୯୨ ପୁନର୍ଗଠନ ପୂର୍ବରୁ",
-    description:
-      "Before the 1992 district reorganisation, Ganjam included the Parlakhemundi subdivision. Seven blocks of that subdivision were separated and the new Gajapati district was formed.",
-    descriptionOr:
-      "୧୯୯୨ ମସିହାର ଜିଲ୍ଲା ପୁନର୍ଗଠନ ପୂର୍ବରୁ ଗଞ୍ଜାମ ଜିଲ୍ଲାରେ ପାରଳାଖେମୁଣ୍ଡି ଉପଖଣ୍ଡ ଅନ୍ତର୍ଭୁକ୍ତ ଥିଲା। ଏହି ଉପଖଣ୍ଡର ସାତଟି ବ୍ଲକ୍ ଅଲଗା କରାଯାଇ ଗଜପତି ଜିଲ୍ଲା ଗଠିତ ହୋଇଥିଲା।",
-    significance:
-      "This reorganisation is an important example of how southern Odisha's modern district structure developed.",
-    significanceOr:
-      "ଏହି ପୁନର୍ଗଠନ ଦକ୍ଷିଣ ଓଡ଼ିଶାର ଆଧୁନିକ ଜିଲ୍ଲା ଗଠନ କିପରି ବିକଶିତ ହେଲା ତାହାର ଏକ ଗୁରୁତ୍ୱପୂର୍ଣ୍ଣ ଉଦାହରଣ।",
   },
 ];
 
@@ -175,7 +135,7 @@ const historicalLearnItems: HistoricalLearnItem[] = [
    COMPONENT
 ========================================================= */
 
-export const LearnPage: React.FC<LearnPageProps> = () => {
+const LearnPage: React.FC<LearnPageProps> = () => {
   const { language } = useLanguage();
 
   const isOdia = language === "or";
@@ -193,7 +153,29 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
   const [rituals, setRituals] = useState<RitualPractice[]>([]);
 
   const [loading, setLoading] = useState(true);
+
+  /*
+   * This search is used for normal filtering.
+   */
   const [search, setSearch] = useState("");
+
+  /*
+   * Separate translator state.
+   *
+   * IMPORTANT:
+   * Gemini is ONLY called for text entered by the user.
+   * We do NOT automatically send all cultural descriptions
+   * to Gemini.
+   */
+  const [translatorInput, setTranslatorInput] = useState("");
+  const [translatorOutput, setTranslatorOutput] = useState("");
+  const [translatorLoading, setTranslatorLoading] =
+    useState(false);
+  const [translatorError, setTranslatorError] =
+    useState("");
+
+  const translatorTimerRef =
+    useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [playingSong, setPlayingSong] =
     useState<number | null>(null);
@@ -201,347 +183,114 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
   const [playingPhrase, setPlayingPhrase] =
     useState<number | null>(null);
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioRef =
+    useRef<HTMLAudioElement | null>(null);
 
   /* =========================================================
-     ENGLISH → ODIA TRANSLATOR
+     LOCAL ODIA TRANSLATIONS
   ========================================================= */
 
-  const [translatorInput, setTranslatorInput] =
-    useState("");
-
-  const [translatorOutput, setTranslatorOutput] =
-    useState("");
-
-  const [translatorLoading, setTranslatorLoading] =
-    useState(false);
-
-  const [translatorError, setTranslatorError] =
-    useState("");
-
-  const translatorTimerRef =
-    useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  /*
-   * Translate English text using the Django backend.
-   *
-   * Backend:
-   * POST /api/learn/translate/
-   *
-   * Example:
-   * hello → ନମସ୍କାର
-   */
-  const translateEnglishToOdia = async (
-    value: string
-  ) => {
-    const cleanText = value.trim();
-
-    if (!cleanText) {
-      setTranslatorOutput("");
-      setTranslatorError("");
-      setTranslatorLoading(false);
-      return;
-    }
-
-    /*
-     * Your backend currently supports maximum 8 words.
-     */
-    const wordCount = cleanText.split(/\s+/).length;
-
-    if (wordCount > 8) {
-      setTranslatorOutput("");
-      setTranslatorError(
-        isOdia
-          ? "ଦୟାକରି ସର୍ବାଧିକ ୮ଟି ଶବ୍ଦ ଲେଖନ୍ତୁ।"
-          : "Please enter a maximum of 8 words."
-      );
-      setTranslatorLoading(false);
-      return;
-    }
-
-    setTranslatorLoading(true);
-    setTranslatorError("");
-
-    try {
-      const result = await api.translateToOdia(
-        cleanText
-      );
-
-      if (
-        result &&
-        result.odia_translation
-      ) {
-        setTranslatorOutput(
-          result.odia_translation.trim()
-        );
-      } else {
-        setTranslatorOutput("");
-        setTranslatorError(
-          isOdia
-            ? "ଅନୁବାଦ ମିଳିଲା ନାହିଁ।"
-            : "Translation was not returned."
-        );
-      }
-    } catch (error) {
-      console.error(
-        "English to Odia translation failed:",
-        error
-      );
-
-      setTranslatorOutput("");
-
-      setTranslatorError(
-        isOdia
-          ? "ଅନୁବାଦ କରିବାରେ ସମସ୍ୟା ହେଲା।"
-          : "Unable to translate. Please try again."
-      );
-    } finally {
-      setTranslatorLoading(false);
-    }
-  };
-
-  /*
-   * Automatically translate while typing.
-   *
-   * We wait 600ms after the user stops typing before
-   * calling the backend. This prevents a Gemini request
-   * for every single letter.
-   */
-  useEffect(() => {
-    if (translatorTimerRef.current) {
-      clearTimeout(translatorTimerRef.current);
-    }
-
-    const cleanText = translatorInput.trim();
-
-    if (!cleanText) {
-      setTranslatorOutput("");
-      setTranslatorError("");
-      setTranslatorLoading(false);
-      return;
-    }
-
-    translatorTimerRef.current = setTimeout(() => {
-      translateEnglishToOdia(cleanText);
-    }, 600);
-
-    return () => {
-      if (translatorTimerRef.current) {
-        clearTimeout(translatorTimerRef.current);
-      }
-    };
-  }, [translatorInput, isOdia]);
-
-  /*
-   * Allow Enter key to translate immediately.
-   */
-  const handleTranslatorKeyDown = (
-    event: React.KeyboardEvent<HTMLInputElement>
-  ) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-
-      if (translatorTimerRef.current) {
-        clearTimeout(translatorTimerRef.current);
-      }
-
-      translateEnglishToOdia(translatorInput);
-    }
-  };
-
-  const clearTranslator = () => {
-    setTranslatorInput("");
-    setTranslatorOutput("");
-    setTranslatorError("");
-
-    if (translatorTimerRef.current) {
-      clearTimeout(translatorTimerRef.current);
-    }
-  };
-
-  /*
-   * Dynamic Odia translation cache.
-   */
-  const [odiaCache, setOdiaCache] = useState<
-    Record<string, string>
-  >(() => {
-    try {
-      const saved = localStorage.getItem(
-        "heritagehub_learn_odia_cache"
-      );
-
-      return saved ? JSON.parse(saved) : {};
-    } catch {
-      return {};
-    }
-  });
-
-  const [translationBusy, setTranslationBusy] =
-    useState(false);
-
-  const normalizeOdiaKey = (value: string) =>
-    value
-      .trim()
-      .replace(/\s+/g, " ")
-      .toLowerCase();
-
   const localOdiaMap: Record<string, string> = {
-    "youtube": "ୟୁଟ୍ୟୁବ",
-    "heritagehub archive":
-      "ହେରିଟେଜ୍ ହବ୍ ଅଭିଲେଖ",
-    "heritagehub": "ହେରିଟେଜ୍ ହବ୍",
-    "songs": "ସଙ୍ଗୀତ",
-    "song": "ସଙ୍ଗୀତ",
-    "dance": "ନୃତ୍ୟ",
-    "language": "ଭାଷା",
-    "rituals": "ପରମ୍ପରା",
-    "ritual": "ପରମ୍ପରା",
-    "culture": "ସଂସ୍କୃତି",
-    "greetings": "ଅଭିବାଦନ",
-    "everyday": "ଦୈନନ୍ଦିନ",
-    "family": "ପରିବାର",
-    "food": "ଖାଦ୍ୟ",
-    "travel": "ଭ୍ରମଣ",
-    "numbers": "ସଂଖ୍ୟା",
-    "sentences": "ବାକ୍ୟ",
-
-    "sambalpuri": "ସମ୍ବଲପୁରୀ",
-    "koraputia": "କୋରାପୁଟିଆ",
-    "santali": "ସାନ୍ତାଳୀ",
-    "bhajan": "ଭଜନ",
-    "folk": "ଲୋକସଙ୍ଗୀତ",
-    "folk song": "ଲୋକସଙ୍ଗୀତ",
-    "devotional": "ଭକ୍ତିମୂଳକ",
-    "traditional": "ପାରମ୍ପରିକ",
-    "tribal": "ଆଦିବାସୀ",
-    "odia": "ଓଡ଼ିଆ",
-    "odissi": "ଓଡ଼ିଶୀ",
-
-    "odisha": "ଓଡ଼ିଶା",
-    "sambalpur": "ସମ୍ବଲପୁର",
-    "puri": "ପୁରୀ",
-    "koraput": "କୋରାପୁଟ",
-    "cuttack": "କଟକ",
-    "bhubaneswar": "ଭୁବନେଶ୍ୱର",
-    "khordha": "ଖୋର୍ଦ୍ଧା",
-    "khurda": "ଖୋର୍ଦ୍ଧା",
-    "mayurbhanj": "ମୟୂରଭଞ୍ଜ",
-    "rayagada": "ରାୟଗଡ଼ା",
-    "kalahandi": "କଳାହାଣ୍ଡି",
-    "bargarh": "ବରଗଡ଼",
-    "ganjam": "ଗଞ୍ଜାମ",
-    "balasore": "ବାଲେଶ୍ୱର",
-    "kendrapara": "କେନ୍ଦ୍ରାପଡ଼ା",
-
-    "alta makhi": "ଅଲତା ମାଖି",
-    "chi chi re nani": "ଛି ଛି ରେ ନାନୀ",
-    "hisid halay hoy": "ହିସିଦ ହାଲାୟ ହୋୟ",
-    "jaga to kala ranga":
-      "ଜଗା ତୋ କଳା ରଙ୍ଗ",
-    "keshari loo": "କେଶରୀ ଲୋ",
-
-    "pankaj tandi": "ପଙ୍କଜ ତାଣ୍ଡି",
-    "pratham kumbhar": "ପ୍ରଥମ କୁମ୍ଭାର",
-    "kiran dash": "କିରଣ ଦାଶ",
-    "bijay anand sahu":
-      "ବିଜୟ ଆନନ୍ଦ ସାହୁ",
-    "satya adhikari":
-      "ସତ୍ୟ ଅଧିକାରୀ",
-    "uday hansda": "ଉଦୟ ହାଁସଦା",
-    "sumita soren": "ସୁମିତା ସୋରେନ",
-
-    "odissi dance": "ଓଡ଼ିଶୀ ନୃତ୍ୟ",
-    "sambalpuri dance":
-      "ସମ୍ବଲପୁରୀ ନୃତ୍ୟ",
-    "dhemsa dance": "ଢେମସା ନୃତ୍ୟ",
-    "dhemsa": "ଢେମସା",
-    "baitha": "ବୈଠା",
-    "boitha": "ବୈଠା",
-    "chowka": "ଚୌକା",
-    "chauka": "ଚୌକା",
-    "tribhangi": "ତ୍ରିଭଙ୍ଗୀ",
-    "sampada": "ସମ୍ପଦା",
-
-    "hello": "ନମସ୍କାର",
+    hello: "ନମସ୍କାର",
+    hi: "ନମସ୍କାର",
     "thank you": "ଧନ୍ୟବାଦ",
     "good morning": "ସୁପ୍ରଭାତ",
-    "welcome to odisha":
-      "ଓଡ଼ିଶାକୁ ସ୍ୱାଗତ",
-    "one": "ଏକ",
-    "rice": "ଭାତ",
+    "good evening": "ଶୁଭ ସନ୍ଧ୍ୟା",
+    welcome: "ସ୍ୱାଗତ",
+    "welcome to odisha": "ଓଡ଼ିଶାକୁ ସ୍ୱାଗତ",
+    yes: "ହଁ",
+    no: "ନା",
+    please: "ଦୟାକରି",
+    sorry: "ଦୁଃଖିତ",
+    one: "ଏକ",
+    two: "ଦୁଇ",
+    three: "ତିନି",
+    rice: "ଭାତ",
+    water: "ପାଣି",
+    food: "ଖାଦ୍ୟ",
+    house: "ଘର",
+    mother: "ମା",
+    father: "ବାପା",
+    friend: "ବନ୍ଧୁ",
+    odia: "ଓଡ଼ିଆ",
+    odisha: "ଓଡ଼ିଶା",
+    dance: "ନୃତ୍ୟ",
+    song: "ସଙ୍ଗୀତ",
+    songs: "ସଙ୍ଗୀତ",
+    language: "ଭାଷା",
+    ritual: "ପରମ୍ପରା",
+    rituals: "ପରମ୍ପରା",
+    culture: "ସଂସ୍କୃତି",
+    sambalpuri: "ସମ୍ବଲପୁରୀ",
+    odissi: "ଓଡ଼ିଶୀ",
+    dhemsa: "ଢେମସା",
+    baitha: "ବୈଠା",
+    boitha: "ବୈଠା",
+    chowka: "ଚୌକା",
+    chauka: "ଚୌକା",
+    tribhangi: "ତ୍ରିଭଙ୍ଗୀ",
+    sampada: "ସମ୍ପଦା",
+    greetings: "ଅଭିବାଦନ",
+    everyday: "ଦୈନନ୍ଦିନ",
+    family: "ପରିବାର",
+    travel: "ଭ୍ରମଣ",
+    numbers: "ସଂଖ୍ୟା",
+    sentences: "ବାକ୍ୟ",
+    "folk song": "ଲୋକସଙ୍ଗୀତ",
+    traditional: "ପାରମ୍ପରିକ",
+    tribal: "ଆଦିବାସୀ",
+    bhajan: "ଭଜନ",
+    santali: "ସାନ୍ତାଳୀ",
+    koraputia: "କୋରାପୁଟିଆ",
+    sambalpur: "ସମ୍ବଲପୁର",
+    puri: "ପୁରୀ",
+    koraput: "କୋରାପୁଟ",
+    cuttack: "କଟକ",
+    bhubaneswar: "ଭୁବନେଶ୍ୱର",
+    khordha: "ଖୋର୍ଦ୍ଧା",
+    khurda: "ଖୋର୍ଦ୍ଧା",
+    mayurbhanj: "ମୟୂରଭଞ୍ଜ",
+    rayagada: "ରାୟଗଡ଼ା",
+    kalahandi: "କଳାହାଣ୍ଡି",
+    bargarh: "ବରଗଡ଼",
+    ganjam: "ଗଞ୍ଜାମ",
+    balasore: "ବାଲେଶ୍ୱର",
+    kendrapara: "କେନ୍ଦ୍ରାପଡ଼ା",
+    battles: "ଯୁଦ୍ଧ",
+    battle: "ଯୁଦ୍ଧ",
+    "kalinga war": "କଳିଙ୍ଗ ଯୁଦ୍ଧ",
+    "paika rebellion": "ପାଇକ ବିଦ୍ରୋହ",
+    "extinct districts": "ବିଲୁପ୍ତ ଜିଲ୍ଲା",
+    "administrative history": "ପ୍ରଶାସନିକ ଇତିହାସ",
+    "ancient history": "ପ୍ରାଚୀନ ଇତିହାସ",
+    "resistance movement": "ପ୍ରତିରୋଧ ଆନ୍ଦୋଳନ",
+    "southern odisha": "ଦକ୍ଷିଣ ଓଡ଼ିଶା",
+    "western odisha": "ପଶ୍ଚିମ ଓଡ଼ିଶା",
   };
 
-  const getLocalOdia = (
-    value?: string | null
-  ) => {
-    if (!value) return "";
+  const normalize = (value: string) =>
+    value.trim().replace(/\s+/g, " ").toLowerCase();
 
-    const key = normalizeOdiaKey(value);
-
-    return (
-      localOdiaMap[key] ||
-      odiaCache[key] ||
-      ""
-    );
-  };
-
-  const toOdia = (
-    value?: string | null
-  ) => {
-    if (!value) return "";
-
-    if (!isOdia) return value;
-
-    const translated = getLocalOdia(value);
-
-    return translated || value;
-  };
-
-  const saveTranslation = (
-    english: string,
-    odia: string
-  ) => {
-    const key = normalizeOdiaKey(english);
-
-    setOdiaCache((current) => {
-      if (current[key] === odia) {
-        return current;
-      }
-
-      const next = {
-        ...current,
-        [key]: odia,
-      };
-
-      try {
-        localStorage.setItem(
-          "heritagehub_learn_odia_cache",
-          JSON.stringify(next)
-        );
-      } catch {
-        // Ignore localStorage errors.
-      }
-
-      return next;
-    });
-  };
+  const localTranslate = (value: string) =>
+    localOdiaMap[normalize(value)] || "";
 
   /* =========================================================
-     TRANSLATIONS
+     STATIC UI TEXT
   ========================================================= */
 
   const text = {
+    odia: isOdia ? "ଓଡ଼ିଆ" : "Odia",
     eyebrow: isOdia
-      ? "ଓଡ଼ିଶାକୁ ଜାଣନ୍ତୁ"
-      : "DISCOVER ODISHA",
+      ? "ଓଡ଼ିଶାର ଜୀବନ୍ତ ଐତିହ୍ୟ"
+      : "ODISHA'S LIVING HERITAGE",
 
     title: isOdia
-      ? "ଓଡ଼ିଶାର ଜୀବନ୍ତ ଐତିହ୍ୟ ଶିଖନ୍ତୁ"
-      : "Learn Odisha's Living Heritage",
+      ? "ଐତିହ୍ୟ ଶିଖନ୍ତୁ"
+      : "Learn Odisha's Heritage",
 
     description: isOdia
-      ? "ଓଡ଼ିଶାର ସଙ୍ଗୀତ, ନୃତ୍ୟ, ଭାଷା ଓ ପାରମ୍ପରିକ ଆଚାର ବିଷୟରେ ଜାଣନ୍ତୁ।"
-      : "Discover the music, dance, languages and traditional practices that keep Odisha's cultural heritage alive.",
+      ? "ଓଡ଼ିଶାର ସଙ୍ଗୀତ, ନୃତ୍ୟ, ଭାଷା, ପରମ୍ପରା ଓ ଇତିହାସକୁ ଜାଣନ୍ତୁ।"
+      : "Explore Odisha's music, dance, language, traditions and history.",
 
     songs: isOdia ? "ସଙ୍ଗୀତ" : "Songs",
 
@@ -549,17 +298,21 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
 
     language: isOdia ? "ଭାଷା" : "Language",
 
-    rituals: isOdia
-      ? "ପରମ୍ପରା"
-      : "Rituals",
+    rituals: isOdia ? "ପରମ୍ପରା" : "Rituals",
+
+    battles: isOdia ? "ଯୁଦ୍ଧ" : "Battles",
+
+    extinctDistricts: isOdia
+      ? "ବିଲୁପ୍ତ ଜିଲ୍ଲା"
+      : "Extinct Districts",
 
     songsTitle: isOdia
       ? "ଓଡ଼ିଶାର ସଙ୍ଗୀତ"
       : "Songs of Odisha",
 
     songsDescription: isOdia
-      ? "ଓଡ଼ିଶାର ବିଭିନ୍ନ ଅଞ୍ଚଳର ପାରମ୍ପରିକ ସଙ୍ଗୀତ ଶୁଣନ୍ତୁ।"
-      : "Listen to traditional music preserved from communities across Odisha.",
+      ? "ଓଡ଼ିଶାର ବିଭିନ୍ନ ଅଞ୍ଚଳର ପାରମ୍ପରିକ ସଙ୍ଗୀତ ଆବିଷ୍କାର କରନ୍ତୁ।"
+      : "Discover traditional music preserved across Odisha.",
 
     danceTitle: isOdia
       ? "ଓଡ଼ିଶାର ନୃତ୍ୟ"
@@ -567,55 +320,63 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
 
     danceDescription: isOdia
       ? "ଓଡ଼ିଶାର ଶାସ୍ତ୍ରୀୟ ଓ ଲୋକନୃତ୍ୟର ଭଙ୍ଗୀ ଏବଂ ପରମ୍ପରା ଜାଣନ୍ତୁ।"
-      : "Explore classical and folk dance forms, movements and traditions.",
+      : "Explore classical and folk dance forms and movements.",
 
     languageTitle: isOdia
       ? "ଭାଷା ଶିଖନ୍ତୁ"
       : "Learn the Language",
 
     languageDescription: isOdia
-      ? "ଦୈନନ୍ଦିନ ବ୍ୟବହାର ପାଇଁ ସରଳ ଓଡ଼ିଆ ଶବ୍ଦ ଏବଂ ବାକ୍ୟ ଶିଖନ୍ତୁ।"
-      : "Learn useful words and phrases from Odisha's languages.",
+      ? "ଇଂରାଜୀ ଶବ୍ଦ କିମ୍ବା ବାକ୍ୟ ଲେଖନ୍ତୁ ଏବଂ Gemini ଦ୍ୱାରା ଓଡ଼ିଆ ଅନୁବାଦ ପାଆନ୍ତୁ।"
+      : "Type an English word or phrase and get its Odia translation powered by Gemini.",
 
     ritualsTitle: isOdia
       ? "ପରମ୍ପରା ଓ ଆଚାର"
       : "Rituals & Practices",
 
     ritualsDescription: isOdia
-      ? "ଓଡ଼ିଶାର ସମୁଦାୟମାନଙ୍କ ମଧ୍ୟରେ ପ୍ରଚଳିତ ପାରମ୍ପରିକ ଆଚାର ଓ ପ୍ରଥା ଜାଣନ୍ତୁ।"
-      : "Discover traditional rituals and community practices preserved across Odisha.",
+      ? "ଓଡ଼ିଶାର ପାରମ୍ପରିକ ଆଚାର ଓ ସମୁଦାୟ ପ୍ରଥା ଜାଣନ୍ତୁ।"
+      : "Discover traditional rituals and community practices across Odisha.",
 
-    battles: isOdia
-      ? "ଯୁଦ୍ଧ"
-      : "Battles",
+    battlesTitle: isOdia
+      ? "ଓଡ଼ିଶାର ଐତିହାସିକ ଯୁଦ୍ଧ"
+      : "Battles That Shaped Odisha",
 
     battlesDescription: isOdia
-      ? "ଓଡ଼ିଶାର ଇତିହାସକୁ ପ୍ରଭାବିତ କରିଥିବା ପ୍ରମୁଖ ଯୁଦ୍ଧ ଓ ପ୍ରତିରୋଧ ବିଷୟରେ ଜାଣନ୍ତୁ।"
+      ? "ଓଡ଼ିଶାର ଇତିହାସକୁ ପରିବର୍ତ୍ତନ କରିଥିବା ପ୍ରମୁଖ ଯୁଦ୍ଧ ଓ ପ୍ରତିରୋଧ ଆନ୍ଦୋଳନ ଆବିଷ୍କାର କରନ୍ତୁ।"
       : "Explore major battles and resistance movements that shaped Odisha's history.",
 
-    extinctDistricts: isOdia
+    extinctTitle: isOdia
       ? "ବିଲୁପ୍ତ ଜିଲ୍ଲା"
       : "Extinct Districts",
 
-    extinctDistrictsDescription: isOdia
-      ? "ପୁରୁଣା ପ୍ରଶାସନିକ ଜିଲ୍ଲା ଓ ସୀମାଗୁଡ଼ିକ କିପରି ପୁନର୍ଗଠିତ ହେଲା ତାହା ଜାଣନ୍ତୁ।"
+    extinctDescription: isOdia
+      ? "ପୂର୍ବତନ ପ୍ରଶାସନିକ ଜିଲ୍ଲା ଏବଂ ଓଡ଼ିଶାର ସୀମା କିପରି ପରିବର୍ତ୍ତିତ ହେଲା ଜାଣନ୍ତୁ।"
       : "Explore former administrative districts and how Odisha's boundaries evolved.",
 
-    searchSongs: isOdia
-      ? "ସଙ୍ଗୀତ, କଳାକାର କିମ୍ବା ଅଞ୍ଚଳ ଖୋଜନ୍ତୁ..."
-      : "Search songs, artists or regions...",
+    translateTitle: isOdia
+      ? "ଇଂରାଜୀରୁ ଓଡ଼ିଆ"
+      : "English to Odia",
 
-    searchDance: isOdia
-      ? "ନୃତ୍ୟ କିମ୍ବା ଭଙ୍ଗୀ ଖୋଜନ୍ତୁ..."
-      : "Search dances or poses...",
+    translateSubtitle: isOdia
+      ? "ଆପଣଙ୍କ ଶବ୍ଦ କିମ୍ବା ବାକ୍ୟ ଲେଖନ୍ତୁ"
+      : "Type a word or short phrase",
 
-    searchLanguage: isOdia
-      ? "ଶବ୍ଦ କିମ୍ବା ବାକ୍ୟ ଖୋଜନ୍ତୁ..."
-      : "Search words or phrases...",
+    translatePlaceholder: isOdia
+      ? "ଇଂରାଜୀରେ ଲେଖନ୍ତୁ... ଯଥା: hello"
+      : "Type in English... e.g. hello",
 
-    searchRituals: isOdia
-      ? "ପରମ୍ପରା, ଯୁଦ୍ଧ କିମ୍ବା ଜିଲ୍ଲା ଖୋଜନ୍ତୁ..."
-      : "Search rituals, battles or districts...",
+    translating: isOdia
+      ? "ଅନୁବାଦ ହେଉଛି..."
+      : "Translating...",
+
+    translationResult: isOdia
+      ? "ଓଡ଼ିଆ ଅନୁବାଦ"
+      : "Odia Translation",
+
+    maxWords: isOdia
+      ? "ସର୍ବାଧିକ ୮ଟି ଶବ୍ଦ ଲେଖନ୍ତୁ।"
+      : "Please enter up to 8 words.",
 
     noResults: isOdia
       ? "କୌଣସି ଫଳାଫଳ ମିଳିଲା ନାହିଁ"
@@ -629,10 +390,6 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
       ? "ଖୋଜା ସଫା କରନ୍ତୁ"
       : "Clear Search",
 
-    loading: isOdia
-      ? "ଐତିହ୍ୟ ତଥ୍ୟ ଲୋଡ୍ ହେଉଛି..."
-      : "Loading heritage knowledge...",
-
     tutorial: isOdia
       ? "ଟ୍ୟୁଟୋରିଆଲ୍ ଦେଖନ୍ତୁ"
       : "Watch Tutorial",
@@ -641,57 +398,33 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
       ? "ଶୁଣନ୍ତୁ"
       : "Listen",
 
-    pause: isOdia
-      ? "ବିରତି"
-      : "Pause",
+    period: isOdia
+      ? "ସମୟ"
+      : "Period",
+
+    significance: isOdia
+      ? "ଗୁରୁତ୍ୱ"
+      : "Significance",
 
     region: isOdia
       ? "ଅଞ୍ଚଳ"
       : "Region",
 
-    culturalContext: isOdia
-      ? "ସାଂସ୍କୃତିକ ପ୍ରସଙ୍ଗ"
-      : "Cultural Context",
+    archive: isOdia
+      ? "ହେରିଟେଜ୍ ହବ୍ ଅଭିଲେଖ"
+      : "HeritageHub Archive",
 
-    english: isOdia
-      ? "ଇଂରାଜୀ"
-      : "English",
+    history: isOdia
+      ? "ଐତିହାସିକ ଅଭିଲେଖ"
+      : "Historical Archive",
 
-    odia: isOdia
-      ? "ଓଡ଼ିଆ"
-      : "Odia",
-
-    preservedArchive: isOdia
-      ? "ଡିଜିଟାଲ୍ ଐତିହ୍ୟ ଅଭିଲେଖ"
-      : "Digital Heritage Archive",
-
-    translatorTitle: isOdia
-      ? "ଇଂରାଜୀ → ଓଡ଼ିଆ ଅନୁବାଦକ"
-      : "English → Odia Translator",
-
-    translatorDescription: isOdia
-      ? "ଇଂରାଜୀ ଶବ୍ଦ କିମ୍ବା ଛୋଟ ବାକ୍ୟ ଲେଖନ୍ତୁ। AI ଏହାକୁ ଓଡ଼ିଆରେ ଅନୁବାଦ କରିବ।"
-      : "Type an English word or short phrase and AI will translate it into Odia.",
-
-    translatorPlaceholder: isOdia
-      ? "ଇଂରାଜୀରେ ଲେଖନ୍ତୁ..."
-      : "Type English here...",
-
-    translate: isOdia
-      ? "ଅନୁବାଦ କରନ୍ତୁ"
-      : "Translate",
-
-    translation: isOdia
-      ? "ଓଡ଼ିଆ ଅନୁବାଦ"
-      : "Odia Translation",
-
-    translating: isOdia
-      ? "ଅନୁବାଦ ହେଉଛି..."
-      : "Translating...",
+    administrativeHistory: isOdia
+      ? "ପ୍ରଶାସନିକ ଇତିହାସ"
+      : "Administrative History",
   };
 
   /* =========================================================
-     FETCH DATA
+     FETCH BACKEND DATA
   ========================================================= */
 
   useEffect(() => {
@@ -713,9 +446,7 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
 
         if (songsResponse.status === "fulfilled") {
           setSongs(
-            Array.isArray(
-              songsResponse.value
-            )
+            Array.isArray(songsResponse.value)
               ? songsResponse.value
               : []
           );
@@ -723,35 +454,23 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
 
         if (danceResponse.status === "fulfilled") {
           setDancePoses(
-            Array.isArray(
-              danceResponse.value
-            )
+            Array.isArray(danceResponse.value)
               ? danceResponse.value
               : []
           );
         }
 
-        if (
-          languageResponse.status ===
-          "fulfilled"
-        ) {
+        if (languageResponse.status === "fulfilled") {
           setPhrases(
-            Array.isArray(
-              languageResponse.value
-            )
+            Array.isArray(languageResponse.value)
               ? languageResponse.value
               : []
           );
         }
 
-        if (
-          ritualsResponse.status ===
-          "fulfilled"
-        ) {
+        if (ritualsResponse.status === "fulfilled") {
           setRituals(
-            Array.isArray(
-              ritualsResponse.value
-            )
+            Array.isArray(ritualsResponse.value)
               ? ritualsResponse.value
               : []
           );
@@ -770,151 +489,132 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
   }, []);
 
   /* =========================================================
-     AUTOMATIC ODIA TRANSLATION FOR BACKEND CONTENT
+     GEMINI TRANSLATOR
+     
+     IMPORTANT:
+     Only the user's translator input is sent to Gemini.
+     Long backend descriptions are NOT sent automatically.
   ========================================================= */
 
   useEffect(() => {
-    if (!isOdia || loading) return;
-
-    const values = new Set<string>();
-
-    const add = (value: unknown) => {
-      if (typeof value !== "string") {
-        return;
-      }
-
-      const trimmed = value.trim();
-
-      if (!trimmed) return;
-
-      const key =
-        normalizeOdiaKey(trimmed);
-
-      if (
-        localOdiaMap[key] ||
-        odiaCache[key]
-      ) {
-        return;
-      }
-
-      if (
-        /^https?:\/\//i.test(trimmed) ||
-        /^data:/i.test(trimmed) ||
-        /\.(jpg|jpeg|png|webp|gif|mp3|wav|ogg|mp4)$/i.test(
-          trimmed
-        )
-      ) {
-        return;
-      }
-
-      values.add(trimmed);
-    };
-
-    songs.forEach((song) => {
-      add(song.title);
-      add(song.artist);
-      add(song.genre);
-      add(song.region);
-      add(song.cultural_context);
-    });
-
-    dancePoses.forEach((dance) => {
-      const item = dance as any;
-
-      add(item.dance_type);
-      add(item.category);
-      add(item.name);
-      add(item.title);
-      add(item.pose_name);
-      add(item.description);
-      add(item.cultural_context);
-      add(item.region);
-    });
-
-    rituals.forEach((ritual) => {
-      const item = ritual as any;
-
-      add(item.category);
-      add(item.region);
-      add(item.name);
-      add(item.title);
-      add(item.description);
-      add(item.cultural_context);
-      add(item.cultural_significance);
-      add(item.practices);
-    });
-
-    const pending =
-      Array.from(values);
-
-    if (pending.length === 0) {
+    if (activeSection !== "language") {
       return;
     }
 
-    let cancelled = false;
+    const value = translatorInput.trim();
 
-    const translateAll = async () => {
-      setTranslationBusy(true);
+    setTranslatorError("");
 
-      const batchSize = 2;
+    if (!value) {
+      setTranslatorOutput("");
+      setTranslatorLoading(false);
+      return;
+    }
 
-      for (
-        let index = 0;
-        index < pending.length &&
-        !cancelled;
-        index += batchSize
-      ) {
-        const batch = pending.slice(
-          index,
-          index + batchSize
-        );
+    const wordCount = value.split(/\s+/).length;
 
-        await Promise.all(
-          batch.map(
-            async (english) => {
-              try {
-                const result =
-                  await api.translateToOdia(
-                    english
-                  );
+    if (wordCount > 8) {
+      setTranslatorOutput("");
+      setTranslatorLoading(false);
+      setTranslatorError(text.maxWords);
+      return;
+    }
 
-                if (
-                  !cancelled &&
-                  result?.odia_translation
-                ) {
-                  saveTranslation(
-                    english,
-                    result.odia_translation.trim()
-                  );
-                }
-              } catch (error) {
-                console.error(
-                  "Automatic Odia translation failed:",
-                  english,
-                  error
-                );
-              }
-            }
-          )
-        );
-      }
+    /*
+     * Cancel previous debounce timer.
+     */
+    if (translatorTimerRef.current) {
+      clearTimeout(translatorTimerRef.current);
+    }
 
-      if (!cancelled) {
-        setTranslationBusy(false);
-      }
-    };
+    /*
+     * Use local translations immediately for common words.
+     */
+    const local = localTranslate(value);
 
-    translateAll();
+    if (local) {
+      setTranslatorOutput(local);
+      setTranslatorLoading(false);
+      return;
+    }
+
+    /*
+     * Wait a little before calling Gemini.
+     * This prevents a request for every single keystroke.
+     */
+    translatorTimerRef.current = setTimeout(
+      async () => {
+        try {
+          setTranslatorLoading(true);
+          setTranslatorError("");
+
+          /*
+           * This uses your existing api.ts method.
+           *
+           * Your backend endpoint:
+           * POST /api/learn/translate/
+           *
+           * Your backend expects:
+           * {
+           *   english_phrase: "hello"
+           * }
+           *
+           * and returns:
+           * {
+           *   odia_translation: "ନମସ୍କାର"
+           * }
+           */
+          const result =
+            await api.translateToOdia(value);
+
+          const translated =
+            result?.odia_translation ||
+            (result as any)?.translated_text ||
+            "";
+
+          if (!translated) {
+            throw new Error(
+              "No translation returned by backend."
+            );
+          }
+
+          setTranslatorOutput(
+            translated.trim()
+          );
+        } catch (error: any) {
+          console.error(
+            "Odia translation failed:",
+            error
+          );
+
+          setTranslatorOutput("");
+
+          /*
+           * Display a friendly message instead of
+           * showing a large browser error.
+           */
+          setTranslatorError(
+            error?.message ||
+              (isOdia
+                ? "ଅନୁବାଦ ବିଫଳ ହେଲା। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
+                : "Translation failed. Please try again.")
+          );
+        } finally {
+          setTranslatorLoading(false);
+        }
+      },
+      600
+    );
 
     return () => {
-      cancelled = true;
+      if (translatorTimerRef.current) {
+        clearTimeout(translatorTimerRef.current);
+      }
     };
   }, [
+    translatorInput,
+    activeSection,
     isOdia,
-    loading,
-    songs,
-    dancePoses,
-    rituals,
   ]);
 
   /* =========================================================
@@ -925,142 +625,142 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
     search.trim().toLowerCase();
 
   const filteredSongs = useMemo(() => {
-    if (!normalizedSearch) {
-      return songs;
-    }
+    if (!normalizedSearch) return songs;
 
     return songs.filter((song) => {
-      const searchable = [
-        song.title,
-        song.artist,
-        song.genre,
-        song.region,
-        song.cultural_context,
-        toOdia(song.title),
-        toOdia(song.artist),
-        toOdia(song.genre),
-        toOdia(song.region),
-        toOdia(song.cultural_context),
-      ]
+      const item = song as any;
+
+      const values = [
+        item.title,
+        item.artist,
+        item.genre,
+        item.region,
+        item.cultural_context,
+        item.title_odia,
+        item.artist_odia,
+        item.genre_odia,
+        item.region_odia,
+        item.cultural_context_odia,
+      ];
+
+      return values
         .filter(Boolean)
         .join(" ")
-        .toLowerCase();
-
-      return searchable.includes(
-        normalizedSearch
-      );
+        .toLowerCase()
+        .includes(normalizedSearch);
     });
-  }, [
-    songs,
-    normalizedSearch,
-    language,
-    odiaCache,
-  ]);
+  }, [songs, normalizedSearch]);
 
   const filteredDance = useMemo(() => {
-    if (!normalizedSearch) {
-      return dancePoses;
-    }
+    if (!normalizedSearch) return dancePoses;
 
-    return dancePoses.filter(
-      (dance) => {
-        const rawValues =
-          Object.values(dance).filter(
-            (value) =>
-              typeof value === "string" ||
-              typeof value === "number"
-          );
+    return dancePoses.filter((dance) => {
+      const item = dance as any;
 
-        const translatedValues =
-          rawValues.map((value) =>
-            typeof value === "string"
-              ? toOdia(value)
-              : value
-          );
+      const values = [
+        item.dance_name,
+        item.dance_name_odia,
+        item.pose_name,
+        item.pose_name_odia,
+        item.explanation,
+        item.explanation_odia,
+      ];
 
-        const searchable = [
-          ...rawValues,
-          ...translatedValues,
-        ]
-          .join(" ")
-          .toLowerCase();
-
-        return searchable.includes(
-          normalizedSearch
-        );
-      }
-    );
-  }, [
-    dancePoses,
-    normalizedSearch,
-    language,
-    odiaCache,
-  ]);
+      return values
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase()
+        .includes(normalizedSearch);
+    });
+  }, [dancePoses, normalizedSearch]);
 
   const filteredPhrases = useMemo(() => {
-    if (!normalizedSearch) {
-      return phrases;
-    }
+    if (!normalizedSearch) return phrases;
 
-    return phrases.filter(
-      (phrase) => {
-        const searchable =
-          Object.values(phrase)
-            .filter(
-              (value) =>
-                typeof value ===
-                  "string" ||
-                typeof value === "number"
-            )
-            .join(" ")
-            .toLowerCase();
+    return phrases.filter((phrase) => {
+      const item = phrase as any;
 
-        return searchable.includes(
-          normalizedSearch
-        );
-      }
-    );
+      const values = [
+        item.english_phrase,
+        item.odia_translation,
+        item.category,
+        item.category_odia,
+      ];
+
+      return values
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase()
+        .includes(normalizedSearch);
+    });
   }, [phrases, normalizedSearch]);
 
   const filteredRituals = useMemo(() => {
-    if (!normalizedSearch) {
-      return rituals;
-    }
+    if (!normalizedSearch) return rituals;
 
-    return rituals.filter(
-      (ritual) => {
-        const rawValues =
-          Object.values(ritual).filter(
-            (value) =>
-              typeof value === "string" ||
-              typeof value === "number"
-          );
+    return rituals.filter((ritual) => {
+      const item = ritual as any;
 
-        const translatedValues =
-          rawValues.map((value) =>
-            typeof value === "string"
-              ? toOdia(value)
-              : value
-          );
+      const values = [
+        item.title,
+        item.title_odia,
+        item.region,
+        item.region_odia,
+        item.description,
+        item.description_odia,
+        item.cultural_significance,
+        item.cultural_significance_odia,
+        item.practices,
+        item.practices_odia,
+      ];
 
-        const searchable = [
-          ...rawValues,
-          ...translatedValues,
-        ]
-          .join(" ")
-          .toLowerCase();
+      return values
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase()
+        .includes(normalizedSearch);
+    });
+  }, [rituals, normalizedSearch]);
 
-        return searchable.includes(
-          normalizedSearch
-        );
-      }
+  const filteredBattles = useMemo(() => {
+    if (!normalizedSearch) return BATTLES;
+
+    return BATTLES.filter((battle) =>
+      [
+        battle.title,
+        battle.region,
+        battle.period,
+        battle.description,
+        battle.significance,
+        battle.type,
+      ]
+        .join(" ")
+        .toLowerCase()
+        .includes(normalizedSearch)
     );
-  }, [
-    rituals,
-    normalizedSearch,
-    language,
-    odiaCache,
-  ]);
+  }, [normalizedSearch]);
+
+  const filteredExtinctDistricts =
+    useMemo(() => {
+      if (!normalizedSearch) {
+        return EXTINCT_DISTRICTS;
+      }
+
+      return EXTINCT_DISTRICTS.filter(
+        (district) =>
+          [
+            district.title,
+            district.region,
+            district.period,
+            district.description,
+            district.significance,
+            district.type,
+          ]
+            .join(" ")
+            .toLowerCase()
+            .includes(normalizedSearch)
+      );
+    }, [normalizedSearch]);
 
   /* =========================================================
      AUDIO
@@ -1089,9 +789,7 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
         ? url.trim()
         : "";
 
-    if (!cleanUrl) {
-      return;
-    }
+    if (!cleanUrl) return;
 
     const audio = new Audio();
 
@@ -1113,7 +811,7 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
 
     audio.onerror = () => {
       console.warn(
-        `Unable to load ${type} audio:`,
+        "Unable to load audio:",
         cleanUrl
       );
 
@@ -1126,21 +824,12 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
       setPlayingPhrase(id);
     }
 
-    const playPromise =
-      audio.play();
-
-    if (
-      playPromise !== undefined
-    ) {
-      playPromise.catch(() => {
-        reset();
-      });
-    }
+    audio.play().catch(() => {
+      reset();
+    });
   };
 
-  const playSong = (
-    song: Song
-  ) => {
+  const playSong = (song: Song) => {
     const id = Number(song.id);
 
     if (playingSong === id) {
@@ -1148,11 +837,7 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
       return;
     }
 
-    playAudio(
-      song.audio,
-      "song",
-      id
-    );
+    playAudio(song.audio, "song", id);
   };
 
   const playPhrase = (
@@ -1177,32 +862,18 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
       if (audioRef.current) {
         audioRef.current.pause();
       }
+
+      if (translatorTimerRef.current) {
+        clearTimeout(
+          translatorTimerRef.current
+        );
+      }
     };
   }, []);
 
   /* =========================================================
      HELPERS
   ========================================================= */
-
-  const getSearchPlaceholder =
-    () => {
-      switch (activeSection) {
-        case "songs":
-          return text.searchSongs;
-
-        case "dance":
-          return text.searchDance;
-
-        case "language":
-          return text.searchLanguage;
-
-        case "rituals":
-          return text.searchRituals;
-
-        default:
-          return "";
-      }
-    };
 
   const clearSearch = () => {
     setSearch("");
@@ -1214,13 +885,60 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
     setActiveSection(section);
     setSearch("");
     stopAudio();
+
+    if (section !== "language") {
+      setTranslatorInput("");
+      setTranslatorOutput("");
+      setTranslatorError("");
+    }
   };
 
-  const renderEmptyState = () => (
-    <div className="col-span-full border border-dashed border-[#c4c7c7] dark:border-[#4a4642] py-20 text-center bg-[#faf9f5] dark:bg-[#171513]">
-      <Search className="w-9 h-9 mx-auto mb-5 text-[#747878] dark:text-[#aaa39c]" />
+  const getSearchPlaceholder = () => {
+    switch (activeSection) {
+      case "songs":
+        return isOdia
+          ? "ସଙ୍ଗୀତ, କଳାକାର କିମ୍ବା ଅଞ୍ଚଳ ଖୋଜନ୍ତୁ..."
+          : "Search songs, artists or regions...";
 
-      <h3 className="font-display text-2xl text-[#1b1c1a] dark:text-[#f3eee7]">
+      case "dance":
+        return isOdia
+          ? "ନୃତ୍ୟ କିମ୍ବା ଭଙ୍ଗୀ ଖୋଜନ୍ତୁ..."
+          : "Search dances or poses...";
+
+      case "language":
+        return isOdia
+          ? "ଶବ୍ଦ କିମ୍ବା ବାକ୍ୟ ଖୋଜନ୍ତୁ..."
+          : "Search words or phrases...";
+
+      case "rituals":
+        return isOdia
+          ? "ପରମ୍ପରା କିମ୍ବା ଅଞ୍ଚଳ ଖୋଜନ୍ତୁ..."
+          : "Search rituals or regions...";
+
+      case "battles":
+        return isOdia
+          ? "ଯୁଦ୍ଧ କିମ୍ବା ସ୍ଥାନ ଖୋଜନ୍ତୁ..."
+          : "Search battles or places...";
+
+      case "extinct-districts":
+        return isOdia
+          ? "ଜିଲ୍ଲା କିମ୍ବା ଅଞ୍ଚଳ ଖୋଜନ୍ତୁ..."
+          : "Search districts or regions...";
+
+      default:
+        return "Search...";
+    }
+  };
+
+  /* =========================================================
+     EMPTY STATE
+  ========================================================= */
+
+  const renderEmptyState = () => (
+    <div className="col-span-full border border-dashed border-[#c4c7c7] dark:border-[#4a4642] py-20 text-center">
+      <Search className="w-10 h-10 mx-auto mb-5 text-[#747878]" />
+
+      <h3 className="font-display text-2xl">
         {text.noResults}
       </h3>
 
@@ -1231,11 +949,134 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
       {search && (
         <button
           onClick={clearSearch}
-          className="mt-6 text-[11px] font-bold uppercase tracking-[0.12em] text-[#94492d] dark:text-[#d58b6e]"
+          className="mt-6 text-[11px] font-bold uppercase tracking-[0.12em] text-[#94492d]"
         >
           {text.clearSearch}
         </button>
       )}
+    </div>
+  );
+
+  /* =========================================================
+     TRANSLATOR
+  ========================================================= */
+
+  const renderTranslator = () => (
+    <div className="mb-14">
+      <div className="relative overflow-hidden border border-[#c9c2ba] dark:border-[#49423d] bg-[#f3eee7] dark:bg-[#201d1a]">
+        {/* Decorative background */}
+        <div className="absolute -right-20 -top-20 w-64 h-64 rounded-full border border-[#94492d]/10" />
+
+        <div className="absolute -right-10 -bottom-20 w-48 h-48 rounded-full border border-[#94492d]/10" />
+
+        <div className="relative p-7 md:p-10">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-2 text-[#94492d] dark:text-[#d58b6e]">
+                <Languages className="w-5 h-5" />
+
+                <span className="text-[10px] uppercase tracking-[0.15em] font-bold">
+                  {text.translateTitle}
+                </span>
+              </div>
+
+              <h3 className="font-display text-3xl md:text-4xl mt-3">
+                {text.translateSubtitle}
+              </h3>
+            </div>
+
+            <div className="px-4 py-2 border border-[#c9c2ba] dark:border-[#49423d] text-[10px] uppercase tracking-[0.12em] font-bold text-[#747878]">
+              Gemini AI
+            </div>
+          </div>
+
+          <div className="mt-8 grid lg:grid-cols-[1fr_auto_1fr] items-center gap-5">
+            {/* English */}
+            <div>
+              <label className="block mb-2 text-[10px] uppercase tracking-[0.14em] font-bold text-[#747878]">
+                {isOdia ? "ଇଂରାଜୀ" : "English"}
+              </label>
+
+              <div className="relative">
+                <input
+                  value={translatorInput}
+                  onChange={(event) =>
+                    setTranslatorInput(
+                      event.target.value
+                    )
+                  }
+                  type="text"
+                  maxLength={300}
+                  placeholder={
+                    text.translatePlaceholder
+                  }
+                  className="w-full h-16 pl-5 pr-12 border border-[#c4c7c7] dark:border-[#4a4642] bg-white dark:bg-[#171513] text-lg outline-none focus:border-[#94492d] transition-colors"
+                />
+
+                {translatorInput && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTranslatorInput("");
+                      setTranslatorOutput("");
+                      setTranslatorError("");
+                    }}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#747878] hover:text-[#94492d]"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                )}
+              </div>
+
+              <p className="mt-2 text-[11px] text-[#747878]">
+                {translatorInput
+                  ? `${translatorInput.trim().split(/\s+/).length}/8 words`
+                  : text.maxWords}
+              </p>
+            </div>
+
+            {/* Arrow */}
+            <div className="hidden lg:flex w-12 h-12 rounded-full bg-[#94492d] text-white items-center justify-center shadow-lg">
+              <ArrowRight className="w-5 h-5" />
+            </div>
+
+            {/* Odia */}
+            <div>
+              <label className="block mb-2 text-[10px] uppercase tracking-[0.14em] font-bold text-[#94492d]">
+                {text.translationResult}
+              </label>
+
+              <div className="min-h-16 border border-[#c4c7c7] dark:border-[#4a4642] bg-white dark:bg-[#171513] px-5 flex items-center">
+                {translatorLoading ? (
+                  <div className="flex items-center gap-3 text-[#94492d]">
+                    <div className="w-5 h-5 border-2 border-[#d9d6cf] border-t-[#94492d] rounded-full animate-spin" />
+
+                    <span className="text-sm">
+                      {text.translating}
+                    </span>
+                  </div>
+                ) : translatorOutput ? (
+                  <span className="font-display text-2xl md:text-3xl">
+                    {translatorOutput}
+                  </span>
+                ) : (
+                  <span className="text-sm text-[#aaa39c]">
+                    {isOdia
+                      ? "ଅନୁବାଦ ଏଠାରେ ଦେଖାଯିବ..."
+                      : "Translation will appear here..."}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {translatorError && (
+            <div className="mt-5 px-4 py-3 border border-red-300 bg-red-50 dark:bg-red-950/20 dark:border-red-900 text-sm text-red-700 dark:text-red-300">
+              {translatorError}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 
@@ -1246,36 +1087,28 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
   const renderSongs = () => (
     <div>
       <SectionHeading
-        icon={
-          <Music className="w-5 h-5" />
-        }
+        icon={<Music className="w-5 h-5" />}
         title={text.songsTitle}
-        description={
-          text.songsDescription
-        }
-        archiveLabel={
-          isOdia
-            ? "ହେରିଟେଜ୍ ହବ୍ ଅଭିଲେଖ"
-            : "HeritageHub Archive"
-        }
+        description={text.songsDescription}
+        archiveLabel={text.archive}
       />
 
       <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
         {filteredSongs.length === 0
           ? renderEmptyState()
-          : filteredSongs.map(
-              (song) => (
+          : filteredSongs.map((song) => {
+              const item = song as any;
+
+              return (
                 <article
                   key={song.id}
                   className="group border border-[#d9d6cf] dark:border-[#3d3935] bg-white dark:bg-[#201d1a] overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                 >
                   <div className="relative aspect-[4/3] bg-[#ece9e2] dark:bg-[#12100f] overflow-hidden">
-                    {song.image ? (
+                    {item.image ? (
                       <img
-                        src={song.image}
-                        alt={toOdia(
-                          song.title
-                        )}
+                        src={item.image}
+                        alt={item.title_odia || item.title}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                     ) : (
@@ -1284,17 +1117,13 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
                       </div>
                     )}
 
-                    {song.audio && (
+                    {item.audio && (
                       <button
-                        onClick={() =>
-                          playSong(song)
-                        }
-                        className="absolute bottom-4 left-4 w-12 h-12 rounded-full bg-[#faf9f5] dark:bg-[#1c1917] text-[#1b1c1a] dark:text-white flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+                        onClick={() => playSong(song)}
+                        className="absolute bottom-4 left-4 w-12 h-12 rounded-full bg-[#faf9f5] dark:bg-[#1c1917] flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+                        aria-label={playingSong === Number(song.id) ? "Pause song" : "Play song"}
                       >
-                        {playingSong ===
-                        Number(
-                          song.id
-                        ) ? (
+                        {playingSong === Number(song.id) ? (
                           <Pause className="w-5 h-5" />
                         ) : (
                           <Play className="w-5 h-5 ml-0.5" />
@@ -1304,65 +1133,62 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
                   </div>
 
                   <div className="p-6">
-                    <div className="flex items-center justify-between gap-3 mb-3">
-                      <span className="text-[10px] uppercase tracking-[0.14em] font-bold text-[#94492d] dark:text-[#d58b6e]">
-                        {song.genre
-                          ? toOdia(
-                              song.genre
-                            )
-                          : text.songs}
+                    <div className="flex justify-between gap-3 mb-3">
+                      <span className="text-[10px] uppercase tracking-[0.14em] font-bold text-[#94492d]">
+                        {isOdia
+                          ? item.genre_odia || item.genre
+                          : item.genre}
                       </span>
 
-                      {song.region && (
-                        <span className="flex items-center gap-1 text-[11px] text-[#747878] dark:text-[#aaa39c]">
+                      {item.region && (
+                        <span className="flex items-center gap-1 text-[11px] text-[#747878]">
                           <MapPin className="w-3 h-3" />
-                          {toOdia(
-                            song.region
-                          )}
+                          {isOdia
+                            ? item.region_odia || item.region
+                            : item.region}
                         </span>
                       )}
                     </div>
 
-                    <h3 className="font-display text-2xl font-semibold text-[#1b1c1a] dark:text-[#f3eee7]">
-                      {toOdia(
-                        song.title
-                      )}
+                    <h3 className="font-display text-2xl">
+                      {isOdia
+                        ? item.title_odia || item.title
+                        : item.title}
                     </h3>
 
-                    {song.artist && (
-                      <p className="mt-2 text-sm text-[#747878] dark:text-[#aaa39c]">
-                        {toOdia(
-                          song.artist
-                        )}
+                    {item.artist && (
+                      <p className="mt-2 text-sm text-[#747878]">
+                        {isOdia
+                          ? item.artist_odia || item.artist
+                          : item.artist}
                       </p>
                     )}
 
-                    {song.cultural_context && (
+                    {(item.cultural_context ||
+                      item.cultural_context_odia) && (
                       <p className="mt-4 text-sm leading-6 text-[#444748] dark:text-[#c8c1ba]">
-                        {toOdia(
-                          song.cultural_context
-                        )}
+                        {isOdia
+                          ? item.cultural_context_odia ||
+                            item.cultural_context
+                          : item.cultural_context}
                       </p>
                     )}
 
-                    {song.youtube_url && (
+                    {item.youtube_url && (
                       <a
-                        href={
-                          song.youtube_url
-                        }
+                        href={item.youtube_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-5 inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.12em] font-bold text-[#94492d] dark:text-[#d58b6e]"
+                        className="mt-5 inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.12em] font-bold text-[#94492d]"
                       >
                         YouTube
-
                         <ExternalLink className="w-3.5 h-3.5" />
                       </a>
                     )}
                   </div>
                 </article>
-              )
-            )}
+              );
+            })}
       </div>
     </div>
   );
@@ -1374,110 +1200,89 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
   const renderDance = () => (
     <div>
       <SectionHeading
-        icon={
-          <Sparkles className="w-5 h-5" />
-        }
+        icon={<Sparkles className="w-5 h-5" />}
         title={text.danceTitle}
-        description={
-          text.danceDescription
-        }
-        archiveLabel={
-          isOdia
-            ? "ହେରିଟେଜ୍ ହବ୍ ଅଭିଲେଖ"
-            : "HeritageHub Archive"
-        }
+        description={text.danceDescription}
+        archiveLabel={text.archive}
       />
 
       <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
         {filteredDance.length === 0
           ? renderEmptyState()
-          : filteredDance.map(
-              (dance) => {
-                const item =
-                  dance as any;
+          : filteredDance.map((dance) => {
+              const item = dance as any;
 
-                return (
-                  <article
-                    key={dance.id}
-                    className="group bg-white dark:bg-[#201d1a] border border-[#d9d6cf] dark:border-[#3d3935] overflow-hidden hover:shadow-xl transition-all duration-300"
-                  >
-                    <div className="aspect-[4/5] bg-[#ece9e2] dark:bg-[#12100f] overflow-hidden">
-                      {item.image ? (
-                        <img
-                          src={item.image}
-                          alt={toOdia(
-                            item.name ||
-                              item.title ||
-                              (isOdia
-                                ? "ନୃତ୍ୟ"
-                                : "Dance")
-                          )}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Sparkles className="w-10 h-10 text-[#94492d]" />
-                        </div>
-                      )}
-                    </div>
+              const danceName = isOdia
+                ? item.dance_name_odia ||
+                  item.dance_name
+                : item.dance_name;
 
-                    <div className="p-6">
-                      <span className="text-[10px] uppercase tracking-[0.14em] font-bold text-[#94492d] dark:text-[#d58b6e]">
-                        {toOdia(
-                          item.dance_type ||
-                            item.category ||
-                            text.dance
-                        )}
-                      </span>
+              const poseName = isOdia
+                ? item.pose_name_odia ||
+                  item.pose_name
+                : item.pose_name;
 
-                      <h3 className="font-display text-2xl mt-2 text-[#1b1c1a] dark:text-[#f3eee7]">
-                        {toOdia(
-                          item.name ||
-                            item.title ||
-                            item.pose_name ||
-                            text.dance
-                        )}
-                      </h3>
+              const explanation = isOdia
+                ? item.explanation_odia ||
+                  item.explanation
+                : item.explanation;
 
-                      {(
-                        item.description ||
-                        item.cultural_context
-                      ) && (
-                        <p className="mt-3 text-sm leading-6 text-[#444748] dark:text-[#c8c1ba]">
-                          {toOdia(
-                            item.description ||
-                              item.cultural_context
-                          )}
-                        </p>
-                      )}
+              return (
+                <article
+                  key={dance.id}
+                  className="group bg-white dark:bg-[#201d1a] border border-[#d9d6cf] dark:border-[#3d3935] overflow-hidden hover:shadow-xl transition-all duration-300"
+                >
+                  <div className="relative aspect-[4/5] bg-[#ece9e2] dark:bg-[#12100f] overflow-hidden">
+                    {item.image ? (
+                      <img
+                        src={item.image}
+                        alt={poseName}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Sparkles className="w-10 h-10 text-[#94492d]" />
+                      </div>
+                    )}
+                  </div>
 
-                      {(
-                        item.tutorial_url ||
-                        item.youtube_url ||
-                        item.tutorial_link
-                      ) && (
-                        <a
-                          href={
-                            item.tutorial_url ||
-                            item.youtube_url ||
-                            item.tutorial_link
-                          }
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="mt-5 inline-flex items-center gap-2 bg-[#94492d] hover:bg-[#7e3c25] text-white px-4 py-3 text-[11px] font-bold uppercase tracking-[0.1em]"
-                        >
-                          <Play className="w-3.5 h-3.5" />
+                  <div className="p-6">
+                    <span className="text-[10px] uppercase tracking-[0.14em] font-bold text-[#94492d]">
+                      {danceName ||
+                        text.dance}
+                    </span>
 
-                          {text.tutorial}
+                    <h3 className="font-display text-2xl mt-2">
+                      {poseName ||
+                        text.dance}
+                    </h3>
 
-                          <ExternalLink className="w-3.5 h-3.5" />
-                        </a>
-                      )}
-                    </div>
-                  </article>
-                );
-              }
-            )}
+                    {explanation && (
+                      <p className="mt-3 text-sm leading-6 text-[#444748] dark:text-[#c8c1ba]">
+                        {explanation}
+                      </p>
+                    )}
+
+                    {item.tutorial_link && (
+                      <a
+                        href={
+                          item.tutorial_link
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-5 inline-flex items-center gap-2 bg-[#94492d] hover:bg-[#7e3c25] text-white px-4 py-3 text-[11px] font-bold uppercase tracking-[0.1em]"
+                      >
+                        <Play className="w-3.5 h-3.5" />
+
+                        {text.tutorial}
+
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
       </div>
     </div>
   );
@@ -1488,236 +1293,50 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
 
   const renderLanguage = () => (
     <div>
-
-      {/* =====================================================
-          ENGLISH → ODIA AI TRANSLATOR
-      ===================================================== */}
-
-      <div className="mb-14 border border-[#d9d6cf] dark:border-[#3d3935] bg-white dark:bg-[#201d1a] p-6 md:p-8 shadow-sm">
-
-        <div className="flex items-start gap-4 mb-6">
-
-          <div className="w-11 h-11 shrink-0 flex items-center justify-center bg-[#94492d] text-white">
-            <Languages className="w-5 h-5" />
-          </div>
-
-          <div>
-            <h3 className="font-display text-2xl md:text-3xl text-[#1b1c1a] dark:text-[#f3eee7]">
-              {text.translatorTitle}
-            </h3>
-
-            <p className="mt-2 text-sm leading-6 text-[#747878] dark:text-[#aaa39c]">
-              {text.translatorDescription}
-            </p>
-          </div>
-
-        </div>
-
-        {/* INPUT */}
-
-        <div className="relative">
-
-          <input
-            type="text"
-            value={translatorInput}
-            onChange={(event) =>
-              setTranslatorInput(
-                event.target.value
-              )
-            }
-            onKeyDown={
-              handleTranslatorKeyDown
-            }
-            placeholder={
-              text.translatorPlaceholder
-            }
-            maxLength={300}
-            className="w-full h-14 pl-5 pr-14 border border-[#c4c7c7] dark:border-[#4a4642] bg-[#faf9f5] dark:bg-[#171513] text-[#1b1c1a] dark:text-[#f3eee7] outline-none focus:border-[#94492d] dark:focus:border-[#d58b6e] transition-colors placeholder:text-[#969998] dark:placeholder:text-[#77716c]"
-          />
-
-          {translatorInput && (
-            <button
-              type="button"
-              onClick={
-                clearTranslator
-              }
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-[#747878] hover:text-[#94492d]"
-              aria-label="Clear translator"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          )}
-
-        </div>
-
-        {/* TRANSLATE BUTTON */}
-
-        <div className="mt-4 flex justify-end">
-
-          <button
-            type="button"
-            onClick={() =>
-              translateEnglishToOdia(
-                translatorInput
-              )
-            }
-            disabled={
-              translatorLoading ||
-              !translatorInput.trim()
-            }
-            className="inline-flex items-center gap-2 bg-[#94492d] hover:bg-[#7e3c25] disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 text-[11px] font-bold uppercase tracking-[0.1em] transition-colors"
-          >
-
-            {translatorLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-
-                {text.translating}
-              </>
-            ) : (
-              <>
-                <Languages className="w-4 h-4" />
-
-                {text.translate}
-
-                <ArrowRight className="w-4 h-4" />
-              </>
-            )}
-
-          </button>
-
-        </div>
-
-        {/* TRANSLATION RESULT */}
-
-        {translatorOutput && (
-          <div className="mt-6 border-t border-[#d9d6cf] dark:border-[#3d3935] pt-6">
-
-            <div className="grid md:grid-cols-2 gap-6">
-
-              {/* ENGLISH */}
-
-              <div>
-                <span className="text-[10px] uppercase tracking-[0.14em] font-bold text-[#747878] dark:text-[#aaa39c]">
-                  {text.english}
-                </span>
-
-                <p className="mt-2 text-lg text-[#1b1c1a] dark:text-[#f3eee7]">
-                  {translatorInput}
-                </p>
-              </div>
-
-              {/* ODIA */}
-
-              <div>
-                <span className="text-[10px] uppercase tracking-[0.14em] font-bold text-[#94492d] dark:text-[#d58b6e]">
-                  {text.translation}
-                </span>
-
-                <p className="mt-2 text-2xl font-medium text-[#1b1c1a] dark:text-[#f3eee7]">
-                  {translatorOutput}
-                </p>
-              </div>
-
-            </div>
-
-          </div>
-        )}
-
-        {/* ERROR */}
-
-        {translatorError && (
-          <div className="mt-5 text-sm text-red-600 dark:text-red-400">
-            {translatorError}
-          </div>
-        )}
-
-      </div>
-
-      {/* =====================================================
-          EXISTING LANGUAGE SECTION
-      ===================================================== */}
-
       <SectionHeading
-        icon={
-          <Languages className="w-5 h-5" />
-        }
+        icon={<Languages className="w-5 h-5" />}
         title={text.languageTitle}
-        description={
-          text.languageDescription
-        }
-        archiveLabel={
-          isOdia
-            ? "ହେରିଟେଜ୍ ହବ୍ ଅଭିଲେଖ"
-            : "HeritageHub Archive"
-        }
+        description={text.languageDescription}
+        archiveLabel={text.archive}
       />
 
-      <div className="border-t border-[#d9d6cf] dark:border-[#3d3935]">
+      {/* GEMINI TRANSLATOR */}
+      {renderTranslator()}
 
+      {/* EXISTING PHRASES */}
+      <div className="border-t border-[#d9d6cf] dark:border-[#3d3935]">
         {filteredPhrases.length === 0
           ? renderEmptyState()
           : filteredPhrases.map(
               (phrase) => {
-                const item =
-                  phrase as any;
+                const item = phrase as any;
 
                 return (
                   <div
                     key={phrase.id}
                     className="grid md:grid-cols-[1fr_1fr_auto] gap-6 items-center py-6 border-b border-[#d9d6cf] dark:border-[#3d3935]"
                   >
-
                     <div>
-
-                      <span className="text-[10px] uppercase tracking-[0.14em] font-bold text-[#94492d] dark:text-[#d58b6e]">
-
+                      <span className="text-[10px] uppercase tracking-[0.14em] font-bold text-[#94492d]">
                         {isOdia
-                          ? toOdia(
-                              item.category ||
-                                "sentences"
-                            )
-                          : item.category ||
-                            text.english}
-
+                          ? item.category_odia ||
+                            item.category
+                          : item.category}
                       </span>
 
-                      <p className="mt-2 text-lg text-[#1b1c1a] dark:text-[#f3eee7]">
-
-                        {isOdia
-                          ? item.odia_translation ||
-                            item.translation ||
-                            toOdia(
-                              item.english_phrase ||
-                                item.english ||
-                                ""
-                            )
-                          : item.english_phrase ||
-                            item.english ||
-                            ""}
-
+                      <p className="mt-2 text-lg">
+                        {item.english_phrase}
                       </p>
-
                     </div>
 
                     <div>
-
-                      <span className="text-[10px] uppercase tracking-[0.14em] font-bold text-[#747878] dark:text-[#aaa39c]">
-
-                        {isOdia
-                          ? "ଓଡ଼ିଆ ଅର୍ଥ"
-                          : text.odia}
-
+                      <span className="text-[10px] uppercase tracking-[0.14em] font-bold text-[#747878]">
+                        {text.odia}
                       </span>
 
-                      <p className="mt-2 text-xl text-[#1b1c1a] dark:text-[#f3eee7]">
-
-                        {item.odia_translation ||
-                          item.translation ||
-                          ""}
-
+                      <p className="mt-2 text-xl">
+                        {item.odia_translation}
                       </p>
-
                     </div>
 
                     {item.audio && (
@@ -1727,9 +1346,8 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
                             phrase
                           )
                         }
-                        className="w-11 h-11 border border-[#c4c7c7] dark:border-[#4a4642] flex items-center justify-center hover:bg-[#94492d] hover:text-white transition-colors text-[#1b1c1a] dark:text-[#f3eee7]"
+                        className="w-11 h-11 border border-[#c4c7c7] dark:border-[#4a4642] flex items-center justify-center hover:bg-[#94492d] hover:text-white transition-colors"
                       >
-
                         {playingPhrase ===
                         Number(
                           phrase.id
@@ -1738,17 +1356,13 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
                         ) : (
                           <Volume2 className="w-4 h-4" />
                         )}
-
                       </button>
                     )}
-
                   </div>
                 );
               }
             )}
-
       </div>
-
     </div>
   );
 
@@ -1756,123 +1370,26 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
      RITUALS
   ========================================================= */
 
-  const renderRituals = () => {
-    const battles = historicalLearnItems.filter(
-      (item) => item.type === "battle"
-    );
+  const renderRituals = () => (
+    <div>
+      <SectionHeading
+        icon={<BookOpen className="w-5 h-5" />}
+        title={text.ritualsTitle}
+        description={text.ritualsDescription}
+        archiveLabel={text.archive}
+      />
 
-    const extinctDistricts = historicalLearnItems.filter(
-      (item) => item.type === "extinct_district"
-    );
-
-    const matchesSearch = (item: HistoricalLearnItem) => {
-      if (!normalizedSearch) return true;
-
-      const searchable = [
-        item.title,
-        item.titleOr,
-        item.region,
-        item.regionOr,
-        item.period,
-        item.periodOr,
-        item.description,
-        item.descriptionOr,
-        item.significance,
-        item.significanceOr,
-      ]
-        .join(" ")
-        .toLowerCase();
-
-      return searchable.includes(normalizedSearch);
-    };
-
-    const renderHistoricalCard = (
-      item: HistoricalLearnItem
-    ) => (
-      <article
-        key={item.id}
-        className="group border border-[#d9d6cf] dark:border-[#3d3935] bg-white dark:bg-[#201d1a] overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-      >
-        <div className="h-2 bg-[#94492d] dark:bg-[#d58b6e]" />
-
-        <div className="p-7">
-          <div className="flex items-start justify-between gap-4">
-            <span className="text-[10px] uppercase tracking-[0.14em] font-bold text-[#94492d] dark:text-[#d58b6e]">
-              {item.type === "battle"
-                ? text.battles
-                : text.extinctDistricts}
-            </span>
-
-            <span className="flex items-center gap-1 text-[11px] text-[#747878] dark:text-[#aaa39c] text-right">
-              <MapPin className="w-3 h-3 shrink-0" />
-              {isOdia ? item.regionOr : item.region}
-            </span>
-          </div>
-
-          <h3 className="font-display text-2xl md:text-3xl mt-4 text-[#1b1c1a] dark:text-[#f3eee7]">
-            {isOdia ? item.titleOr : item.title}
-          </h3>
-
-          <div className="mt-4">
-            <span className="text-[10px] uppercase tracking-[0.14em] font-bold text-[#747878] dark:text-[#aaa39c]">
-              {isOdia ? "କାଳ" : "Period"}
-            </span>
-
-            <p className="mt-1 text-sm text-[#444748] dark:text-[#c8c1ba]">
-              {isOdia ? item.periodOr : item.period}
-            </p>
-          </div>
-
-          <p className="mt-5 text-sm leading-7 text-[#444748] dark:text-[#c8c1ba]">
-            {isOdia
-              ? item.descriptionOr
-              : item.description}
-          </p>
-
-          <div className="mt-6 pt-5 border-t border-[#d9d6cf] dark:border-[#3d3935]">
-            <span className="text-[10px] uppercase tracking-[0.14em] font-bold text-[#94492d] dark:text-[#d58b6e]">
-              {isOdia
-                ? "ଗୁରୁତ୍ୱ"
-                : "Significance"}
-            </span>
-
-            <p className="mt-2 text-sm leading-7 text-[#444748] dark:text-[#c8c1ba]">
-              {isOdia
-                ? item.significanceOr
-                : item.significance}
-            </p>
-          </div>
-        </div>
-      </article>
-    );
-
-    const filteredHistoricalBattles = battles.filter(matchesSearch);
-    const filteredHistoricalDistricts = extinctDistricts.filter(matchesSearch);
-
-    return (
-      <div>
-        {/* EXISTING RITUALS */}
-        <SectionHeading
-          icon={<BookOpen className="w-5 h-5" />}
-          title={text.ritualsTitle}
-          description={text.ritualsDescription}
-          archiveLabel={
-            isOdia
-              ? "ହେରିଟେଜ୍ ହବ୍ ଅଭିଲେଖ"
-              : "HeritageHub Archive"
-          }
-        />
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {filteredRituals.length === 0
-            ? renderEmptyState()
-            : filteredRituals.map((ritual) => {
+      <div className="grid md:grid-cols-2 gap-6">
+        {filteredRituals.length === 0
+          ? renderEmptyState()
+          : filteredRituals.map(
+              (ritual) => {
                 const item = ritual as any;
 
                 return (
                   <article
                     key={ritual.id}
-                    className="border border-[#d9d6cf] dark:border-[#3d3935] bg-white dark:bg-[#201d1a] overflow-hidden"
+                    className="border border-[#d9d6cf] dark:border-[#3d3935] bg-white dark:bg-[#201d1a] overflow-hidden hover:shadow-xl transition-all"
                   >
                     {item.image && (
                       <div className="aspect-[16/9] overflow-hidden">
@@ -1880,12 +1397,9 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
                           src={item.image}
                           alt={
                             isOdia
-                              ? item.nameOr ||
-                                item.titleOr ||
-                                "ପରମ୍ପରା"
-                              : item.name ||
-                                item.title ||
-                                "Ritual"
+                              ? item.title_odia ||
+                                item.title
+                              : item.title
                           }
                           className="w-full h-full object-cover"
                         />
@@ -1894,99 +1408,301 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
 
                     <div className="p-7">
                       <div className="flex justify-between gap-4">
-                        <span className="text-[10px] uppercase tracking-[0.14em] font-bold text-[#94492d] dark:text-[#d58b6e]">
+                        <span className="text-[10px] uppercase tracking-[0.14em] font-bold text-[#94492d]">
                           {isOdia
-                            ? item.categoryOr ||
-                              toOdia(item.category) ||
-                              text.rituals
-                            : item.category ||
-                              text.rituals}
+                            ? item.title_odia ||
+                              item.title
+                            : item.title}
                         </span>
 
                         {item.region && (
-                          <span className="flex items-center gap-1 text-[11px] text-[#747878] dark:text-[#aaa39c]">
+                          <span className="flex items-center gap-1 text-[11px] text-[#747878]">
                             <MapPin className="w-3 h-3" />
-                            {toOdia(item.region)}
+                            {isOdia
+                              ? item.region_odia ||
+                                item.region
+                              : item.region}
                           </span>
                         )}
                       </div>
 
-                      <h3 className="font-display text-2xl mt-3 text-[#1b1c1a] dark:text-[#f3eee7]">
+                      <h3 className="font-display text-2xl mt-3">
                         {isOdia
-                          ? item.nameOr ||
-                            item.titleOr ||
-                            toOdia(
-                              item.name ||
-                                item.title ||
-                                text.rituals
-                            )
-                          : item.name ||
-                            item.title ||
-                            text.rituals}
+                          ? item.title_odia ||
+                            item.title
+                          : item.title}
                       </h3>
 
-                      {(item.description ||
-                        item.cultural_context) && (
+                      {item.description && (
                         <p className="mt-4 text-sm leading-7 text-[#444748] dark:text-[#c8c1ba]">
                           {isOdia
-                            ? item.descriptionOr ||
-                              item.cultural_contextOr ||
-                              toOdia(
-                                item.description ||
-                                  item.cultural_context
-                              )
-                            : item.description ||
-                              item.cultural_context}
+                            ? item.description_odia ||
+                              item.description
+                            : item.description}
                         </p>
+                      )}
+
+                      {item.cultural_significance && (
+                        <div className="mt-6 pt-5 border-t border-[#dedbd5] dark:border-[#3d3935]">
+                          <span className="text-[10px] uppercase tracking-[0.14em] font-bold text-[#94492d]">
+                            {isOdia
+                              ? "ସାଂସ୍କୃତିକ ଗୁରୁତ୍ୱ"
+                              : "Cultural Significance"}
+                          </span>
+
+                          <p className="mt-2 text-sm leading-6">
+                            {isOdia
+                              ? item.cultural_significance_odia ||
+                                item.cultural_significance
+                              : item.cultural_significance}
+                          </p>
+                        </div>
                       )}
                     </div>
                   </article>
                 );
-              })}
-        </div>
+              }
+            )}
+      </div>
+    </div>
+  );
 
-        {/* BATTLES */}
-        <div className="mt-20">
-          <SectionHeading
-            icon={<Sparkles className="w-5 h-5" />}
-            title={text.battles}
-            description={text.battlesDescription}
-            archiveLabel={
-              isOdia
-                ? "ଇତିହାସିକ ଅଭିଲେଖ"
-                : "Historical Archive"
-            }
-          />
+  /* =========================================================
+     BATTLES
+     
+     SEPARATE PAGE/TAB
+     NOT PART OF RITUALS
+  ========================================================= */
 
-          <div className="grid md:grid-cols-2 gap-6">
-            {filteredHistoricalBattles.length === 0
-              ? renderEmptyState()
-              : filteredHistoricalBattles.map(renderHistoricalCard)}
+  const renderBattles = () => (
+    <div>
+      <HistoricalHero
+        icon={<Swords className="w-6 h-6" />}
+        eyebrow={text.history}
+        title={text.battlesTitle}
+        description={text.battlesDescription}
+        accent="battle"
+      />
+
+      <div className="mt-10 grid lg:grid-cols-2 gap-7">
+        {filteredBattles.length === 0
+          ? renderEmptyState()
+          : filteredBattles.map(
+              (battle, index) => (
+                <article
+                  key={battle.id}
+                  className="group relative bg-white dark:bg-[#201d1a] border border-[#d9d6cf] dark:border-[#3d3935] overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl hover:border-[#94492d]/40"
+                >
+                  {/* Top line */}
+                  <div className="h-1.5 bg-[#94492d]" />
+
+                  {/* Number */}
+                  <div className="absolute right-7 top-7 text-7xl font-display text-[#94492d]/10 select-none">
+                    0{index + 1}
+                  </div>
+
+                  <div className="relative p-7 md:p-9">
+                    <div className="flex flex-wrap items-center justify-between gap-4">
+                      <span className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.15em] font-bold text-[#94492d]">
+                        <Shield className="w-3.5 h-3.5" />
+                        {battle.type}
+                      </span>
+
+                      <span className="flex items-center gap-1.5 text-xs text-[#747878]">
+                        <MapPin className="w-3.5 h-3.5" />
+                        {battle.region}
+                      </span>
+                    </div>
+
+                    <h3 className="font-display text-4xl md:text-5xl mt-7 leading-tight">
+                      {battle.title}
+                    </h3>
+
+                    <div className="mt-7 flex items-center gap-3">
+                      <div className="w-10 h-10 border border-[#d9d6cf] dark:border-[#4a4642] flex items-center justify-center">
+                        <CalendarDays className="w-4 h-4 text-[#94492d]" />
+                      </div>
+
+                      <div>
+                        <p className="text-[9px] uppercase tracking-[0.15em] font-bold text-[#747878]">
+                          {text.period}
+                        </p>
+
+                        <p className="mt-1 text-sm font-semibold">
+                          {battle.period}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-8 pt-7 border-t border-[#dedbd5] dark:border-[#3d3935]">
+                      <p className="text-[10px] uppercase tracking-[0.15em] font-bold text-[#94492d]">
+                        {isOdia
+                          ? "ଘଟଣା"
+                          : "The Event"}
+                      </p>
+
+                      <p className="mt-3 text-sm md:text-base leading-7 text-[#444748] dark:text-[#c8c1ba]">
+                        {battle.description}
+                      </p>
+                    </div>
+
+                    <div className="mt-7 p-5 bg-[#f4f1eb] dark:bg-[#171513] border-l-2 border-[#94492d]">
+                      <div className="flex items-center gap-2">
+                        <Landmark className="w-4 h-4 text-[#94492d]" />
+
+                        <span className="text-[10px] uppercase tracking-[0.15em] font-bold text-[#94492d]">
+                          {text.significance}
+                        </span>
+                      </div>
+
+                      <p className="mt-3 text-sm leading-6 text-[#444748] dark:text-[#c8c1ba]">
+                        {battle.significance}
+                      </p>
+                    </div>
+
+                    <div className="mt-7 flex items-center gap-2 text-[10px] uppercase tracking-[0.14em] font-bold text-[#94492d]">
+                      <History className="w-4 h-4" />
+
+                      {isOdia
+                        ? "ଇତିହାସର ଏକ ଅଧ୍ୟାୟ"
+                        : "A chapter in history"}
+
+                      <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                    </div>
+                  </div>
+                </article>
+              )
+            )}
+      </div>
+    </div>
+  );
+
+  /* =========================================================
+     EXTINCT DISTRICTS
+     
+     SEPARATE PAGE/TAB
+     NOT PART OF RITUALS
+  ========================================================= */
+
+  const renderExtinctDistricts = () => (
+    <div>
+      <HistoricalHero
+        icon={<MapPinned className="w-6 h-6" />}
+        eyebrow={text.administrativeHistory}
+        title={text.extinctTitle}
+        description={text.extinctDescription}
+        accent="district"
+      />
+
+      {/* Intro strip */}
+      <div className="mt-10 border border-[#d9d6cf] dark:border-[#3d3935] bg-[#efeeea] dark:bg-[#12100f] p-6 md:p-8">
+        <div className="flex flex-col md:flex-row md:items-center gap-5">
+          <div className="w-14 h-14 shrink-0 border border-[#c4c7c7] dark:border-[#4a4642] flex items-center justify-center">
+            <MapPinned className="w-6 h-6 text-[#94492d]" />
           </div>
-        </div>
 
-        {/* EXTINCT DISTRICTS */}
-        <div className="mt-20">
-          <SectionHeading
-            icon={<MapPin className="w-5 h-5" />}
-            title={text.extinctDistricts}
-            description={text.extinctDistrictsDescription}
-            archiveLabel={
-              isOdia
-                ? "ପ୍ରଶାସନିକ ଇତିହାସ"
-                : "Administrative History"
-            }
-          />
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.15em] font-bold text-[#94492d]">
+              {isOdia
+                ? "ପ୍ରଶାସନିକ ପରିବର୍ତ୍ତନ"
+                : "Administrative Change"}
+            </p>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            {filteredHistoricalDistricts.length === 0
-              ? renderEmptyState()
-              : filteredHistoricalDistricts.map(renderHistoricalCard)}
+            <p className="mt-2 text-sm md:text-base leading-7 text-[#555856] dark:text-[#c8c1ba]">
+              {isOdia
+                ? "ପୁରୁଣା ଜିଲ୍ଲା ସୀମାକୁ ବୁଝିବା ଆଜିର ଓଡ଼ିଶାର ପ୍ରଶାସନିକ ମାନଚିତ୍ରକୁ ବୁଝିବାରେ ସାହାଯ୍ୟ କରେ।"
+                : "Understanding former district boundaries helps explain the administrative map of Odisha today."}
+            </p>
           </div>
         </div>
       </div>
-    );
-  };
+
+      <div className="mt-8 grid lg:grid-cols-2 gap-7">
+        {filteredExtinctDistricts.length === 0
+          ? renderEmptyState()
+          : filteredExtinctDistricts.map(
+              (district, index) => (
+                <article
+                  key={district.id}
+                  className="group relative bg-white dark:bg-[#201d1a] border border-[#d9d6cf] dark:border-[#3d3935] overflow-hidden hover:-translate-y-1 hover:shadow-2xl hover:border-[#94492d]/40 transition-all duration-500"
+                >
+                  {/* Decorative top */}
+                  <div className="h-1.5 bg-[#94492d]" />
+
+                  <div className="relative p-7 md:p-9">
+                    <div className="absolute right-7 top-7">
+                      <div className="w-12 h-12 rounded-full border border-[#94492d]/20 flex items-center justify-center">
+                        <span className="font-display text-lg text-[#94492d]">
+                          {index + 1}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.15em] font-bold text-[#94492d]">
+                      <MapPinned className="w-4 h-4" />
+                      {district.type}
+                    </div>
+
+                    <h3 className="font-display text-3xl md:text-4xl mt-6 max-w-[80%] leading-tight">
+                      {district.title}
+                    </h3>
+
+                    <div className="mt-7 grid sm:grid-cols-2 gap-4">
+                      <div className="border border-[#dedbd5] dark:border-[#3d3935] p-4">
+                        <div className="flex items-center gap-2 text-[#747878]">
+                          <MapPin className="w-4 h-4" />
+
+                          <span className="text-[9px] uppercase tracking-[0.14em] font-bold">
+                            {text.region}
+                          </span>
+                        </div>
+
+                        <p className="mt-2 text-sm font-semibold">
+                          {district.region}
+                        </p>
+                      </div>
+
+                      <div className="border border-[#dedbd5] dark:border-[#3d3935] p-4">
+                        <div className="flex items-center gap-2 text-[#747878]">
+                          <Clock3 className="w-4 h-4" />
+
+                          <span className="text-[9px] uppercase tracking-[0.14em] font-bold">
+                            {text.period}
+                          </span>
+                        </div>
+
+                        <p className="mt-2 text-sm font-semibold">
+                          {district.period}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-7 pt-7 border-t border-[#dedbd5] dark:border-[#3d3935]">
+                      <p className="text-sm md:text-base leading-7 text-[#444748] dark:text-[#c8c1ba]">
+                        {district.description}
+                      </p>
+                    </div>
+
+                    <div className="mt-7 p-5 bg-[#f4f1eb] dark:bg-[#171513]">
+                      <div className="flex items-center gap-2">
+                        <Landmark className="w-4 h-4 text-[#94492d]" />
+
+                        <span className="text-[10px] uppercase tracking-[0.15em] font-bold text-[#94492d]">
+                          {text.significance}
+                        </span>
+                      </div>
+
+                      <p className="mt-3 text-sm leading-6 text-[#555856] dark:text-[#c8c1ba]">
+                        {district.significance}
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              )
+            )}
+      </div>
+    </div>
+  );
 
   /* =========================================================
      MAIN
@@ -1994,19 +1710,17 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
 
   return (
     <main className="min-h-screen bg-[#faf9f5] dark:bg-[#171513] text-[#1b1c1a] dark:text-[#f3eee7] transition-colors duration-300">
-
-      {/* HERO */}
+      {/* =====================================================
+          HERO
+      ===================================================== */}
 
       <section className="border-b border-[#dedbd5] dark:border-[#35312e]">
-
         <div className="max-w-[1440px] mx-auto px-6 md:px-16 py-16 md:py-24">
-
-          <span className="label-caps text-[#94492d] dark:text-[#d58b6e]">
+          <span className="text-[10px] uppercase tracking-[0.18em] font-bold text-[#94492d]">
             {text.eyebrow}
           </span>
 
           <div className="max-w-4xl mt-6">
-
             <h1 className="font-display text-5xl md:text-7xl leading-[0.98] tracking-tight">
               {text.title}
             </h1>
@@ -2014,57 +1728,46 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
             <p className="mt-7 max-w-2xl text-base md:text-lg leading-8 text-[#444748] dark:text-[#c8c1ba]">
               {text.description}
             </p>
-
           </div>
-
         </div>
-
       </section>
 
-      {/* NAVIGATION */}
+      {/* =====================================================
+          NAVIGATION
+      ===================================================== */}
 
       <section className="sticky top-20 z-30 bg-[#faf9f5]/95 dark:bg-[#171513]/95 backdrop-blur-md border-b border-[#dedbd5] dark:border-[#35312e]">
-
         <div className="max-w-[1440px] mx-auto px-6 md:px-16 overflow-x-auto">
-
           <div className="flex min-w-max">
-
             <LearnTab
               active={
-                activeSection ===
-                "songs"
+                activeSection === "songs"
               }
               label={text.songs}
               icon={
                 <Music className="w-4 h-4" />
               }
               onClick={() =>
-                changeSection(
-                  "songs"
-                )
+                changeSection("songs")
               }
             />
 
             <LearnTab
               active={
-                activeSection ===
-                "dance"
+                activeSection === "dance"
               }
               label={text.dance}
               icon={
                 <Sparkles className="w-4 h-4" />
               }
               onClick={() =>
-                changeSection(
-                  "dance"
-                )
+                changeSection("dance")
               }
             />
 
             <LearnTab
               active={
-                activeSection ===
-                "language"
+                activeSection === "language"
               }
               label={text.language}
               icon={
@@ -2079,84 +1782,135 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
 
             <LearnTab
               active={
-                activeSection ===
-                "rituals"
+                activeSection === "rituals"
               }
               label={text.rituals}
               icon={
                 <BookOpen className="w-4 h-4" />
               }
               onClick={() =>
-                changeSection(
-                  "rituals"
-                )
+                changeSection("rituals")
               }
             />
 
+            {/* NEW SEPARATE BATTLES TAB */}
+            <LearnTab
+              active={
+                activeSection === "battles"
+              }
+              label={text.battles}
+              icon={
+                <Swords className="w-4 h-4" />
+              }
+              onClick={() =>
+                changeSection("battles")
+              }
+            />
+
+            {/* NEW SEPARATE DISTRICTS TAB */}
+            <LearnTab
+              active={
+                activeSection ===
+                "extinct-districts"
+              }
+              label={text.extinctDistricts}
+              icon={
+                <MapPinned className="w-4 h-4" />
+              }
+              onClick={() =>
+                changeSection(
+                  "extinct-districts"
+                )
+              }
+            />
           </div>
-
         </div>
-
       </section>
 
-      {/* CONTENT */}
+      {/* =====================================================
+          CONTENT
+      ===================================================== */}
 
       <section className="max-w-[1440px] mx-auto px-6 md:px-16 py-12 md:py-16">
+        {/* Normal search */}
+        {activeSection !==
+          "battles" &&
+          activeSection !==
+            "extinct-districts" && (
+            <div className="flex items-center gap-3 max-w-2xl mb-14">
+              <div className="relative flex-1">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#747878]" />
 
-        {/* EXISTING SEARCH */}
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(event) =>
+                    setSearch(
+                      event.target.value
+                    )
+                  }
+                  placeholder={getSearchPlaceholder()}
+                  className="w-full h-14 pl-11 pr-11 border border-[#c4c7c7] dark:border-[#4a4642] bg-white dark:bg-[#201d1a] outline-none focus:border-[#94492d] transition-colors placeholder:text-[#969998]"
+                />
 
-        <div className="flex items-center gap-3 max-w-2xl mb-14">
-
-          <div className="relative flex-1">
-
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#747878]" />
-
-            <input
-              type="text"
-              value={search}
-              onChange={(event) =>
-                setSearch(
-                  event.target.value
-                )
-              }
-              placeholder={
-                getSearchPlaceholder()
-              }
-              className="w-full h-14 pl-11 pr-11 border border-[#c4c7c7] dark:border-[#4a4642] bg-white dark:bg-[#201d1a] text-[#1b1c1a] dark:text-[#f3eee7] outline-none focus:border-[#94492d] dark:focus:border-[#d58b6e] transition-colors placeholder:text-[#969998] dark:placeholder:text-[#77716c]"
-            />
-
-            {search && (
-              <button
-                onClick={
-                  clearSearch
-                }
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#747878] hover:text-[#94492d]"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-
-          </div>
-
-        </div>
-
-        {isOdia &&
-          translationBusy &&
-          !loading && (
-            <div className="mb-6 text-[11px] font-semibold tracking-[0.08em] text-[#94492d] dark:text-[#d58b6e]">
-              ବାକି ତଥ୍ୟଗୁଡ଼ିକ ଓଡ଼ିଆକୁ ରୂପାନ୍ତର ହେଉଛି...
+                {search && (
+                  <button
+                    onClick={
+                      clearSearch
+                    }
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#747878] hover:text-[#94492d]"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
             </div>
           )}
 
+        {/* Historical search */}
+        {(activeSection ===
+          "battles" ||
+          activeSection ===
+            "extinct-districts") && (
+          <div className="max-w-2xl mb-12">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#747878]" />
+
+              <input
+                type="text"
+                value={search}
+                onChange={(event) =>
+                  setSearch(
+                    event.target.value
+                  )
+                }
+                placeholder={getSearchPlaceholder()}
+                className="w-full h-14 pl-11 pr-11 border border-[#c4c7c7] dark:border-[#4a4642] bg-white dark:bg-[#201d1a] outline-none focus:border-[#94492d] transition-colors"
+              />
+
+              {search && (
+                <button
+                  onClick={
+                    clearSearch
+                  }
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#747878]"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
         {loading ? (
           <div className="min-h-[350px] flex flex-col items-center justify-center">
-
             <div className="w-10 h-10 border-2 border-[#d9d6cf] dark:border-[#4a4642] border-t-[#94492d] rounded-full animate-spin" />
 
-            <p className="mt-5 text-sm text-[#747878] dark:text-[#aaa39c]">
-              {text.loading}
+            <p className="mt-5 text-sm text-[#747878]">
+              {isOdia
+                ? "ଐତିହ୍ୟ ତଥ୍ୟ ଲୋଡ୍ ହେଉଛି..."
+                : "Loading heritage knowledge..."}
             </p>
-
           </div>
         ) : (
           <>
@@ -2175,41 +1929,45 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
             {activeSection ===
               "rituals" &&
               renderRituals()}
+
+            {/* COMPLETELY SEPARATE */}
+            {activeSection ===
+              "battles" &&
+              renderBattles()}
+
+            {/* COMPLETELY SEPARATE */}
+            {activeSection ===
+              "extinct-districts" &&
+              renderExtinctDistricts()}
           </>
         )}
-
       </section>
 
-      {/* FOOTER */}
+      {/* =====================================================
+          FOOTER STRIP
+      ===================================================== */}
 
       <section className="border-t border-[#dedbd5] dark:border-[#35312e] bg-[#efeeea] dark:bg-[#12100f]">
+        <div className="max-w-[1440px] mx-auto px-6 md:px-16 py-12">
+          <div className="flex items-center gap-4">
+            <div className="w-11 h-11 border border-[#c4c7c7] dark:border-[#4a4642] flex items-center justify-center">
+              <BookOpen className="w-4 h-4 text-[#94492d]" />
+            </div>
 
-        <div className="max-w-[1440px] mx-auto px-6 md:px-16 py-10 flex items-center gap-4">
+            <div>
+              <p className="font-display text-xl">
+                HeritageHub
+              </p>
 
-          <div className="w-10 h-10 border border-[#c4c7c7] dark:border-[#4a4642] flex items-center justify-center">
-
-            <BookOpen className="w-4 h-4 text-[#94492d] dark:text-[#d58b6e]" />
-
+              <p className="text-xs text-[#747878] mt-1">
+                {isOdia
+                  ? "ଓଡ଼ିଶାର ଐତିହ୍ୟକୁ ସଂରକ୍ଷଣ ଓ ପ୍ରଚାର"
+                  : "Preserving and sharing Odisha's heritage"}
+              </p>
+            </div>
           </div>
-
-          <div>
-
-            <p className="font-display text-lg">
-              {isOdia
-                ? "ହେରିଟେଜ୍ ହବ୍"
-                : "HeritageHub"}
-            </p>
-
-            <p className="text-xs text-[#747878] dark:text-[#aaa39c]">
-              {text.preservedArchive}
-            </p>
-
-          </div>
-
         </div>
-
       </section>
-
     </main>
   );
 };
@@ -2225,9 +1983,7 @@ interface LearnTabProps {
   onClick: () => void;
 }
 
-const LearnTab: React.FC<
-  LearnTabProps
-> = ({
+const LearnTab: React.FC<LearnTabProps> = ({
   active,
   label,
   icon,
@@ -2236,9 +1992,9 @@ const LearnTab: React.FC<
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-2 px-6 py-5 text-[11px] uppercase tracking-[0.12em] font-bold border-b-2 transition-all ${
+      className={`flex items-center gap-2 px-5 md:px-6 py-5 text-[10px] md:text-[11px] uppercase tracking-[0.12em] font-bold border-b-2 transition-all whitespace-nowrap ${
         active
-          ? "border-[#94492d] text-[#94492d] dark:text-[#d58b6e] dark:border-[#d58b6e]"
+          ? "border-[#94492d] text-[#94492d] dark:text-[#d58b6e]"
           : "border-transparent text-[#747878] dark:text-[#aaa39c] hover:text-[#1b1c1a] dark:hover:text-white"
       }`}
     >
@@ -2269,29 +2025,94 @@ const SectionHeading: React.FC<
 }) => {
   return (
     <div className="mb-10 md:flex md:items-end md:justify-between gap-8">
-
       <div>
-
         <div className="flex items-center gap-2 text-[#94492d] dark:text-[#d58b6e] mb-4">
-
           {icon}
 
           <span className="text-[10px] uppercase tracking-[0.15em] font-bold">
             {archiveLabel}
           </span>
-
         </div>
 
-        <h2 className="font-display text-4xl md:text-5xl text-[#1b1c1a] dark:text-[#f3eee7]">
+        <h2 className="font-display text-4xl md:text-5xl">
           {title}
         </h2>
 
         <p className="mt-4 max-w-2xl text-sm md:text-base leading-7 text-[#747878] dark:text-[#aaa39c]">
           {description}
         </p>
+      </div>
+    </div>
+  );
+};
 
+/* =========================================================
+   HISTORICAL HERO
+========================================================= */
+
+interface HistoricalHeroProps {
+  icon: React.ReactNode;
+  eyebrow: string;
+  title: string;
+  description: string;
+  accent: "battle" | "district";
+}
+
+const HistoricalHero: React.FC<
+  HistoricalHeroProps
+> = ({
+  icon,
+  eyebrow,
+  title,
+  description,
+  accent,
+}) => {
+  const isBattle = accent === "battle";
+
+  return (
+    <div className="relative overflow-hidden border border-[#d9d6cf] dark:border-[#3d3935] bg-gradient-to-br from-[#f5f0e8] via-[#f0ede7] to-[#e7dfd5] dark:from-[#211d1a] dark:via-[#201d1a] dark:to-[#171513] shadow-[0_20px_60px_rgba(80,45,30,0.08)]">
+      {/* Decorative lines */}
+      <div className="absolute inset-y-0 right-0 w-1/3 opacity-30 pointer-events-none">
+        <div className="absolute right-[-100px] top-[-100px] w-[360px] h-[360px] rounded-full border border-[#94492d]" />
+
+        <div className="absolute right-[-40px] top-[-40px] w-[240px] h-[240px] rounded-full border border-[#94492d]" />
       </div>
 
+      <div className="relative p-8 md:p-12 lg:p-14">
+        <div className="flex items-center gap-3 text-[#94492d]">
+          <div className="w-10 h-10 border border-[#94492d]/30 flex items-center justify-center">
+            {icon}
+          </div>
+
+          <span className="text-[10px] uppercase tracking-[0.17em] font-bold">
+            {eyebrow}
+          </span>
+        </div>
+
+        <div className="max-w-4xl mt-7">
+          <h2 className="font-display text-5xl md:text-6xl lg:text-7xl leading-[0.95] tracking-tight">
+            {title}
+          </h2>
+
+          <p className="mt-7 max-w-2xl text-base md:text-lg leading-8 text-[#555856] dark:text-[#c8c1ba]">
+            {description}
+          </p>
+        </div>
+
+        <div className="mt-9 flex items-center gap-3 text-[10px] uppercase tracking-[0.15em] font-bold text-[#747878]">
+          {isBattle ? (
+            <>
+              <Swords className="w-4 h-4 text-[#94492d]" />
+              Odisha · Historical Battles
+            </>
+          ) : (
+            <>
+              <MapPinned className="w-4 h-4 text-[#94492d]" />
+              Odisha · Administrative History
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
