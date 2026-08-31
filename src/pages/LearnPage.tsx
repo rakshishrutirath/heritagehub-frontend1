@@ -927,10 +927,12 @@ export const LearnPage: React.FC<LearnPageProps> = () => {
                       </p>
                     )}
 
-                    {(item.tutorial_url ||
+                    {(item.tutorial_link ||
+                      item.tutorial_url ||
                       item.youtube_url) && (
                       <a
                         href={
+                          item.tutorial_link ||
                           item.tutorial_url ||
                           item.youtube_url
                         }
