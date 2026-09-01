@@ -1,2165 +1,1119 @@
-import React, {
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-
+import React, { useMemo, useState } from "react";
+import { Canvas } from "@react-three/fiber";
+import {
+  OrbitControls,
+  Environment,
+  ContactShadows,
+  RoundedBox,
+} from "@react-three/drei";
 import * as THREE from "three";
 
-import { GLTFLoader } from
-  "three/examples/jsm/loaders/GLTFLoader.js";
-
-import {
-  Upload,
-  Box,
-  RefreshCw,
-  CheckCircle,
-  XCircle,
-  Image as ImageIcon,
-  ExternalLink,
-  RotateCcw,
-  ZoomIn,
-  ZoomOut,
-  Loader2,
-  ShieldCheck,
-  Sparkles,
-} from "lucide-react";
-
-import api from "../services/api";
-import { Artifact } from "../types";
-import { useLanguage } from "../context/LanguageContext";
-
 /* =========================================================
-   PROPS
+   TYPES
 ========================================================= */
 
-interface ThreeDHeritagePageProps {
-  models?: unknown[];
-  artifacts?: Artifact[];
-  initialModelId?: string;
+type ModelType =
+  | "konark-wheel"
+  | "temple"
+  | "chariot"
+  | "dipa"
+  | "pillar";
 
-  onSelectArtifactDetail?: (
-    artifact: Artifact | null
-  ) => void;
+type Theme = "normal" | "moonlight" | "black";
+
+/* =========================================================
+   MODEL DATA
+========================================================= */
+
+const MODELS: {
+  id: ModelType;
+  name: string;
+  description: string;
+}[] = [
+  {
+    id: "konark-wheel",
+    name: "Konark Wheel",
+    description:
+      "A stylized interactive representation inspired by the Konark Sun Temple wheel.",
+  },
+  {
+    id: "temple",
+    name: "Odisha Temple",
+    description:
+      "A stylized heritage temple structure inspired by Odisha architecture.",
+  },
+  {
+    id: "chariot",
+    name: "Heritage Chariot",
+    description:
+      "A stylized traditional ceremonial chariot.",
+  },
+  {
+    id: "dipa",
+    name: "Dipa",
+    description:
+      "A traditional decorative lamp-inspired heritage object.",
+  },
+  {
+    id: "pillar",
+    name: "Temple Pillar",
+    description:
+      "A decorative temple pillar with traditional geometric details.",
+  },
+];
+
+/* =========================================================
+   MATERIAL
+========================================================= */
+
+function HeritageMaterial({
+  color,
+  wireframe,
+}: {
+  color: string;
+  wireframe: boolean;
+}) {
+  return (
+    <meshStandardMaterial
+      color={color}
+      roughness={0.72}
+      metalness={0.12}
+      wireframe={wireframe}
+    />
+  );
 }
 
 /* =========================================================
-   STATUS TYPE
+   KONARK WHEEL
 ========================================================= */
 
-type GenerationStatus =
-  | "idle"
-  | "pending"
-  | "processing"
-  | "succeeded"
-  | "failed"
-  | "error";
-
-/* =========================================================
-   PAGE
-========================================================= */
-
-export const ThreeDHeritagePage:
-React.FC<ThreeDHeritagePageProps> = () => {
-  /* =======================================================
-     LANGUAGE
-  ======================================================= */
-
-  const { language } = useLanguage();
-
-  const isOdia =
-    language === "or";
-
-  const t = {
-    eyebrow:
-      isOdia
-        ? "ଛବିରୁ 3D ଐତିହ୍ୟ"
-        : "IMAGE-TO-3D HERITAGE",
-
-    title:
-      isOdia
-        ? "3D ରେ ଐତିହ୍ୟ ପୁନର୍ନିର୍ମାଣ କରନ୍ତୁ"
-        : "Reconstruct Heritage in 3D",
-
-    description:
-      isOdia
-        ? "ଏକ ଐତିହ୍ୟ ଛବି ଅପଲୋଡ୍ କରନ୍ତୁ। HeritageHub ଏହାକୁ Django 3D generation pipeline କୁ ପଠାଇବ, ପ୍ରକ୍ରିୟାର ସ୍ଥିତି ଯାଞ୍ଚ କରିବ ଏବଂ ପ୍ରସ୍ତୁତ 3D model ଦେଖାଇବ।"
-        : "Upload a heritage image and HeritageHub will send it to the Django 3D generation pipeline, monitor its processing status, and display the generated model.",
-
-    sourceImage:
-      isOdia
-        ? "ମୂଳ ଛବି"
-        : "Source Image",
-
-    chooseImage:
-      isOdia
-        ? "ଐତିହ୍ୟ ଛବି ବାଛନ୍ତୁ"
-        : "Choose Heritage Image",
-
-    imageHint:
-      isOdia
-        ? "JPG, PNG, WEBP କିମ୍ବା browser ଦ୍ୱାରା ସମର୍ଥିତ ଛବି।"
-        : "JPG, PNG, WEBP or another browser-supported image.",
-
-    selectedFile:
-      isOdia
-        ? "ବାଛାଯାଇଥିବା ଫାଇଲ୍"
-        : "Selected File",
-
-    generate:
-      isOdia
-        ? "3D ମଡେଲ୍ ତିଆରି କରନ୍ତୁ"
-        : "Generate 3D Model",
-
-    starting:
-      isOdia
-        ? "Generation ଆରମ୍ଭ ହେଉଛି..."
-        : "Starting Generation...",
-
-    startOver:
-      isOdia
-        ? "ପୁନର୍ବାର ଆରମ୍ଭ"
-        : "Start Over",
-
-    generationStatus:
-      isOdia
-        ? "Generation ସ୍ଥିତି"
-        : "Generation Status",
-
-    idle:
-      isOdia
-        ? "3D ପୁନର୍ନିର୍ମାଣ ଆରମ୍ଭ କରିବା ପାଇଁ ଏକ ଛବି ବାଛନ୍ତୁ।"
-        : "Select an image to begin the reconstruction workflow.",
-
-    processing:
-      isOdia
-        ? "ପ୍ରକ୍ରିୟା ଚାଲିଛି"
-        : "Processing",
-
-    processingDescription:
-      isOdia
-        ? "HeritageHub ଆପଣଙ୍କ 3D ପୁନର୍ନିର୍ମାଣ ତିଆରି କରୁଛି।"
-        : "HeritageHub is generating your 3D reconstruction.",
-
-    progress:
-      isOdia
-        ? "ଅଗ୍ରଗତି"
-        : "Progress",
-
-    complete:
-      isOdia
-        ? "Generation ସମ୍ପୂର୍ଣ୍ଣ"
-        : "Generation Complete",
-
-    completeDescription:
-      isOdia
-        ? "ଆପଣଙ୍କ ଐତିହ୍ୟ 3D ପୁନର୍ନିର୍ମାଣ ପ୍ରସ୍ତୁତ।"
-        : "Your heritage reconstruction is ready.",
-
-    failed:
-      isOdia
-        ? "Generation ବିଫଳ"
-        : "Generation Failed",
-
-    genericFailure:
-      isOdia
-        ? "3D model ତିଆରି କରିହେଲା ନାହିଁ।"
-        : "Unable to generate the model.",
-
-    generationId:
-      "Generation ID",
-
-    viewer:
-      isOdia
-        ? "3D ଐତିହ୍ୟ ଭ୍ୟୁଅର୍"
-        : "3D Heritage Viewer",
-
-    viewerDescription:
-      isOdia
-        ? "Backend reconstruction ସମ୍ପୂର୍ଣ୍ଣ ହେଲେ ଆପଣଙ୍କ 3D ଐତିହ୍ୟ model ଏଠାରେ ଦେଖାଯିବ।"
-        : "Your generated heritage model will appear here when the backend reconstruction is complete.",
-
-    openModel:
-      isOdia
-        ? "Model ଫାଇଲ୍ ଖୋଲନ୍ତୁ"
-        : "Open Model File",
-
-    uploadStep:
-      isOdia
-        ? "ଛବି ଅପଲୋଡ୍"
-        : "Upload Image",
-
-    uploadStepText:
-      isOdia
-        ? "ପୁନର୍ନିର୍ମାଣ କରିବାକୁ ଚାହୁଁଥିବା ଐତିହ୍ୟ ବସ୍ତୁର ଏକ ସ୍ପଷ୍ଟ ଛବି ବାଛନ୍ତୁ।"
-        : "Select a clear image of the heritage object you want to reconstruct.",
-
-    generateStep:
-      isOdia
-        ? "3D Generation"
-        : "Generate",
-
-    generateStepText:
-      isOdia
-        ? "Django image-to-3D generation task ଆରମ୍ଭ କରି Generation ID ଫେରାଇବ।"
-        : "Django starts the image-to-3D generation task and returns a generation ID.",
-
-    exploreStep:
-      isOdia
-        ? "3D ଅନ୍ୱେଷଣ"
-        : "Explore",
-
-    exploreStepText:
-      isOdia
-        ? "HeritageHub task status ସ୍ୱୟଂଚାଳିତ ଭାବେ ଯାଞ୍ଚ କରି ପ୍ରସ୍ତୁତ 3D model ଲୋଡ୍ କରିବ।"
-        : "HeritageHub checks the task status automatically and loads the finished 3D model.",
-
-    invalidImage:
-      isOdia
-        ? "ଦୟାକରି ଏକ ସଠିକ୍ image file ବାଛନ୍ତୁ।"
-        : "Please select a valid image file.",
-
-    selectBeforeGenerate:
-      isOdia
-        ? "3D generation ଆରମ୍ଭ କରିବା ପୂର୍ବରୁ ଏକ ଛବି ବାଛନ୍ତୁ।"
-        : "Select an image before starting 3D generation.",
-
-    unableStart:
-      isOdia
-        ? "3D generation ଆରମ୍ଭ କରିହେଲା ନାହିଁ।"
-        : "Unable to start 3D generation.",
-
-    modelDisplayError:
-      isOdia
-        ? "3D model ତିଆରି ହୋଇଛି, କିନ୍ତୁ browser model file ଦେଖାଇପାରିଲା ନାହିଁ।"
-        : "The 3D model was generated, but the browser could not display the model file.",
-
-    reconstruction:
-      isOdia
-        ? "ଡିଜିଟାଲ୍ ପୁନର୍ନିର୍ମାଣ"
-        : "Digital Reconstruction",
-  };
-
-  /* =======================================================
-     STATE
-  ======================================================= */
-
-  const [
-    selectedImage,
-    setSelectedImage,
-  ] = useState<File | null>(null);
-
-  const [
-    previewUrl,
-    setPreviewUrl,
-  ] = useState<string | null>(null);
-
-  const [
-    generationId,
-    setGenerationId,
-  ] = useState<string | null>(null);
-
-  const [
-    status,
-    setStatus,
-  ] = useState<GenerationStatus>("idle");
-
-  const [
-    progress,
-    setProgress,
-  ] = useState<number>(0);
-
-  const [
-    modelUrl,
-    setModelUrl,
-  ] = useState<string | null>(null);
-
-  const [
-    error,
-    setError,
-  ] = useState("");
-
-  const [
-    generating,
-    setGenerating,
-  ] = useState(false);
-
-  /* =======================================================
-     THREE.JS REFS
-  ======================================================= */
-
-  const viewerRef =
-    useRef<HTMLDivElement | null>(null);
-
-  const sceneRef =
-    useRef<THREE.Scene | null>(null);
-
-  const cameraRef =
-    useRef<THREE.PerspectiveCamera | null>(
-      null
-    );
-
-  const rendererRef =
-    useRef<THREE.WebGLRenderer | null>(
-      null
-    );
-
-  const modelRef =
-    useRef<THREE.Group | null>(null);
-
-  const animationRef =
-    useRef<number | null>(null);
-
-  const isDraggingRef =
-    useRef(false);
-
-  const lastMouseRef =
-    useRef({
-      x: 0,
-      y: 0,
-    });
-
-  /* =======================================================
-     IMAGE SELECTION
-  ======================================================= */
-
-  const handleImageSelect = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file =
-      event.target.files?.[0];
-
-    if (!file) {
-      return;
-    }
-
-    if (
-      !file.type.startsWith(
-        "image/"
-      )
-    ) {
-      setError(
-        t.invalidImage
-      );
-
-      return;
-    }
-
-    if (
-      previewUrl
-    ) {
-      URL.revokeObjectURL(
-        previewUrl
-      );
-    }
-
-    const newPreview =
-      URL.createObjectURL(
-        file
-      );
-
-    setSelectedImage(
-      file
-    );
-
-    setPreviewUrl(
-      newPreview
-    );
-
-    setGenerationId(
-      null
-    );
-
-    setStatus(
-      "idle"
-    );
-
-    setProgress(
-      0
-    );
-
-    setModelUrl(
-      null
-    );
-
-    setError(
-      ""
-    );
-  };
-
-  /* =======================================================
-     GENERATE 3D
-  ======================================================= */
-
-  const handleGenerate =
-    async () => {
-      if (
-        !selectedImage
-      ) {
-        setError(
-          t.selectBeforeGenerate
-        );
-
-        return;
-      }
-
-      try {
-        setGenerating(
-          true
-        );
-
-        setError(
-          ""
-        );
-
-        setProgress(
-          0
-        );
-
-        setModelUrl(
-          null
-        );
-
-        setStatus(
-          "processing"
-        );
-
-        const response =
-          await api.generate3D(
-            selectedImage
-          );
-
-        console.log(
-          "3D generation response:",
-          response
-        );
-
-        setGenerationId(
-          response.generation_id
-        );
-
-        setStatus(
-          response.status ||
-            "processing"
-        );
-      } catch (
-        err
-      ) {
-        console.error(
-          "3D generation failed:",
-          err
-        );
-
-        setStatus(
-          "error"
-        );
-
-        if (
-          err instanceof Error
-        ) {
-          setError(
-            err.message
-          );
-        } else {
-          setError(
-            t.unableStart
-          );
-        }
-      } finally {
-        setGenerating(
-          false
-        );
-      }
-    };
-
-  /* =======================================================
-     POLL BACKEND STATUS
-  ======================================================= */
-
-  useEffect(() => {
-    if (
-      !generationId
-    ) {
-      return;
-    }
-
-    if (
-      status === "succeeded" ||
-      status === "failed" ||
-      status === "error"
-    ) {
-      return;
-    }
-
-    let cancelled =
-      false;
-
-    const checkStatus =
-      async () => {
-        try {
-          const result =
-            await api.check3DStatus(
-              generationId
-            );
-
-          if (
-            cancelled
-          ) {
-            return;
-          }
-
-          console.log(
-            "3D status:",
-            result
-          );
-
-          if (
-            result.progress !==
-            undefined
-          ) {
-            setProgress(
-              result.progress
-            );
-          }
-
-          if (
-            result.model_url
-          ) {
-            setModelUrl(
-              result.model_url
-            );
-          }
-
-          if (
-            result.status ===
-            "succeeded"
-          ) {
-            setStatus(
-              "succeeded"
-            );
-
-            setProgress(
-              100
-            );
-
-            return;
-          }
-
-          if (
-            result.status ===
-            "failed"
-          ) {
-            setStatus(
-              "failed"
-            );
-
-            setError(
-              result.error_message ||
-                t.genericFailure
-            );
-
-            return;
-          }
-
-          if (
-            result.status ===
-            "error"
-          ) {
-            setStatus(
-              "error"
-            );
-
-            setError(
-              result.detail ||
-                result.error_message ||
-                t.genericFailure
-            );
-
-            return;
-          }
-
-          setStatus(
-            result.status
-          );
-        } catch (
-          err
-        ) {
-          console.error(
-            "3D status check failed:",
-            err
-          );
-
-          if (
-            err instanceof Error
-          ) {
-            setError(
-              err.message
-            );
-          }
-        }
-      };
-
-    checkStatus();
-
-    const interval =
-      window.setInterval(
-        checkStatus,
-        5000
-      );
-
-    return () => {
-      cancelled =
-        true;
-
-      window.clearInterval(
-        interval
-      );
-    };
-  }, [
-    generationId,
-    status,
-  ]);
-
-  /* =======================================================
-     THREE.JS VIEWER
-  ======================================================= */
-
-  useEffect(() => {
-    if (
-      status !==
-        "succeeded" ||
-      !modelUrl ||
-      !viewerRef.current
-    ) {
-      return;
-    }
-
-    const container =
-      viewerRef.current;
-
-    /* -------------------------
-       SCENE
-    ------------------------- */
-
-    const scene =
-      new THREE.Scene();
-
-    scene.background =
-      new THREE.Color(
-        0x151311
-      );
-
-    sceneRef.current =
-      scene;
-
-    /* -------------------------
-       CAMERA
-    ------------------------- */
-
-    const camera =
-      new THREE.PerspectiveCamera(
-        45,
-
-        container.clientWidth /
-          Math.max(
-            container.clientHeight,
-            1
-          ),
-
-        0.1,
-
-        1000
-      );
-
-    camera.position.set(
-      0,
-      1,
-      4
-    );
-
-    cameraRef.current =
-      camera;
-
-    /* -------------------------
-       RENDERER
-    ------------------------- */
-
-    const renderer =
-      new THREE.WebGLRenderer({
-        antialias:
-          true,
-      });
-
-    renderer.setSize(
-      container.clientWidth,
-      container.clientHeight
-    );
-
-    renderer.setPixelRatio(
-      Math.min(
-        window.devicePixelRatio,
-        2
-      )
-    );
-
-    renderer.outputColorSpace =
-      THREE.SRGBColorSpace;
-
-    renderer.toneMapping =
-      THREE.ACESFilmicToneMapping;
-
-    renderer.toneMappingExposure =
-      1.1;
-
-    container.innerHTML =
-      "";
-
-    container.appendChild(
-      renderer.domElement
-    );
-
-    rendererRef.current =
-      renderer;
-
-    /* -------------------------
-       LIGHTS
-    ------------------------- */
-
-    const ambient =
-      new THREE.AmbientLight(
-        0xffffff,
-        1.5
-      );
-
-    scene.add(
-      ambient
-    );
-
-    const keyLight =
-      new THREE.DirectionalLight(
-        0xffffff,
-        3
-      );
-
-    keyLight.position.set(
-      4,
-      6,
-      5
-    );
-
-    scene.add(
-      keyLight
-    );
-
-    const fillLight =
-      new THREE.DirectionalLight(
-        0xffd8c4,
-        1.2
-      );
-
-    fillLight.position.set(
-      -4,
-      2,
-      3
-    );
-
-    scene.add(
-      fillLight
-    );
-
-    /* -------------------------
-       FLOOR
-    ------------------------- */
-
-    const floorGeometry =
-      new THREE.CircleGeometry(
-        2.1,
-        64
-      );
-
-    const floorMaterial =
-      new THREE.MeshStandardMaterial({
-        color:
-          0x222222,
-
-        roughness:
-          0.9,
-      });
-
-    const floor =
-      new THREE.Mesh(
-        floorGeometry,
-        floorMaterial
-      );
-
-    floor.rotation.x =
-      -Math.PI / 2;
-
-    floor.position.y =
-      -1.2;
-
-    scene.add(
-      floor
-    );
-
-    /* -------------------------
-       LOAD MODEL
-    ------------------------- */
-
-    const loader =
-      new GLTFLoader();
-
-    const proxyModelUrl =
-      `/api/meshy-model?url=${encodeURIComponent(modelUrl)}`;
-
-    loader.load(
-      proxyModelUrl,
-
-      (
-        gltf
-      ) => {
-        const model =
-          gltf.scene;
-
-        const box =
-          new THREE.Box3()
-            .setFromObject(
-              model
-            );
-
-        const center =
-          box.getCenter(
-            new THREE.Vector3()
-          );
-
-        const size =
-          box.getSize(
-            new THREE.Vector3()
-          );
-
-        model.position.sub(
-          center
-        );
-
-        const largest =
-          Math.max(
-            size.x,
-            size.y,
-            size.z
-          );
-
-        if (
-          largest >
-          0
-        ) {
-          const scale =
-            2.4 /
-            largest;
-
-          model.scale.setScalar(
-            scale
-          );
-        }
-
-        scene.add(
-          model
-        );
-
-        modelRef.current =
-          model;
-      },
-
-      undefined,
-
-      (
-        loadError
-      ) => {
-        console.error(
-          "Unable to load generated model:",
-          loadError
-        );
-
-        setError(
-          t.modelDisplayError
-        );
-      }
-    );
-
-    /* -------------------------
-       DRAG ROTATION
-    ------------------------- */
-
-    const canvas =
-      renderer.domElement;
-
-    const handleDown = (
-      event: MouseEvent
-    ) => {
-      isDraggingRef.current =
-        true;
-
-      lastMouseRef.current =
-        {
-          x:
-            event.clientX,
-
-          y:
-            event.clientY,
-        };
-    };
-
-    const handleMove = (
-      event: MouseEvent
-    ) => {
-      if (
-        !isDraggingRef.current ||
-        !modelRef.current
-      ) {
-        return;
-      }
-
-      const dx =
-        event.clientX -
-        lastMouseRef.current.x;
-
-      const dy =
-        event.clientY -
-        lastMouseRef.current.y;
-
-      modelRef.current.rotation.y +=
-        dx *
-        0.008;
-
-      modelRef.current.rotation.x +=
-        dy *
-        0.005;
-
-      lastMouseRef.current =
-        {
-          x:
-            event.clientX,
-
-          y:
-            event.clientY,
-        };
-    };
-
-    const handleUp =
-      () => {
-        isDraggingRef.current =
-          false;
-      };
-
-    canvas.addEventListener(
-      "mousedown",
-      handleDown
-    );
-
-    window.addEventListener(
-      "mousemove",
-      handleMove
-    );
-
-    window.addEventListener(
-      "mouseup",
-      handleUp
-    );
-
-    /* -------------------------
-       ANIMATION
-    ------------------------- */
-
-    const animate =
-      () => {
-        animationRef.current =
-          requestAnimationFrame(
-            animate
-          );
-
-        if (
-          modelRef.current &&
-          !isDraggingRef.current
-        ) {
-          modelRef.current
-            .rotation.y +=
-            0.002;
-        }
-
-        renderer.render(
-          scene,
-          camera
-        );
-      };
-
-    animate();
-
-    /* -------------------------
-       RESIZE
-    ------------------------- */
-
-    const handleResize =
-      () => {
-        if (
-          !viewerRef.current
-        ) {
-          return;
-        }
-
-        const width =
-          viewerRef.current
-            .clientWidth;
-
-        const height =
-          viewerRef.current
-            .clientHeight;
-
-        if (
-          width <= 0 ||
-          height <= 0
-        ) {
-          return;
-        }
-
-        camera.aspect =
-          width /
-          height;
-
-        camera.updateProjectionMatrix();
-
-        renderer.setSize(
-          width,
-          height
-        );
-      };
-
-    window.addEventListener(
-      "resize",
-      handleResize
-    );
-
-    /* -------------------------
-       CLEANUP
-    ------------------------- */
-
-    return () => {
-      if (
-        animationRef.current
-      ) {
-        cancelAnimationFrame(
-          animationRef.current
-        );
-      }
-
-      canvas.removeEventListener(
-        "mousedown",
-        handleDown
-      );
-
-      window.removeEventListener(
-        "mousemove",
-        handleMove
-      );
-
-      window.removeEventListener(
-        "mouseup",
-        handleUp
-      );
-
-      window.removeEventListener(
-        "resize",
-        handleResize
-      );
-
-      renderer.dispose();
-
-      floorGeometry.dispose();
-      floorMaterial.dispose();
-
-      modelRef.current =
-        null;
-
-      rendererRef.current =
-        null;
-
-      sceneRef.current =
-        null;
-    };
-  }, [
-    modelUrl,
-    status,
-  ]);
-
-  /* =======================================================
-     VIEWER CONTROLS
-  ======================================================= */
-
-  const resetModel =
-    () => {
-      if (
-        modelRef.current
-      ) {
-        modelRef.current.rotation.set(
-          0,
-          0,
-          0
-        );
-      }
-
-      if (
-        cameraRef.current
-      ) {
-        cameraRef.current.position.set(
-          0,
-          1,
-          4
-        );
-      }
-    };
-
-  const zoomIn =
-    () => {
-      if (
-        cameraRef.current
-      ) {
-        cameraRef.current.position.z =
-          Math.max(
-            1.5,
-
-            cameraRef.current
-              .position.z -
-              0.4
-          );
-      }
-    };
-
-  const zoomOut =
-    () => {
-      if (
-        cameraRef.current
-      ) {
-        cameraRef.current.position.z =
-          Math.min(
-            8,
-
-            cameraRef.current
-              .position.z +
-              0.4
-          );
-      }
-    };
-
-  /* =======================================================
-     RESET WORKFLOW
-  ======================================================= */
-
-  const resetGeneration =
-    () => {
-      if (
-        previewUrl
-      ) {
-        URL.revokeObjectURL(
-          previewUrl
-        );
-      }
-
-      setSelectedImage(
-        null
-      );
-
-      setPreviewUrl(
-        null
-      );
-
-      setGenerationId(
-        null
-      );
-
-      setStatus(
-        "idle"
-      );
-
-      setProgress(
-        0
-      );
-
-      setModelUrl(
-        null
-      );
-
-      setError(
-        ""
-      );
-    };
-
-  /* =======================================================
-     PREVIEW CLEANUP
-  ======================================================= */
-
-  useEffect(() => {
-    return () => {
-      if (
-        previewUrl
-      ) {
-        URL.revokeObjectURL(
-          previewUrl
-        );
-      }
-    };
-  }, [
-    previewUrl,
-  ]);
-
-  /* =======================================================
-     UI
-  ======================================================= */
+function KonarkWheel({
+  wireframe,
+}: {
+  wireframe: boolean;
+}) {
+  const spokes = 12;
 
   return (
-    <main
-      className="
-        min-h-screen
-        bg-[#faf9f5]
-        dark:bg-[#12100f]
-        text-[#1b1c1a]
-        dark:text-[#f3eee7]
-        transition-colors
-        duration-300
-      "
-    >
-      {/* HERO */}
+    <group rotation={[Math.PI / 2, 0, 0]}>
+      {/* Main wheel */}
+      <mesh>
+        <torusGeometry args={[2.15, 0.28, 24, 64]} />
+        <HeritageMaterial
+          color="#b85c2e"
+          wireframe={wireframe}
+        />
+      </mesh>
 
-      <section
-        className="
-          border-b
-          border-[#ded9d3]
-          dark:border-[#38322e]
-        "
+      {/* Inner ring */}
+      <mesh>
+        <torusGeometry args={[1.45, 0.15, 20, 48]} />
+        <HeritageMaterial
+          color="#d28a4d"
+          wireframe={wireframe}
+        />
+      </mesh>
+
+      {/* Center */}
+      <mesh>
+        <cylinderGeometry args={[0.42, 0.42, 0.32, 32]} />
+        <HeritageMaterial
+          color="#9c4b26"
+          wireframe={wireframe}
+        />
+      </mesh>
+
+      {/* Spokes */}
+      {Array.from({ length: spokes }).map((_, i) => {
+        const angle = (i / spokes) * Math.PI * 2;
+
+        return (
+          <mesh
+            key={i}
+            rotation={[0, 0, angle]}
+            position={[
+              Math.cos(angle) * 1.08,
+              Math.sin(angle) * 1.08,
+              0,
+            ]}
+          >
+            <boxGeometry args={[0.16, 2.05, 0.20]} />
+            <HeritageMaterial
+              color="#c46a35"
+              wireframe={wireframe}
+            />
+          </mesh>
+        );
+      })}
+
+      {/* Decorative dots */}
+      {Array.from({ length: 24 }).map((_, i) => {
+        const angle = (i / 24) * Math.PI * 2;
+
+        return (
+          <mesh
+            key={`dot-${i}`}
+            position={[
+              Math.cos(angle) * 1.78,
+              Math.sin(angle) * 1.78,
+              0.18,
+            ]}
+          >
+            <sphereGeometry args={[0.10, 12, 12]} />
+            <HeritageMaterial
+              color="#e19a59"
+              wireframe={wireframe}
+            />
+          </mesh>
+        );
+      })}
+    </group>
+  );
+}
+
+/* =========================================================
+   TEMPLE
+========================================================= */
+
+function Temple({
+  wireframe,
+}: {
+  wireframe: boolean;
+}) {
+  return (
+    <group>
+      {/* Base */}
+      <mesh position={[0, 0.25, 0]}>
+        <boxGeometry args={[4.5, 0.5, 3.4]} />
+        <HeritageMaterial
+          color="#b85c2e"
+          wireframe={wireframe}
+        />
+      </mesh>
+
+      {/* Main body */}
+      <mesh position={[0, 1.55, 0]}>
+        <boxGeometry args={[3.6, 2.1, 2.6]} />
+        <HeritageMaterial
+          color="#c8783c"
+          wireframe={wireframe}
+        />
+      </mesh>
+
+      {/* Temple tower */}
+      <mesh position={[0, 3.35, 0]}>
+        <coneGeometry args={[1.65, 3.0, 8]} />
+        <HeritageMaterial
+          color="#a84e27"
+          wireframe={wireframe}
+        />
+      </mesh>
+
+      {/* Tower tip */}
+      <mesh position={[0, 5.05, 0]}>
+        <coneGeometry args={[0.45, 1.2, 8]} />
+        <HeritageMaterial
+          color="#d58a48"
+          wireframe={wireframe}
+        />
+      </mesh>
+
+      {/* Door */}
+      <mesh position={[0, 1.1, 1.34]}>
+        <boxGeometry args={[0.85, 1.5, 0.12]} />
+        <HeritageMaterial
+          color="#512717"
+          wireframe={wireframe}
+        />
+      </mesh>
+
+      {/* Side pillars */}
+      {[-1.25, 1.25].map((x) => (
+        <mesh
+          key={x}
+          position={[x, 1.2, 1.42]}
+        >
+          <cylinderGeometry
+            args={[0.18, 0.22, 1.8, 16]}
+          />
+          <HeritageMaterial
+            color="#d28a4d"
+            wireframe={wireframe}
+          />
+        </mesh>
+      ))}
+
+      {/* Decorative rings */}
+      {[2.55, 2.95, 3.35, 3.75].map(
+        (y, index) => (
+          <mesh
+            key={index}
+            position={[0, y, 0]}
+          >
+            <torusGeometry
+              args={[1.35 - index * 0.20, 0.10, 16, 32]}
+            />
+            <HeritageMaterial
+              color="#e19a59"
+              wireframe={wireframe}
+            />
+          </mesh>
+        )
+      )}
+    </group>
+  );
+}
+
+/* =========================================================
+   CHARIOT
+========================================================= */
+
+function Chariot({
+  wireframe,
+}: {
+  wireframe: boolean;
+}) {
+  return (
+    <group>
+      {/* Platform */}
+      <RoundedBox
+        args={[4, 0.6, 2.8]}
+        radius={0.15}
+        smoothness={4}
+        position={[0, 1.2, 0]}
+      >
+        <HeritageMaterial
+          color="#a94725"
+          wireframe={wireframe}
+        />
+      </RoundedBox>
+
+      {/* Upper cabin */}
+      <mesh position={[0, 2.8, 0]}>
+        <coneGeometry args={[1.9, 3.2, 8]} />
+        <HeritageMaterial
+          color="#c66a35"
+          wireframe={wireframe}
+        />
+      </mesh>
+
+      {/* Roof */}
+      <mesh position={[0, 4.35, 0]}>
+        <coneGeometry args={[2.1, 0.8, 8]} />
+        <HeritageMaterial
+          color="#8f3d21"
+          wireframe={wireframe}
+        />
+      </mesh>
+
+      {/* Wheels */}
+      {[-1.75, 1.75].map((x) => (
+        <group
+          key={x}
+          position={[x, 0.7, 0]}
+          rotation={[0, Math.PI / 2, 0]}
+        >
+          <mesh>
+            <cylinderGeometry
+              args={[1, 1, 0.35, 32]}
+            />
+            <HeritageMaterial
+              color="#8a3d22"
+              wireframe={wireframe}
+            />
+          </mesh>
+
+          <mesh position={[0, 0, 0.2]}>
+            <torusGeometry
+              args={[0.72, 0.12, 16, 32]}
+            />
+            <HeritageMaterial
+              color="#e19a59"
+              wireframe={wireframe}
+            />
+          </mesh>
+        </group>
+      ))}
+
+      {/* Pole */}
+      <mesh position={[0, 5.3, 0]}>
+        <cylinderGeometry
+          args={[0.12, 0.12, 2, 16]}
+        />
+        <HeritageMaterial
+          color="#d28a4d"
+          wireframe={wireframe}
+        />
+      </mesh>
+
+      {/* Flag */}
+      <mesh position={[0.55, 6.0, 0]}>
+        <coneGeometry args={[0.5, 1, 3]} />
+        <HeritageMaterial
+          color="#d65c32"
+          wireframe={wireframe}
+        />
+      </mesh>
+    </group>
+  );
+}
+
+/* =========================================================
+   DIPA
+========================================================= */
+
+function Dipa({
+  wireframe,
+}: {
+  wireframe: boolean;
+}) {
+  return (
+    <group>
+      {/* Base */}
+      <mesh position={[0, 0.35, 0]}>
+        <cylinderGeometry
+          args={[1.4, 1.7, 0.7, 32]}
+        />
+        <HeritageMaterial
+          color="#c46a35"
+          wireframe={wireframe}
+        />
+      </mesh>
+
+      {/* Stem */}
+      <mesh position={[0, 1.7, 0]}>
+        <cylinderGeometry
+          args={[0.35, 0.55, 2.5, 24]}
+        />
+        <HeritageMaterial
+          color="#d58a48"
+          wireframe={wireframe}
+        />
+      </mesh>
+
+      {/* Bowl */}
+      <mesh position={[0, 3.0, 0]}>
+        <sphereGeometry
+          args={[1.25, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2]}
+        />
+        <HeritageMaterial
+          color="#b85c2e"
+          wireframe={wireframe}
+        />
+      </mesh>
+
+      {/* Flame */}
+      <mesh position={[0, 4.15, 0]}>
+        <coneGeometry args={[0.35, 1.4, 16]} />
+        <HeritageMaterial
+          color="#e8a34f"
+          wireframe={wireframe}
+        />
+      </mesh>
+
+      {/* Side decorations */}
+      {[-1, 1].map((x) => (
+        <mesh
+          key={x}
+          position={[x * 1.1, 2.8, 0]}
+        >
+          <sphereGeometry args={[0.3, 16, 16]} />
+          <HeritageMaterial
+            color="#d58a48"
+            wireframe={wireframe}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+/* =========================================================
+   PILLAR
+========================================================= */
+
+function Pillar({
+  wireframe,
+}: {
+  wireframe: boolean;
+}) {
+  return (
+    <group>
+      {/* Base */}
+      <mesh position={[0, 0.3, 0]}>
+        <boxGeometry args={[2.6, 0.6, 2.6]} />
+        <HeritageMaterial
+          color="#a94f28"
+          wireframe={wireframe}
+        />
+      </mesh>
+
+      {/* Lower section */}
+      <mesh position={[0, 1.35, 0]}>
+        <cylinderGeometry
+          args={[1, 1, 1.5, 8]}
+        />
+        <HeritageMaterial
+          color="#c46a35"
+          wireframe={wireframe}
+        />
+      </mesh>
+
+      {/* Main shaft */}
+      <mesh position={[0, 3.3, 0]}>
+        <cylinderGeometry
+          args={[0.72, 0.82, 3.8, 8]}
+        />
+        <HeritageMaterial
+          color="#d58a48"
+          wireframe={wireframe}
+        />
+      </mesh>
+
+      {/* Decorative rings */}
+      {[1.9, 4.5].map((y) => (
+        <mesh
+          key={y}
+          position={[0, y, 0]}
+        >
+          <torusGeometry
+            args={[0.82, 0.15, 16, 32]}
+          />
+          <HeritageMaterial
+            color="#9b4424"
+            wireframe={wireframe}
+          />
+        </mesh>
+      ))}
+
+      {/* Capital */}
+      <mesh position={[0, 5.3, 0]}>
+        <cylinderGeometry
+          args={[1.35, 0.8, 0.8, 8]}
+        />
+        <HeritageMaterial
+          color="#b85c2e"
+          wireframe={wireframe}
+        />
+      </mesh>
+
+      {/* Top */}
+      <mesh position={[0, 5.9, 0]}>
+        <coneGeometry args={[1.4, 0.8, 8]} />
+        <HeritageMaterial
+          color="#d58a48"
+          wireframe={wireframe}
+        />
+      </mesh>
+    </group>
+  );
+}
+
+/* =========================================================
+   MODEL SWITCHER
+========================================================= */
+
+function HeritageModel({
+  type,
+  wireframe,
+}: {
+  type: ModelType;
+  wireframe: boolean;
+}) {
+  switch (type) {
+    case "konark-wheel":
+      return <KonarkWheel wireframe={wireframe} />;
+
+    case "temple":
+      return <Temple wireframe={wireframe} />;
+
+    case "chariot":
+      return <Chariot wireframe={wireframe} />;
+
+    case "dipa":
+      return <Dipa wireframe={wireframe} />;
+
+    case "pillar":
+      return <Pillar wireframe={wireframe} />;
+
+    default:
+      return <Temple wireframe={wireframe} />;
+  }
+}
+
+/* =========================================================
+   3D SCENE
+========================================================= */
+
+function Scene({
+  model,
+  wireframe,
+  theme,
+}: {
+  model: ModelType;
+  wireframe: boolean;
+  theme: Theme;
+}) {
+  const background = useMemo(() => {
+    if (theme === "black") return "#050505";
+    if (theme === "moonlight") return "#07101f";
+    return "#f3eee5";
+  }, [theme]);
+
+  const floorColor =
+    theme === "black"
+      ? "#111111"
+      : theme === "moonlight"
+      ? "#0d1728"
+      : "#ddd3c4";
+
+  return (
+    <Canvas
+      camera={{
+        position: [8, 6, 10],
+        fov: 45,
+      }}
+      style={{
+        width: "100%",
+        height: "100%",
+        background,
+      }}
+      shadows
+      dpr={[1, 2]}
+    >
+      <color
+        attach="background"
+        args={[background]}
+      />
+
+      <ambientLight
+        intensity={
+          theme === "black"
+            ? 0.7
+            : theme === "moonlight"
+            ? 0.8
+            : 1.2
+        }
+      />
+
+      <directionalLight
+        position={[5, 8, 5]}
+        intensity={
+          theme === "moonlight"
+            ? 2.2
+            : 2.5
+        }
+        castShadow
+      />
+
+      <directionalLight
+        position={[-5, 4, -4]}
+        intensity={1}
+      />
+
+      {theme === "moonlight" && (
+        <pointLight
+          position={[0, 7, 4]}
+          intensity={8}
+          distance={15}
+        />
+      )}
+
+      <group position={[0, -1.1, 0]}>
+        <HeritageModel
+          type={model}
+          wireframe={wireframe}
+        />
+      </group>
+
+      {/* Ground */}
+      <mesh
+        rotation={[-Math.PI / 2, 0, 0]}
+        position={[0, -1.12, 0]}
+        receiveShadow
+      >
+        <planeGeometry args={[30, 30]} />
+        <meshStandardMaterial
+          color={floorColor}
+          roughness={1}
+        />
+      </mesh>
+
+      <ContactShadows
+        position={[0, -1.08, 0]}
+        opacity={0.45}
+        scale={10}
+        blur={2.5}
+        far={6}
+      />
+
+      <Environment preset="city" />
+
+      {/* 360-degree rotation */}
+      <OrbitControls
+        enablePan={false}
+        enableZoom={true}
+        enableRotate={true}
+        minDistance={5}
+        maxDistance={18}
+        target={[0, 2, 0]}
+      />
+    </Canvas>
+  );
+}
+
+/* =========================================================
+   MAIN PAGE
+========================================================= */
+
+export default function ThreeHeritagePage() {
+  const [selectedModel, setSelectedModel] =
+    useState<ModelType>("konark-wheel");
+
+  const [theme, setTheme] =
+    useState<Theme>("normal");
+
+  const [wireframe, setWireframe] =
+    useState(false);
+
+  const currentModel = MODELS.find(
+    (item) => item.id === selectedModel
+  );
+
+  return (
+    <div
+      style={{
+        minHeight: "100vh",
+        background:
+          theme === "black"
+            ? "#050505"
+            : theme === "moonlight"
+            ? "#07101f"
+            : "#f7f3ec",
+        color:
+          theme === "normal"
+            ? "#261810"
+            : "#f5f5f5",
+        paddingBottom: 60,
+      }}
+    >
+      {/* =================================================
+          HEADER
+      ================================================= */}
+
+      <div
+        style={{
+          padding: "30px 5%",
+          borderBottom:
+            theme === "normal"
+              ? "1px solid #ddd"
+              : "1px solid #273044",
+        }}
       >
         <div
-          className="
-            max-w-[1440px]
-            mx-auto
-            px-5
-            md:px-16
-            py-14
-            md:py-20
-          "
+          style={{
+            maxWidth: 1400,
+            margin: "0 auto",
+          }}
         >
           <div
-            className="
-              flex
-              items-center
-              gap-2
-              text-[#94492d]
-              dark:text-[#d97955]
-            "
+            style={{
+              fontSize: 13,
+              letterSpacing: 3,
+              textTransform: "uppercase",
+              opacity: 0.65,
+              marginBottom: 10,
+            }}
           >
-            <Box className="w-4 h-4" />
-
-            <span
-              className="
-                text-[11px]
-                uppercase
-                tracking-[0.16em]
-                font-bold
-              "
-            >
-              {t.eyebrow}
-            </span>
+            HeritageHub
           </div>
 
           <h1
-            className="
-              font-display
-              text-[40px]
-              sm:text-[48px]
-              md:text-[60px]
-              lg:text-[68px]
-              leading-[1.03]
-              tracking-[-0.035em]
-              font-bold
-              mt-4
-              max-w-4xl
-            "
+            style={{
+              margin: 0,
+              fontFamily: "Georgia, serif",
+              fontSize: "clamp(32px, 5vw, 64px)",
+              fontWeight: 500,
+            }}
           >
-            {t.title}
+            3D Heritage Gallery
           </h1>
 
           <p
-            className="
-              max-w-2xl
-              text-[#555550]
-              dark:text-[#aaa39c]
-              leading-7
-              text-[15px]
-              md:text-[17px]
-              mt-5
-            "
+            style={{
+              maxWidth: 720,
+              lineHeight: 1.7,
+              opacity: 0.75,
+              marginTop: 15,
+            }}
           >
-            {t.description}
+            Explore Odisha-inspired heritage objects
+            in an interactive 3D gallery. Drag to rotate,
+            scroll to zoom, and switch between visual modes.
           </p>
         </div>
-      </section>
+      </div>
 
-      {/* WORKSPACE */}
+      {/* =================================================
+          CONTROLS
+      ================================================= */}
 
-      <section
-        className="
-          max-w-[1440px]
-          mx-auto
-          px-5
-          md:px-16
-          py-12
-          md:py-16
-          pb-20
-        "
+      <div
+        style={{
+          maxWidth: 1400,
+          margin: "25px auto",
+          padding: "0 5%",
+        }}
       >
         <div
-          className="
-            grid
-            grid-cols-1
-            lg:grid-cols-12
-            gap-8
-            items-start
-          "
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 10,
+            alignItems: "center",
+          }}
         >
-          {/* LEFT */}
+          {/* Models */}
+
+          {MODELS.map((item) => (
+            <button
+              key={item.id}
+              onClick={() =>
+                setSelectedModel(item.id)
+              }
+              style={{
+                padding: "11px 16px",
+                borderRadius: 999,
+                border:
+                  selectedModel === item.id
+                    ? "2px solid #a64b28"
+                    : "1px solid #999",
+                background:
+                  selectedModel === item.id
+                    ? "#a64b28"
+                    : "transparent",
+                color:
+                  selectedModel === item.id
+                    ? "#fff"
+                    : "inherit",
+                cursor: "pointer",
+                fontWeight: 600,
+              }}
+            >
+              {item.name}
+            </button>
+          ))}
+        </div>
+
+        {/* Visual controls */}
+
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 10,
+            marginTop: 15,
+          }}
+        >
+          <button
+            onClick={() => setTheme("normal")}
+            style={controlButton(theme === "normal")}
+          >
+            ☀ Normal
+          </button>
+
+          <button
+            onClick={() => setTheme("moonlight")}
+            style={controlButton(theme === "moonlight")}
+          >
+            ☾ Moonlight
+          </button>
+
+          <button
+            onClick={() => setTheme("black")}
+            style={controlButton(theme === "black")}
+          >
+            ● Black
+          </button>
+
+          <button
+            onClick={() =>
+              setWireframe((value) => !value)
+            }
+            style={controlButton(wireframe)}
+          >
+            {wireframe
+              ? "▦ Solid Mode"
+              : "⌁ Wireframe Mode"}
+          </button>
+        </div>
+      </div>
+
+      {/* =================================================
+          MODEL VIEWER
+      ================================================= */}
+
+      <div
+        style={{
+          maxWidth: 1400,
+          margin: "0 auto",
+          padding: "0 5%",
+        }}
+      >
+        <div
+          style={{
+            position: "relative",
+            height:
+              "min(70vh, 720px)",
+            minHeight: 500,
+            borderRadius: 18,
+            overflow: "hidden",
+            border:
+              theme === "normal"
+                ? "1px solid #d5cec4"
+                : "1px solid #273044",
+            boxShadow:
+              theme === "black"
+                ? "0 20px 80px rgba(0,0,0,.8)"
+                : "0 20px 60px rgba(0,0,0,.15)",
+          }}
+        >
+          <Scene
+            model={selectedModel}
+            wireframe={wireframe}
+            theme={theme}
+          />
+
+          {/* Viewer label */}
 
           <div
-            className="
-              lg:col-span-4
-              space-y-6
-            "
+            style={{
+              position: "absolute",
+              left: 20,
+              top: 20,
+              padding: "12px 16px",
+              borderRadius: 12,
+              background:
+                theme === "normal"
+                  ? "rgba(255,255,255,.82)"
+                  : "rgba(0,0,0,.55)",
+              backdropFilter: "blur(10px)",
+              color:
+                theme === "normal"
+                  ? "#261810"
+                  : "#fff",
+              pointerEvents: "none",
+            }}
           >
-            {/* SOURCE IMAGE */}
+            <strong>
+              {currentModel?.name}
+            </strong>
 
-            <section
-              className="
-                bg-white
-                dark:bg-[#1c1917]
-                border
-                border-[#c4c7c7]
-                dark:border-[#3b3531]
-                p-6
-              "
+            <div
+              style={{
+                fontSize: 12,
+                marginTop: 5,
+                opacity: 0.7,
+              }}
             >
-              <div
-                className="
-                  flex
-                  items-center
-                  gap-2
-                  mb-5
-                "
-              >
-                <ImageIcon
-                  className="
-                    w-5
-                    h-5
-                    text-[#94492d]
-                    dark:text-[#d97955]
-                  "
-                />
-
-                <h2
-                  className="
-                    font-display
-                    text-xl
-                    font-bold
-                  "
-                >
-                  {t.sourceImage}
-                </h2>
-              </div>
-
-              <label
-                className="
-                  block
-                  border-2
-                  border-dashed
-                  border-[#c4c7c7]
-                  dark:border-[#49413c]
-                  hover:border-[#94492d]
-                  dark:hover:border-[#d97955]
-                  transition-colors
-                  cursor-pointer
-                  overflow-hidden
-                  bg-[#faf9f5]
-                  dark:bg-[#151311]
-                "
-              >
-                {previewUrl ? (
-                  <img
-                    src={
-                      previewUrl
-                    }
-                    alt="Selected heritage"
-                    className="
-                      w-full
-                      h-[280px]
-                      object-contain
-                      bg-[#efeeea]
-                      dark:bg-[#11100f]
-                    "
-                  />
-                ) : (
-                  <div
-                    className="
-                      min-h-[280px]
-                      flex
-                      flex-col
-                      items-center
-                      justify-center
-                      px-5
-                      text-center
-                    "
-                  >
-                    <Upload
-                      className="
-                        w-10
-                        h-10
-                        text-[#94492d]
-                        dark:text-[#d97955]
-                      "
-                    />
-
-                    <h3
-                      className="
-                        font-semibold
-                        mt-4
-                      "
-                    >
-                      {t.chooseImage}
-                    </h3>
-
-                    <p
-                      className="
-                        text-xs
-                        text-[#747878]
-                        dark:text-[#8f8882]
-                        mt-2
-                        leading-5
-                      "
-                    >
-                      {t.imageHint}
-                    </p>
-                  </div>
-                )}
-
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={
-                    handleImageSelect
-                  }
-                  className="hidden"
-                />
-              </label>
-
-              {selectedImage && (
-                <div
-                  className="
-                    mt-4
-                    border
-                    border-[#c4c7c7]
-                    dark:border-[#3b3531]
-                    bg-[#faf9f5]
-                    dark:bg-[#151311]
-                    p-4
-                  "
-                >
-                  <p
-                    className="
-                      text-[10px]
-                      uppercase
-                      tracking-wider
-                      text-[#747878]
-                      dark:text-[#8f8882]
-                    "
-                  >
-                    {t.selectedFile}
-                  </p>
-
-                  <p
-                    className="
-                      text-sm
-                      font-semibold
-                      break-all
-                      mt-1
-                    "
-                  >
-                    {selectedImage.name}
-                  </p>
-                </div>
-              )}
-
-              <button
-                type="button"
-                onClick={
-                  handleGenerate
-                }
-                disabled={
-                  !selectedImage ||
-                  generating ||
-                  status ===
-                    "processing" ||
-                  status ===
-                    "pending"
-                }
-                className="
-                  mt-5
-                  w-full
-                  bg-[#94492d]
-                  hover:bg-[#773319]
-                  dark:bg-[#b85b38]
-                  dark:hover:bg-[#cf6944]
-                  disabled:opacity-50
-                  disabled:cursor-not-allowed
-                  text-white
-                  py-4
-                  font-bold
-                  text-[11px]
-                  uppercase
-                  tracking-[0.12em]
-                  flex
-                  items-center
-                  justify-center
-                  gap-2
-                  transition-colors
-                "
-              >
-                {generating ? (
-                  <Loader2
-                    className="
-                      w-4
-                      h-4
-                      animate-spin
-                    "
-                  />
-                ) : (
-                  <Box className="w-4 h-4" />
-                )}
-
-                {generating
-                  ? t.starting
-                  : t.generate}
-              </button>
-
-              {selectedImage && (
-                <button
-                  type="button"
-                  onClick={
-                    resetGeneration
-                  }
-                  className="
-                    mt-3
-                    w-full
-                    border
-                    border-[#c4c7c7]
-                    dark:border-[#4a433e]
-                    py-3
-                    text-[11px]
-                    uppercase
-                    tracking-[0.12em]
-                    font-bold
-                    hover:bg-[#efeeea]
-                    dark:hover:bg-[#24201d]
-                    transition-colors
-                  "
-                >
-                  {t.startOver}
-                </button>
-              )}
-            </section>
-
-            {/* STATUS */}
-
-            <section
-              className="
-                bg-[#1c1b1b]
-                dark:bg-[#090908]
-                text-white
-                p-6
-                border
-                border-black
-              "
-            >
-              <div
-                className="
-                  flex
-                  items-center
-                  gap-2
-                  mb-5
-                "
-              >
-                <ShieldCheck
-                  className="
-                    w-5
-                    h-5
-                    text-[#fd9e7b]
-                  "
-                />
-
-                <h2
-                  className="
-                    font-display
-                    text-xl
-                    font-bold
-                  "
-                >
-                  {t.generationStatus}
-                </h2>
-              </div>
-
-              {status ===
-                "idle" && (
-                <p
-                  className="
-                    text-sm
-                    text-[#c4c7c7]
-                    leading-6
-                  "
-                >
-                  {t.idle}
-                </p>
-              )}
-
-              {(status ===
-                "processing" ||
-                status ===
-                  "pending") && (
-                <div>
-                  <div
-                    className="
-                      flex
-                      items-center
-                      gap-3
-                    "
-                  >
-                    <RefreshCw
-                      className="
-                        w-5
-                        h-5
-                        text-[#fd9e7b]
-                        animate-spin
-                      "
-                    />
-
-                    <div>
-                      <p className="font-semibold">
-                        {t.processing}
-                      </p>
-
-                      <p
-                        className="
-                          text-xs
-                          text-[#c4c7c7]
-                          mt-1
-                          leading-5
-                        "
-                      >
-                        {t.processingDescription}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-6">
-                    <div
-                      className="
-                        flex
-                        justify-between
-                        text-xs
-                        text-[#c4c7c7]
-                        mb-2
-                      "
-                    >
-                      <span>
-                        {t.progress}
-                      </span>
-
-                      <span>
-                        {progress}%
-                      </span>
-                    </div>
-
-                    <div
-                      className="
-                        h-2
-                        bg-white/10
-                        overflow-hidden
-                      "
-                    >
-                      <div
-                        className="
-                          h-full
-                          bg-[#b85b38]
-                          transition-all
-                          duration-500
-                        "
-                        style={{
-                          width: `${
-                            Math.min(
-                              Math.max(
-                                progress,
-                                0
-                              ),
-                              100
-                            )
-                          }%`,
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {status ===
-                "succeeded" && (
-                <div
-                  className="
-                    flex
-                    items-start
-                    gap-3
-                  "
-                >
-                  <CheckCircle
-                    className="
-                      w-6
-                      h-6
-                      text-emerald-400
-                    "
-                  />
-
-                  <div>
-                    <p className="font-semibold">
-                      {t.complete}
-                    </p>
-
-                    <p
-                      className="
-                        text-xs
-                        text-[#c4c7c7]
-                        mt-1
-                      "
-                    >
-                      {t.completeDescription}
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {(status ===
-                "failed" ||
-                status ===
-                  "error") && (
-                <div
-                  className="
-                    flex
-                    items-start
-                    gap-3
-                  "
-                >
-                  <XCircle
-                    className="
-                      w-6
-                      h-6
-                      text-red-400
-                    "
-                  />
-
-                  <div>
-                    <p className="font-semibold">
-                      {t.failed}
-                    </p>
-
-                    <p
-                      className="
-                        text-xs
-                        text-red-300
-                        mt-1
-                      "
-                    >
-                      {error ||
-                        t.genericFailure}
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {generationId && (
-                <div
-                  className="
-                    mt-6
-                    pt-5
-                    border-t
-                    border-white/10
-                  "
-                >
-                  <p
-                    className="
-                      text-[10px]
-                      uppercase
-                      tracking-wider
-                      text-[#747878]
-                    "
-                  >
-                    {t.generationId}
-                  </p>
-
-                  <p
-                    className="
-                      text-xs
-                      font-mono
-                      text-[#c4c7c7]
-                      break-all
-                      mt-1
-                    "
-                  >
-                    {generationId}
-                  </p>
-                </div>
-              )}
-            </section>
+              Drag to rotate • Scroll to zoom
+            </div>
           </div>
 
-          {/* RIGHT VIEWER */}
+          {/* Mode indicator */}
 
-          <div className="lg:col-span-8">
-            <div
-              className="
-                bg-[#151311]
-                min-h-[600px]
-                lg:min-h-[720px]
-                border
-                border-black
-                relative
-                overflow-hidden
-              "
-            >
-              {status !==
-                "succeeded" && (
-                <div
-                  className="
-                    absolute
-                    inset-0
-                    flex
-                    items-center
-                    justify-center
-                    text-center
-                    px-6
-                  "
-                >
-                  <div className="max-w-md">
-                    <div
-                      className="
-                        w-20
-                        h-20
-                        mx-auto
-                        border
-                        border-white/10
-                        rounded-full
-                        flex
-                        items-center
-                        justify-center
-                      "
-                    >
-                      <Box
-                        className="
-                          w-10
-                          h-10
-                          text-[#b85b38]
-                        "
-                      />
-                    </div>
-
-                    <span
-                      className="
-                        inline-flex
-                        items-center
-                        gap-1.5
-                        text-[10px]
-                        uppercase
-                        tracking-[0.15em]
-                        text-[#d97955]
-                        font-bold
-                        mt-6
-                      "
-                    >
-                      <Sparkles className="w-3.5 h-3.5" />
-
-                      {t.reconstruction}
-                    </span>
-
-                    <h2
-                      className="
-                        font-display
-                        text-3xl
-                        text-white
-                        font-bold
-                        mt-3
-                      "
-                    >
-                      {t.viewer}
-                    </h2>
-
-                    <p
-                      className="
-                        text-[#8d8883]
-                        text-sm
-                        mt-3
-                        leading-6
-                      "
-                    >
-                      {t.viewerDescription}
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {status ===
-                "succeeded" &&
-                modelUrl && (
-                <>
-                  <div
-                    ref={
-                      viewerRef
-                    }
-                    className="
-                      absolute
-                      inset-0
-                      cursor-grab
-                      active:cursor-grabbing
-                    "
-                  />
-
-                  <div
-                    className="
-                      absolute
-                      right-4
-                      top-4
-                      z-20
-                      flex
-                      flex-col
-                      gap-2
-                    "
-                  >
-                    <ViewerButton
-                      label="Zoom in"
-                      onClick={
-                        zoomIn
-                      }
-                    >
-                      <ZoomIn className="w-4 h-4" />
-                    </ViewerButton>
-
-                    <ViewerButton
-                      label="Zoom out"
-                      onClick={
-                        zoomOut
-                      }
-                    >
-                      <ZoomOut className="w-4 h-4" />
-                    </ViewerButton>
-
-                    <ViewerButton
-                      label="Reset model"
-                      onClick={
-                        resetModel
-                      }
-                    >
-                      <RotateCcw className="w-4 h-4" />
-                    </ViewerButton>
-                  </div>
-
-                  <div
-                    className="
-                      absolute
-                      left-4
-                      bottom-4
-                      z-20
-                    "
-                  >
-                    <a
-                      href={`/api/meshy-model?url=${encodeURIComponent(modelUrl)}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="
-                        bg-[#94492d]
-                        hover:bg-[#773319]
-                        text-white
-                        px-4
-                        py-3
-                        text-[10px]
-                        uppercase
-                        tracking-[0.12em]
-                        font-bold
-                        flex
-                        items-center
-                        gap-2
-                        transition-colors
-                      "
-                    >
-                      {t.openModel}
-
-                      <ExternalLink className="w-4 h-4" />
-                    </a>
-                  </div>
-                </>
-              )}
-            </div>
-
-            {/* WORKFLOW */}
-
-            <section
-              className="
-                border
-                border-[#c4c7c7]
-                dark:border-[#3b3531]
-                border-t-0
-                bg-white
-                dark:bg-[#1c1917]
-                p-6
-                md:p-8
-              "
-            >
-              <div
-                className="
-                  grid
-                  grid-cols-1
-                  md:grid-cols-3
-                  gap-8
-                "
-              >
-                <WorkflowStep
-                  number="01"
-                  title={
-                    t.uploadStep
-                  }
-                  description={
-                    t.uploadStepText
-                  }
-                />
-
-                <WorkflowStep
-                  number="02"
-                  title={
-                    t.generateStep
-                  }
-                  description={
-                    t.generateStepText
-                  }
-                />
-
-                <WorkflowStep
-                  number="03"
-                  title={
-                    t.exploreStep
-                  }
-                  description={
-                    t.exploreStepText
-                  }
-                />
-              </div>
-            </section>
+          <div
+            style={{
+              position: "absolute",
+              right: 20,
+              top: 20,
+              padding: "10px 14px",
+              borderRadius: 999,
+              background:
+                theme === "normal"
+                  ? "rgba(255,255,255,.82)"
+                  : "rgba(0,0,0,.55)",
+              backdropFilter: "blur(10px)",
+              fontSize: 12,
+              fontWeight: 700,
+            }}
+          >
+            {wireframe
+              ? "WIREFRAME"
+              : "SOLID"}
           </div>
         </div>
-      </section>
-    </main>
+
+        {/* =================================================
+            DESCRIPTION
+        ================================================= */}
+
+        <div
+          style={{
+            marginTop: 20,
+            padding: 25,
+            borderRadius: 16,
+            background:
+              theme === "normal"
+                ? "#eee7dd"
+                : theme === "moonlight"
+                ? "#101b2d"
+                : "#111",
+          }}
+        >
+          <div
+            style={{
+              fontSize: 12,
+              letterSpacing: 2,
+              textTransform: "uppercase",
+              opacity: 0.6,
+            }}
+          >
+            Selected Heritage Object
+          </div>
+
+          <h2
+            style={{
+              fontFamily: "Georgia, serif",
+              fontSize: 30,
+              margin: "10px 0",
+            }}
+          >
+            {currentModel?.name}
+          </h2>
+
+          <p
+            style={{
+              margin: 0,
+              lineHeight: 1.7,
+              opacity: 0.75,
+            }}
+          >
+            {currentModel?.description}
+          </p>
+        </div>
+
+        {/* =================================================
+            INSTRUCTIONS
+        ================================================= */}
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: 15,
+            marginTop: 20,
+          }}
+        >
+          <InfoCard
+            number="01"
+            title="Rotate"
+            text="Click and drag the model to inspect it from every direction."
+            theme={theme}
+          />
+
+          <InfoCard
+            number="02"
+            title="Zoom"
+            text="Use your mouse wheel or pinch on mobile to zoom."
+            theme={theme}
+          />
+
+          <InfoCard
+            number="03"
+            title="Wireframe"
+            text="Turn on Wireframe Mode to reveal the 3D geometry."
+            theme={theme}
+          />
+
+          <InfoCard
+            number="04"
+            title="Lighting"
+            text="Try Normal, Moonlight and Black backgrounds."
+            theme={theme}
+          />
+        </div>
+      </div>
+    </div>
   );
-};
-
-/* =========================================================
-   VIEWER BUTTON
-========================================================= */
-
-interface ViewerButtonProps {
-  label: string;
-  onClick: () => void;
-  children: React.ReactNode;
 }
 
-const ViewerButton:
-React.FC<ViewerButtonProps> = ({
-  label,
-  onClick,
-  children,
-}) => {
-  return (
-    <button
-      type="button"
-      title={label}
-      aria-label={label}
-      onClick={onClick}
-      className="
-        w-10
-        h-10
-        bg-black/70
-        text-white
-        border
-        border-white/20
-        flex
-        items-center
-        justify-center
-        hover:bg-black
-        transition-colors
-      "
-    >
-      {children}
-    </button>
-  );
-};
-
 /* =========================================================
-   WORKFLOW STEP
+   SMALL COMPONENTS
 ========================================================= */
 
-interface WorkflowStepProps {
-  number: string;
-  title: string;
-  description: string;
+function controlButton(active: boolean) {
+  return {
+    padding: "10px 16px",
+    borderRadius: 999,
+    border: active
+      ? "2px solid #a64b28"
+      : "1px solid #888",
+    background: active
+      ? "#a64b28"
+      : "transparent",
+    color: active
+      ? "#fff"
+      : "inherit",
+    cursor: "pointer",
+    fontWeight: 600,
+  };
 }
 
-const WorkflowStep:
-React.FC<WorkflowStepProps> = ({
+function InfoCard({
   number,
   title,
-  description,
-}) => {
+  text,
+  theme,
+}: {
+  number: string;
+  title: string;
+  text: string;
+  theme: Theme;
+}) {
   return (
-    <div>
-      <span
-        className="
-          text-[#94492d]
-          dark:text-[#d97955]
-          text-xs
-          font-bold
-        "
+    <div
+      style={{
+        padding: 22,
+        borderRadius: 15,
+        background:
+          theme === "normal"
+            ? "#eee7dd"
+            : theme === "moonlight"
+            ? "#101b2d"
+            : "#111",
+      }}
+    >
+      <div
+        style={{
+          fontSize: 12,
+          opacity: 0.55,
+          letterSpacing: 2,
+        }}
       >
         {number}
-      </span>
+      </div>
 
       <h3
-        className="
-          font-display
-          text-lg
-          font-bold
-          mt-2
-        "
+        style={{
+          margin: "10px 0",
+          fontFamily: "Georgia, serif",
+        }}
       >
         {title}
       </h3>
 
       <p
-        className="
-          text-xs
-          text-[#747878]
-          dark:text-[#aaa39c]
-          mt-2
-          leading-6
-        "
+        style={{
+          margin: 0,
+          lineHeight: 1.6,
+          opacity: 0.7,
+          fontSize: 14,
+        }}
       >
-        {description}
+        {text}
       </p>
     </div>
   );
-};
-
-export default ThreeDHeritagePage;
+}
