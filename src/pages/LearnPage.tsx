@@ -777,25 +777,48 @@ const LearnPage: React.FC<LearnPageProps> = () => {
     setPlayingPhrase(null);
   };
 
+  const getSongAudioUrl = (song: Song): string => {
+    const item = song as any;
+
+    let url =
+      (typeof item.cloudinary_audio_url === "string"
+        ? item.cloudinary_audio_url.trim()
+        : "") ||
+      (typeof item.audio === "string"
+        ? item.audio.trim()
+        : "");
+
+    if (!url) return "";
+
+    // Cloudinary audio files may need the video resource type.
+    if (
+      url.includes("res.cloudinary.com") &&
+      /\.mp3(\?|$)/i.test(url) &&
+      url.includes("/image/upload/")
+    ) {
+      url = url.replace("/image/upload/", "/video/upload/");
+    }
+
+    return url;
+  };
+
   const playAudio = (
     url: string | null | undefined,
     type: "song" | "phrase",
     id: number
   ) => {
+    const cleanUrl =
+      typeof url === "string" ? url.trim() : "";
+
+    if (!cleanUrl) {
+      console.warn("No audio URL available.");
+      return;
+    }
+
     stopAudio();
 
-    const cleanUrl =
-      typeof url === "string"
-        ? url.trim()
-        : "";
-
-    if (!cleanUrl) return;
-
-    const audio = new Audio();
-
+    const audio = new Audio(cleanUrl);
     audio.preload = "auto";
-    audio.src = cleanUrl;
-
     audioRef.current = audio;
 
     const reset = () => {
@@ -807,24 +830,23 @@ const LearnPage: React.FC<LearnPageProps> = () => {
       setPlayingPhrase(null);
     };
 
+    audio.onplay = () => {
+      if (type === "song") {
+        setPlayingSong(id);
+      } else {
+        setPlayingPhrase(id);
+      }
+    };
+
     audio.onended = reset;
 
     audio.onerror = () => {
-      console.warn(
-        "Unable to load audio:",
-        cleanUrl
-      );
-
+      console.warn("Unable to load audio:", cleanUrl);
       reset();
     };
 
-    if (type === "song") {
-      setPlayingSong(id);
-    } else {
-      setPlayingPhrase(id);
-    }
-
-    audio.play().catch(() => {
+    audio.play().catch((error) => {
+      console.warn("Audio playback failed:", error);
       reset();
     });
   };
@@ -837,12 +859,17 @@ const LearnPage: React.FC<LearnPageProps> = () => {
       return;
     }
 
-    playAudio(song.audio, "song", id);
+    const audioUrl = getSongAudioUrl(song);
+
+    if (!audioUrl) {
+      console.warn("No audio found for song:", song);
+      return;
+    }
+
+    playAudio(audioUrl, "song", id);
   };
 
-  const playPhrase = (
-    phrase: LanguagePhrase
-  ) => {
+  const playPhrase = (phrase: LanguagePhrase) => {
     const id = Number(phrase.id);
 
     if (playingPhrase === id) {
@@ -850,23 +877,18 @@ const LearnPage: React.FC<LearnPageProps> = () => {
       return;
     }
 
-    playAudio(
-      phrase.audio,
-      "phrase",
-      id
-    );
+    playAudio(phrase.audio, "phrase", id);
   };
 
   useEffect(() => {
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
+        audioRef.current = null;
       }
 
       if (translatorTimerRef.current) {
-        clearTimeout(
-          translatorTimerRef.current
-        );
+        clearTimeout(translatorTimerRef.current);
       }
     };
   }, []);
@@ -1117,7 +1139,7 @@ const LearnPage: React.FC<LearnPageProps> = () => {
                       </div>
                     )}
 
-                    {item.audio && (
+                    {(item.audio || item.cloudinary_audio_url) && (
                       <button
                         onClick={() => playSong(song)}
                         className="absolute bottom-4 left-4 w-12 h-12 rounded-full bg-[#faf9f5] dark:bg-[#1c1917] flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
