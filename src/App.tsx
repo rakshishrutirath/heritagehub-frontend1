@@ -9,14 +9,12 @@ import {
   CartItem,
   TimelineEpoch,
   OnlineExhibition,
-  ThreeDModelData,
 } from "./types";
 
 import {
   mockArtifacts,
   mockTimeline,
   mockExhibitions,
-  mockThreeDModels,
 } from "./data/mockData";
 
 import {
@@ -37,10 +35,10 @@ import Footer from "./components/layout/Footer";
 
 import { HomePage } from "./pages/HomePage";
 import ExplorePage from "./pages/ExplorePage";
-import  LearnPage  from "./pages/LearnPage";
+import LearnPage from "./pages/LearnPage";
 import { ContributePage } from "./pages/ContributePage";
 import { CommunityPage } from "./pages/CommunityPage";
-import { ThreeDHeritagePage } from "./pages/ThreeDHeritagePage";
+import ThreeDHeritagePage from "./pages/ThreeDHeritagePage";
 import { MarketplacePage } from "./pages/MarketplacePage";
 import { CanvasPage } from "./pages/CanvasPage";
 import AiHeritageBot from "./components/common/AiHeritageBot";
@@ -157,6 +155,7 @@ const convertHeritageRecordToArtifact = (
 ========================================================= */
 
 export default function App() {
+
   /* =======================================================
      NAVIGATION
   ======================================================= */
@@ -195,13 +194,6 @@ export default function App() {
       mockExhibitions
     );
 
-  const [
-    models,
-  ] =
-    useState<ThreeDModelData[]>(
-      mockThreeDModels
-    );
-
   /* =======================================================
      BOOKMARKS
   ======================================================= */
@@ -236,14 +228,6 @@ export default function App() {
     );
 
   const [
-    active3DModelId,
-    setActive3DModelId,
-  ] =
-    useState<string | null>(
-      null
-    );
-
-  const [
     isSettingsOpen,
     setIsSettingsOpen,
   ] =
@@ -260,9 +244,12 @@ export default function App() {
   ======================================================= */
 
   useEffect(() => {
+
     const loadHeritageRecords =
       async () => {
+
         try {
+
           const records =
             await api.getHeritageRecords();
 
@@ -272,10 +259,9 @@ export default function App() {
           );
 
           if (
-            Array.isArray(
-              records
-            )
+            Array.isArray(records)
           ) {
+
             const converted =
               records.map(
                 convertHeritageRecordToArtifact
@@ -284,20 +270,27 @@ export default function App() {
             if (
               converted.length > 0
             ) {
+
               setArtifacts(
                 converted
               );
+
             }
           }
+
         } catch (error) {
+
           console.error(
             "Unable to load heritage records:",
             error
           );
+
         }
+
       };
 
     loadHeritageRecords();
+
   }, []);
 
   /* =======================================================
@@ -307,6 +300,7 @@ export default function App() {
   const handleSelectTab = (
     tab: NavigationTab
   ) => {
+
     setActiveTab(
       tab
     );
@@ -315,6 +309,7 @@ export default function App() {
       top: 0,
       behavior: "smooth",
     });
+
   };
 
   /* =======================================================
@@ -324,6 +319,7 @@ export default function App() {
   const handleToggleBookmark = (
     id: string
   ) => {
+
     const updated =
       api.toggleBookmark(
         id
@@ -332,23 +328,26 @@ export default function App() {
     setBookmarkedIds(
       updated
     );
+
   };
 
   /* =======================================================
-     3D
+     3D HERITAGE
+     
+     IMPORTANT:
+     The 3D page is now completely frontend-only.
+     No models prop.
+     No backend/Meshy dependency here.
   ======================================================= */
 
   const handleOpen3D = (
-    artifactIdOrModelId:
-      string
+    _artifactIdOrModelId: string
   ) => {
-    setActive3DModelId(
-      artifactIdOrModelId
-    );
 
     handleSelectTab(
       "3d-heritage"
     );
+
   };
 
   /* =======================================================
@@ -357,9 +356,11 @@ export default function App() {
 
   const handleTopAiDocent =
     () => {
+
       if (
         artifacts.length === 0
       ) {
+
         alert(
           "No heritage records are currently available."
         );
@@ -370,6 +371,7 @@ export default function App() {
       setSelectedArtifact(
         artifacts[0]
       );
+
     };
 
   /* =======================================================
@@ -378,9 +380,11 @@ export default function App() {
 
   const handleOpenCart =
     () => {
+
       alert(
         "Marketplace purchases open directly on the seller website."
       );
+
     };
 
   const totalCartCount =
@@ -411,6 +415,7 @@ export default function App() {
   ======================================================= */
 
   return (
+
     <div
       className="
         min-h-screen
@@ -432,11 +437,13 @@ export default function App() {
         duration-300
       "
     >
+
       {/* ===================================================
           NAVBAR
       =================================================== */}
 
       <Navbar
+
         currentTab={
           activeTab
         }
@@ -468,6 +475,7 @@ export default function App() {
         onOpenAiDocent={
           handleTopAiDocent
         }
+
       />
 
       {/* ===================================================
@@ -489,13 +497,16 @@ export default function App() {
           duration-300
         "
       >
+
         {/* =================================================
             HOME
         ================================================= */}
 
         {activeTab ===
           "home" && (
+
           <HomePage
+
             onSelectTab={
               handleSelectTab
             }
@@ -523,7 +534,9 @@ export default function App() {
             onOpenAiDocent={
               handleTopAiDocent
             }
+
           />
+
         )}
 
         {/* =================================================
@@ -532,7 +545,9 @@ export default function App() {
 
         {activeTab ===
           "explore" && (
+
           <ExplorePage
+
             artifacts={
               artifacts
             }
@@ -552,7 +567,9 @@ export default function App() {
             onToggleBookmark={
               handleToggleBookmark
             }
+
           />
+
         )}
 
         {/* =================================================
@@ -561,7 +578,9 @@ export default function App() {
 
         {activeTab ===
           "learn" && (
+
           <LearnPage
+
             timeline={
               timeline
             }
@@ -577,7 +596,9 @@ export default function App() {
             onSelectArtifact={
               setSelectedArtifact
             }
+
           />
+
         )}
 
         {/* =================================================
@@ -586,7 +607,9 @@ export default function App() {
 
         {activeTab ===
           "contribute" && (
+
           <ContributePage />
+
         )}
 
         {/* =================================================
@@ -595,33 +618,27 @@ export default function App() {
 
         {activeTab ===
           "community" && (
+
           <CommunityPage />
+
         )}
 
         {/* =================================================
             3D HERITAGE
+
+            FRONTEND ONLY
+
+            IMPORTANT:
+            Do NOT pass models.
+            Do NOT pass artifacts.
+            Do NOT pass Meshy data.
         ================================================= */}
 
         {activeTab ===
           "3d-heritage" && (
-          <ThreeDHeritagePage
-            models={
-              models
-            }
 
-            artifacts={
-              artifacts
-            }
+          <ThreeDHeritagePage />
 
-            initialModelId={
-              active3DModelId ||
-              undefined
-            }
-
-            onSelectArtifactDetail={
-              setSelectedArtifact
-            }
-          />
         )}
 
         {/* =================================================
@@ -630,7 +647,9 @@ export default function App() {
 
         {activeTab ===
           "marketplace" && (
+
           <MarketplacePage />
+
         )}
 
         {/* =================================================
@@ -639,7 +658,9 @@ export default function App() {
 
         {activeTab ===
           "canvas" && (
+
           <CanvasPage
+
             artifacts={
               artifacts
             }
@@ -647,8 +668,11 @@ export default function App() {
             onSelectArtifact={
               setSelectedArtifact
             }
+
           />
+
         )}
+
       </main>
 
       {/* ===================================================
@@ -662,6 +686,7 @@ export default function App() {
       =================================================== */}
 
       <ArtifactDetailModal
+
         artifact={
           selectedArtifact
         }
@@ -687,6 +712,7 @@ export default function App() {
         onToggleBookmark={
           handleToggleBookmark
         }
+
       />
 
       {/* ===================================================
@@ -694,6 +720,7 @@ export default function App() {
       =================================================== */}
 
       <SettingsModal
+
         isOpen={
           isSettingsOpen
         }
@@ -703,6 +730,7 @@ export default function App() {
             false
           )
         }
+
       />
 
       {/* ===================================================
@@ -710,6 +738,7 @@ export default function App() {
       =================================================== */}
 
       <AccountModal
+
         isOpen={
           isAccountOpen
         }
@@ -727,6 +756,7 @@ export default function App() {
         onSelectArtifact={(
           artifact
         ) => {
+
           setIsAccountOpen(
             false
           );
@@ -734,9 +764,11 @@ export default function App() {
           setSelectedArtifact(
             artifact
           );
+
         }}
 
         onOpenContribute={() => {
+
           setIsAccountOpen(
             false
           );
@@ -744,7 +776,9 @@ export default function App() {
           handleSelectTab(
             "contribute"
           );
+
         }}
+
       />
 
       {/* ===================================================
@@ -754,5 +788,6 @@ export default function App() {
       <AiHeritageBot />
 
     </div>
+
   );
 }
