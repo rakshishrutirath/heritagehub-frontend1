@@ -936,71 +936,10 @@ React.FC<ExplorePageProps> = () => {
   ======================================================= */
 
   return (
-    <>
-      <style>{`
-      @keyframes heritagePageEnter {
-        from { opacity: 0; transform: translateY(22px); filter: blur(5px); }
-        to { opacity: 1; transform: translateY(0); filter: blur(0); }
-      }
-      @keyframes timeTravelIn {
-        0% { opacity: 0; transform: perspective(1000px) rotateX(10deg) translateY(70px) scale(.96); filter: blur(10px); }
-        55% { opacity: 1; filter: blur(1px); }
-        100% { opacity: 1; transform: perspective(1000px) rotateX(0) translateY(0) scale(1); filter: blur(0); }
-      }
-      @keyframes timeTravelModal {
-        0% { opacity: 0; transform: perspective(1200px) scale(.88) rotateX(7deg); filter: blur(12px); }
-        60% { opacity: 1; filter: blur(1px); }
-        100% { opacity: 1; transform: perspective(1200px) scale(1) rotateX(0); filter: blur(0); }
-      }
-      @keyframes timeTravelGlow {
-        0%, 100% { box-shadow: 0 0 0 rgba(204,167,48,0); }
-        50% { box-shadow: 0 0 45px rgba(204,167,48,.12); }
-      }
-      .heritage-page-enter { animation: heritagePageEnter .8s cubic-bezier(.22,1,.36,1) both; }
-      .time-travel-card {
-        animation: timeTravelIn .85s cubic-bezier(.16,1,.3,1) both, timeTravelGlow 2.8s ease-in-out infinite;
-        transform-origin: center center;
-        will-change: transform, opacity, filter;
-      }
-      .time-travel-card:hover {
-        transform: perspective(900px) translateY(-8px) rotateX(1deg) rotateY(-1deg) scale(1.015);
-      }
-      .time-travel-image {
-        transition: transform 1.1s cubic-bezier(.16,1,.3,1), filter .7s ease;
-      }
-      .time-travel-card:hover .time-travel-image {
-        transform: scale(1.08);
-        filter: saturate(1.12) contrast(1.04);
-      }
-      .time-travel-era {
-        position: relative;
-        overflow: hidden;
-        transition: transform .7s cubic-bezier(.16,1,.3,1), border-color .5s ease, background-color .5s ease;
-      }
-      .time-travel-era::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background: linear-gradient(110deg, transparent 20%, rgba(255,255,255,.08) 50%, transparent 80%);
-        transform: translateX(-120%);
-        transition: transform 1s cubic-bezier(.16,1,.3,1);
-      }
-      .time-travel-era:hover {
-        transform: translateY(-6px);
-        border-color: rgba(204,167,48,.5);
-      }
-      .time-travel-era:hover::before { transform: translateX(120%); }
-      .time-travel-modal { animation: timeTravelModal .7s cubic-bezier(.16,1,.3,1) both; }
-      .time-travel-backdrop { animation: heritagePageEnter .35s ease-out both; }
-      @media (prefers-reduced-motion: reduce) {
-        .heritage-page-enter, .time-travel-card, .time-travel-modal, .time-travel-backdrop { animation: none !important; }
-        .time-travel-card, .time-travel-era, .time-travel-image { transition: none !important; }
-      }
-      `}</style>
-
-      <div
-      className="heritage-page-enter w-full min-h-screen
+    <div
+      className="
+        w-full
+        min-h-screen
 
         bg-[#faf9f5]
         dark:bg-[#12100f]
@@ -1258,8 +1197,7 @@ React.FC<ExplorePageProps> = () => {
           >
             {filteredPlaces.map(
               (
-                place,
-                index
+                place
               ) => (
                 <article
                   key={
@@ -1283,15 +1221,11 @@ React.FC<ExplorePageProps> = () => {
                     cursor-pointer
 
                     group
-                    time-travel-card
 
                     hover:shadow-xl
 
                     transition-all
                   "
-                  style={{
-                    animationDelay: `${index * 120}ms`,
-                  }}
                 >
                   <div
                     className="
@@ -1319,7 +1253,6 @@ React.FC<ExplorePageProps> = () => {
                           h-full
 
                           object-cover
-                          time-travel-image
 
                           transition-transform
                           duration-700
@@ -1480,12 +1413,6 @@ React.FC<ExplorePageProps> = () => {
                           className="
                             w-4
                             h-4
-
-                            transition-transform
-                            duration-500
-                            ease-out
-
-                            group-hover:translate-x-2
                           "
                         />
                       </span>
@@ -1623,8 +1550,7 @@ React.FC<ExplorePageProps> = () => {
           >
             {eras.map(
               (
-                era,
-                index
+                era
               ) => (
                 <article
                   key={
@@ -1635,12 +1561,9 @@ React.FC<ExplorePageProps> = () => {
                     border-white/15
 
                     bg-white/5
-                    time-travel-era
-                    time-travel-card
 
                     overflow-hidden
                   "
-                  style={{ animationDelay: `${index * 120}ms` }}
                 >
                   <div
                     className="
@@ -1750,7 +1673,6 @@ React.FC<ExplorePageProps> = () => {
 
             bg-black/65
             backdrop-blur-sm
-            time-travel-backdrop
 
             overflow-y-auto
 
@@ -1788,7 +1710,6 @@ React.FC<ExplorePageProps> = () => {
               dark:text-[#f5f1e8]
 
               shadow-2xl
-              time-travel-modal
             "
           >
             {/* CLOSE */}
@@ -2321,8 +2242,7 @@ React.FC<ExplorePageProps> = () => {
                           era.id
                         }
                         className={`
-                          grid time-travel-era
-                          ${index === 0 ? "time-travel-card" : ""}
+                          grid
                           grid-cols-1
                           md:grid-cols-[285px_1fr]
                           gap-8
@@ -2455,8 +2375,7 @@ React.FC<ExplorePageProps> = () => {
           </div>
         </div>
       )}
-      </div>
-    </>
+    </div>
   );
 };
 
