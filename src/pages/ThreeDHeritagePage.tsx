@@ -809,8 +809,11 @@ React.FC<ThreeDHeritagePageProps> = () => {
     const loader =
       new GLTFLoader();
 
+    const proxyModelUrl =
+      `/api/meshy-model?url=${encodeURIComponent(modelUrl)}`;
+
     loader.load(
-      modelUrl,
+      proxyModelUrl,
 
       (
         gltf
@@ -1975,9 +1978,7 @@ React.FC<ThreeDHeritagePageProps> = () => {
                     "
                   >
                     <a
-                      href={
-                        modelUrl
-                      }
+                      href={`/api/meshy-model?url=${encodeURIComponent(modelUrl)}`}
                       target="_blank"
                       rel="noreferrer"
                       className="
